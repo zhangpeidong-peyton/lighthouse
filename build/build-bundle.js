@@ -38,7 +38,7 @@ const isDevtools = file => path.basename(file).includes('devtools');
 /** @param {string} file */
 const isExtension = file => path.basename(file).includes('extension');
 
-const BANNER = `lighthouse, browserified. ${VERSION} (${COMMIT_HASH})`;
+const FOOTER = `// lighthouse, browserified. ${VERSION} (${COMMIT_HASH})\n`;
 
 /**
  * Browserify starting at the file at entryPath. Contains entry-point-specific
@@ -57,12 +57,7 @@ async function browserifyFile(entryPath, distPath) {
       retainLines: true, // Keep things on the same line (looks wonky but helps with stacktraces)
       comments: false, // Don't output comments
       /** @param {string} comment */
-      shouldPrintComment: (comment) => comment.includes(BANNER), // Don't include @license or @preserve comments either
-      plugins: [
-        ['add-header-comment', {
-          header: [BANNER],
-        }],
-      ],
+      shouldPrintComment: () => false, // Don't include @license or @preserve comments either
     })
     // Transform the fs.readFile etc into inline strings.
     .transform('brfs', {global: true, parserOpts: {ecmaVersion: 10}})
@@ -113,7 +108,7 @@ async function browserifyFile(entryPath, distPath) {
 
   // Make sure path exists.
   await makeDir(path.dirname(distPath));
-  return new Promise((resolve, reject) => {
+  await new Promise((resolve, reject) => {
     const writeStream = fs.createWriteStream(distPath);
     writeStream.on('finish', resolve);
     writeStream.on('error', reject);
@@ -122,6 +117,7 @@ async function browserifyFile(entryPath, distPath) {
       .pipe(exorcist(`${distPath}.map`))
       .pipe(writeStream);
   });
+  fs.writeFileSync(distPath, fs.readFileSync(distPath, 'utf-8') + '\n' + FOOTER);
 }
 
 /**
