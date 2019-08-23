@@ -14,7 +14,6 @@ const fs = require('fs');
 const path = require('path');
 
 const LighthouseRunner = require('../lighthouse-core/runner.js');
-// const babel = require('babel-core');
 const exorcist = require('exorcist');
 const browserify = require('browserify');
 const makeDir = require('make-dir');
