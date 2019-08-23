@@ -14,7 +14,8 @@ const fs = require('fs');
 const path = require('path');
 
 const LighthouseRunner = require('../lighthouse-core/runner.js');
-const babel = require('babel-core');
+// const babel = require('babel-core');
+const exorcist = require('exorcist');
 const browserify = require('browserify');
 const makeDir = require('make-dir');
 const pkg = require('../package.json');
@@ -38,8 +39,7 @@ const isDevtools = file => path.basename(file).includes('devtools');
 /** @param {string} file */
 const isExtension = file => path.basename(file).includes('extension');
 
-const BANNER = `// lighthouse, browserified. ${VERSION} (${COMMIT_HASH})\n`;
-const DEBUG = false; // true for sourcemaps
+const BANNER = `lighthouse, browserified. ${VERSION} (${COMMIT_HASH})`;
 
 /**
  * Browserify starting at the file at entryPath. Contains entry-point-specific
@@ -50,9 +50,21 @@ const DEBUG = false; // true for sourcemaps
  * @return {Promise<void>}
  */
 async function browserifyFile(entryPath, distPath) {
-  let bundle = browserify(entryPath, {debug: DEBUG});
+  let bundle = browserify(entryPath, {debug: true});
 
   bundle
+    .transform('babelify', {
+      compact: true, // Do not include superfluous whitespace characters and line terminators.
+      retainLines: true, // Keep things on the same line (looks wonky but helps with stacktraces)
+      comments: false, // Don't output comments
+      /** @param {string} comment */
+      shouldPrintComment: (comment) => comment.includes(BANNER), // Don't include @license or @preserve comments either
+      plugins: [
+        ['add-header-comment', {
+          header: [BANNER],
+        }],
+      ],
+    })
     // Transform the fs.readFile etc into inline strings.
     .transform('brfs', {global: true, parserOpts: {ecmaVersion: 10}})
     // Strip everything out of package.json includes except for the version.
@@ -107,29 +119,10 @@ async function browserifyFile(entryPath, distPath) {
     writeStream.on('finish', resolve);
     writeStream.on('error', reject);
 
-    bundleStream.pipe(writeStream);
+    bundleStream
+      .pipe(exorcist(`${distPath}.map`))
+      .pipe(writeStream);
   });
-}
-
-/**
- * Minimally minify a javascript file, in place.
- * @param {string} filePath
- */
-function minifyScript(filePath) {
-  const opts = {
-    compact: true, // Do not include superfluous whitespace characters and line terminators.
-    retainLines: true, // Keep things on the same line (looks wonky but helps with stacktraces)
-    comments: false, // Don't output comments
-    shouldPrintComment: () => false, // Don't include @license or @preserve comments either
-    plugins: [
-      'syntax-object-rest-spread',
-      'syntax-async-generators',
-    ],
-    // sourceMaps: 'both'
-  };
-
-  const minified = BANNER + babel.transformFileSync(filePath, opts).code;
-  fs.writeFileSync(filePath, minified);
 }
 
 /**
@@ -138,11 +131,8 @@ function minifyScript(filePath) {
  * @param {string} distPath
  * @return {Promise<void>}
  */
-async function build(entryPath, distPath) {
-  await browserifyFile(entryPath, distPath);
-  if (!DEBUG) {
-    minifyScript(distPath);
-  }
+function build(entryPath, distPath) {
+  return browserifyFile(entryPath, distPath);
 }
 
 /**
