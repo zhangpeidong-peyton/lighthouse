@@ -16,6 +16,7 @@ const path = require('path');
 const LighthouseRunner = require('../lighthouse-core/runner.js');
 const exorcist = require('exorcist');
 const browserify = require('browserify');
+const terser = require('terser');
 const makeDir = require('make-dir');
 const pkg = require('../package.json');
 
@@ -52,17 +53,18 @@ async function browserifyFile(entryPath, distPath) {
   let bundle = browserify(entryPath, {debug: true});
 
   bundle
-    .transform('babelify', {
-      compact: true, // Do not include superfluous whitespace characters and line terminators.
-      retainLines: true, // Keep things on the same line (looks wonky but helps with stacktraces)
-      comments: false, // Don't output comments
-      /** @param {string} comment */
-      shouldPrintComment: () => false, // Don't include @license or @preserve comments either
-    })
-    // Transform the fs.readFile etc into inline strings.
-    .transform('brfs', {global: true, parserOpts: {ecmaVersion: 10}})
-    // Strip everything out of package.json includes except for the version.
-    .transform('package-json-versionify');
+  // Transform the fs.readFile etc into inline strings.
+  .transform('brfs', {global: true, parserOpts: {ecmaVersion: 10}})
+  // Strip everything out of package.json includes except for the version.
+  .transform('package-json-versionify');
+  // 
+  // .transform('babelify', {
+  //   compact: true, // Do not include superfluous whitespace characters and line terminators.
+  //   retainLines: true, // Keep things on the same line (looks wonky but helps with stacktraces)
+  //   comments: false, // Don't output comments
+  //   /** @param {string} comment */
+  //   shouldPrintComment: () => false, // Don't include @license or @preserve comments either
+  // });
 
   // scripts will need some additional transforms, ignores and requires…
   bundle.ignore('source-map')
@@ -121,13 +123,44 @@ async function browserifyFile(entryPath, distPath) {
 }
 
 /**
+ * Minimally minify a javascript file, in place.
+ * @param {string} filePath
+ */
+function minifyScript(filePath) {
+  // const opts = {
+  //   compact: true, // Do not include superfluous whitespace characters and line terminators.
+  //   retainLines: true, // Keep things on the same line (looks wonky but helps with stacktraces)
+  //   comments: false, // Don't output comments
+  //   shouldPrintComment: () => false, // Don't include @license or @preserve comments either
+  //   plugins: [
+  //     'syntaxobjectrestspread',
+  //     'syntaxasyncgenerators',
+  //   ],
+  //   // sourceMaps: 'both'
+  // };
+
+  const result = terser.minify(fs.readFileSync(filePath, 'utf-8'), {
+    sourceMap: {
+      content: JSON.parse(fs.readFileSync(`${filePath}.map`, 'utf-8')),
+    },
+  });
+  if (result.error) {
+    throw result.error;
+  }
+  const minified = result.code + FOOTER;
+  fs.writeFileSync(filePath, minified + '\n' + FOOTER);
+  fs.writeFileSync(`${filePath}.map`, result.map);
+}
+  
+/**
  * Browserify starting at entryPath, writing the minified result to distPath.
  * @param {string} entryPath
  * @param {string} distPath
  * @return {Promise<void>}
  */
-function build(entryPath, distPath) {
-  return browserifyFile(entryPath, distPath);
+async function build(entryPath, distPath) {
+  await browserifyFile(entryPath, distPath);
+  minifyScript(distPath);
 }
 
 /**
