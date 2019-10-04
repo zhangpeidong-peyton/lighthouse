@@ -1,6 +1,6 @@
 {
   "name": "lighthouse",
-  "version": "5.2.0",
+  "version": "5.5.0",
   "description": "Lighthouse",
   "main": "./lighthouse-core/index.js",
   "bin": {
@@ -49,6 +49,7 @@
     "deploy-viewer": "yarn build-viewer --deploy",
     "now-build": "node lighthouse-core/scripts/build-report-for-autodeployment.js",
     "bundlesize": "bundlesize",
+    "dogfood-lhci": "./lighthouse-core/scripts/dogfood-lhci.sh",
     "timing-trace": "node lighthouse-core/scripts/generate-timing-trace.js",
     "changelog": "conventional-changelog --config ./build/changelog-generator/index.js --infile changelog.md --same-file",
     "type-check": "tsc -p . && tsc -p lighthouse-viewer/",
@@ -126,8 +127,7 @@
     "pretty-json-stringify": "^0.0.2",
     "puppeteer": "^1.19.0",
     "terser": "^4.2.0",
-    "typescript": "3.5.3",
-    "zone.js": "^0.7.3"
+    "typescript": "3.5.3"
   },
   "dependencies": {
     "axe-core": "3.3.0",
@@ -181,7 +181,7 @@
     },
     {
       "path": "./dist/lightrider/lighthouse-lr-bundle.js",
-      "maxSize": "1.4 MB"
+      "maxSize": "1.33 MB"
     },
     {
       "path": "./dist/viewer/src/viewer.js",
