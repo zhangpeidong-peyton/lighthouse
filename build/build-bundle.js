@@ -108,10 +108,11 @@ async function browserifyFile(entryPath, distPath) {
     writeStream.on('error', reject);
 
     bundleStream
+      // Extract the inline source map to an external file.
       .pipe(exorcist(`${distPath}.map`))
       .pipe(writeStream);
   });
-  fs.writeFileSync(distPath, fs.readFileSync(distPath, 'utf-8') + '\n' + FOOTER);
+  fs.writeFileSync(distPath, fs.readFileSync(distPath, 'utf-8'));
 }
 
 /**
@@ -122,16 +123,18 @@ function minifyScript(filePath) {
   const result = terser.minify(fs.readFileSync(filePath, 'utf-8'), {
     sourceMap: {
       content: JSON.parse(fs.readFileSync(`${filePath}.map`, 'utf-8')),
+      url: path.basename(`${filePath}.map`),
     },
   });
   if (result.error) {
     throw result.error;
   }
-  const minified = result.code + FOOTER;
-  fs.writeFileSync(filePath, minified + '\n' + FOOTER);
+  // Version information is added to the end so the source map is not invalidated.
+  const minified = result.code + '\n' + FOOTER;
+  fs.writeFileSync(filePath, minified);
   fs.writeFileSync(`${filePath}.map`, result.map);
 }
-  
+
 /**
  * Browserify starting at entryPath, writing the minified result to distPath.
  * @param {string} entryPath
