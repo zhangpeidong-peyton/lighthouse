@@ -57,14 +57,6 @@ async function browserifyFile(entryPath, distPath) {
   .transform('brfs', {global: true, parserOpts: {ecmaVersion: 10}})
   // Strip everything out of package.json includes except for the version.
   .transform('package-json-versionify');
-  // 
-  // .transform('babelify', {
-  //   compact: true, // Do not include superfluous whitespace characters and line terminators.
-  //   retainLines: true, // Keep things on the same line (looks wonky but helps with stacktraces)
-  //   comments: false, // Don't output comments
-  //   /** @param {string} comment */
-  //   shouldPrintComment: () => false, // Don't include @license or @preserve comments either
-  // });
 
   // scripts will need some additional transforms, ignores and requires…
   bundle.ignore('source-map')
@@ -123,22 +115,10 @@ async function browserifyFile(entryPath, distPath) {
 }
 
 /**
- * Minimally minify a javascript file, in place.
+ * Minify a javascript file, in place.
  * @param {string} filePath
  */
 function minifyScript(filePath) {
-  // const opts = {
-  //   compact: true, // Do not include superfluous whitespace characters and line terminators.
-  //   retainLines: true, // Keep things on the same line (looks wonky but helps with stacktraces)
-  //   comments: false, // Don't output comments
-  //   shouldPrintComment: () => false, // Don't include @license or @preserve comments either
-  //   plugins: [
-  //     'syntaxobjectrestspread',
-  //     'syntaxasyncgenerators',
-  //   ],
-  //   // sourceMaps: 'both'
-  // };
-
   const result = terser.minify(fs.readFileSync(filePath, 'utf-8'), {
     sourceMap: {
       content: JSON.parse(fs.readFileSync(`${filePath}.map`, 'utf-8')),
