@@ -129,6 +129,8 @@ function minifyScript(filePath) {
     output: {
       comments: /^!/,
     },
+    keep_classnames: true,
+    keep_fnames: true,
     sourceMap: {
       content: JSON.parse(fs.readFileSync(`${filePath}.map`, 'utf-8')),
       url: path.basename(`${filePath}.map`),

@@ -61,6 +61,7 @@ function assertValidPasses(passes, audits) {
   passes.forEach(pass => {
     pass.gatherers.forEach(gathererDefn => {
       const gatherer = gathererDefn.instance;
+      console.log(gatherer.name);
       foundGatherers.add(gatherer.name);
       const isGatherRequiredByAudits = requiredGatherers.has(gatherer.name);
       if (!isGatherRequiredByAudits) {
