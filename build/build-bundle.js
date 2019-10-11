@@ -16,7 +16,6 @@ const path = require('path');
 const LighthouseRunner = require('../lighthouse-core/runner.js');
 const exorcist = require('exorcist');
 const browserify = require('browserify');
-// const banner = require('browserify-banner');
 const terser = require('terser');
 const makeDir = require('make-dir');
 const pkg = require('../package.json');
@@ -135,6 +134,11 @@ function minifyScript(filePath) {
     keep_classnames: true,
     // Runtime.evaluate errors if function names are elided.
     keep_fnames: true,
+    mangle: {
+      // Can't mangle these variables because `bundled-lighthouse-cli.js` does a naive
+      // regex replace for these.
+      reserved: ['ChromeProtocol', 'mkdirp', 'rimraf', 'fs'],
+    },
     sourceMap: {
       content: JSON.parse(fs.readFileSync(`${filePath}.map`, 'utf-8')),
       url: path.basename(`${filePath}.map`),
