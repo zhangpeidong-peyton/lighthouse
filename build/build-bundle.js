@@ -18,9 +18,7 @@ const exorcist = require('exorcist');
 const browserify = require('browserify');
 const terser = require('terser');
 const makeDir = require('make-dir');
-const pkg = require('../package.json');
 
-const VERSION = pkg.version;
 const COMMIT_HASH = require('child_process')
   .execSync('git rev-parse HEAD')
   .toString().trim();
@@ -38,8 +36,6 @@ const locales = fs.readdirSync(__dirname + '/../lighthouse-core/lib/i18n/locales
 const isDevtools = file => path.basename(file).includes('devtools');
 /** @param {string} file */
 const isExtension = file => path.basename(file).includes('extension');
-
-const HEADER = `lighthouse, browserified. ${VERSION} (${COMMIT_HASH})`;
 
 /**
  * Browserify starting at the file at entryPath. Contains entry-point-specific
