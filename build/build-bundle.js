@@ -129,7 +129,9 @@ function minifyScript(filePath) {
     output: {
       comments: /^!/,
     },
+    // The config relies on class names for gatherers.
     keep_classnames: true,
+    // Evaluate async errors if function names are elided.
     keep_fnames: true,
     sourceMap: {
       content: JSON.parse(fs.readFileSync(`${filePath}.map`, 'utf-8')),
