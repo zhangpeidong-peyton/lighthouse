@@ -16,6 +16,7 @@ const path = require('path');
 const LighthouseRunner = require('../lighthouse-core/runner.js');
 const exorcist = require('exorcist');
 const browserify = require('browserify');
+// const banner = require('browserify-banner');
 const terser = require('terser');
 const makeDir = require('make-dir');
 const pkg = require('../package.json');
@@ -39,7 +40,7 @@ const isDevtools = file => path.basename(file).includes('devtools');
 /** @param {string} file */
 const isExtension = file => path.basename(file).includes('extension');
 
-const FOOTER = `// lighthouse, browserified. ${VERSION} (${COMMIT_HASH})\n`;
+const HEADER = `lighthouse, browserified. ${VERSION} (${COMMIT_HASH})`;
 
 /**
  * Browserify starting at the file at entryPath. Contains entry-point-specific
@@ -53,10 +54,14 @@ async function browserifyFile(entryPath, distPath) {
   let bundle = browserify(entryPath, {debug: true});
 
   bundle
-  // Transform the fs.readFile etc into inline strings.
-  .transform('brfs', {global: true, parserOpts: {ecmaVersion: 10}})
-  // Strip everything out of package.json includes except for the version.
-  .transform('package-json-versionify');
+    .plugin('browserify-banner', {
+      pkg: Object.assign({COMMIT_HASH}, require('../package.json')),
+      file: require.resolve('./banner.txt'),
+    })
+    // Transform the fs.readFile etc into inline strings.
+    .transform('brfs', {global: true, parserOpts: {ecmaVersion: 10}})
+    // Strip everything out of package.json includes except for the version.
+    .transform('package-json-versionify');
 
   // scripts will need some additional transforms, ignores and requires…
   bundle.ignore('source-map')
@@ -121,6 +126,9 @@ async function browserifyFile(entryPath, distPath) {
  */
 function minifyScript(filePath) {
   const result = terser.minify(fs.readFileSync(filePath, 'utf-8'), {
+    output: {
+      comments: /^!/,
+    },
     sourceMap: {
       content: JSON.parse(fs.readFileSync(`${filePath}.map`, 'utf-8')),
       url: path.basename(`${filePath}.map`),
@@ -129,9 +137,7 @@ function minifyScript(filePath) {
   if (result.error) {
     throw result.error;
   }
-  // Version information is added to the end so the source map is not invalidated.
-  const minified = result.code + '\n' + FOOTER;
-  fs.writeFileSync(filePath, minified);
+  fs.writeFileSync(filePath, result.code);
   fs.writeFileSync(`${filePath}.map`, result.map);
 }
 

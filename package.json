@@ -1,7 +1,7 @@
 {
   "name": "lighthouse",
   "version": "5.5.0",
-  "description": "Lighthouse",
+  "description": "Automated auditing, performance metrics, and best practices for the web.",
   "main": "./lighthouse-core/index.js",
   "bin": {
     "lighthouse": "./lighthouse-cli/index.js",
@@ -98,6 +98,7 @@
     "archiver": "^3.0.0",
     "brfs": "^2.0.2",
     "browserify": "^16.2.3",
+    "browserify-banner": "^1.0.15",
     "bundlesize": "^0.17.2",
     "chalk": "^2.4.1",
     "codecov": "^3.2.0",
@@ -168,7 +169,7 @@
     "chrome",
     "devtools"
   ],
-  "author": "The Chromium Authors",
+  "author": "Google Inc.",
   "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/GoogleChrome/lighthouse/issues"
