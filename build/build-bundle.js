@@ -128,6 +128,8 @@ function minifyScript(filePath) {
   const result = terser.minify(fs.readFileSync(filePath, 'utf-8'), {
     output: {
       comments: /^!/,
+      // @ts-ignore - terser types are whack-a-doodle wrong.
+      max_line_len: /** @type {boolean} */ (1000),
     },
     // The config relies on class names for gatherers.
     keep_classnames: true,
