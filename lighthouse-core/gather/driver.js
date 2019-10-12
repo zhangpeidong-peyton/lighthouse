@@ -529,10 +529,7 @@ class Driver {
     const response = await this.sendCommand('Runtime.evaluate', evaluationParams);
     if (response.exceptionDetails) {
       // An error occurred before we could even create a Promise, should be *very* rare
-      const errorMessage = response.exceptionDetails.exception ?
-        response.exceptionDetails.exception.description :
-        response.exceptionDetails.text;
-      return Promise.reject(new Error(`Evaluation exception: ${errorMessage}`));
+      return Promise.reject(new Error(`Evaluation exception: ${response.exceptionDetails.text}`));
     }
     // Protocol should always return a 'result' object, but it is sometimes undefined.  See #6026.
     if (response.result === undefined) {
