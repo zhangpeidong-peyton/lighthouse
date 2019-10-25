@@ -114,7 +114,6 @@ async function browserifyFile(entryPath, distPath) {
       .pipe(exorcist(`${distPath}.map`))
       .pipe(writeStream);
   });
-  fs.writeFileSync(distPath, fs.readFileSync(distPath, 'utf-8'));
 }
 
 /**
