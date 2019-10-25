@@ -12,12 +12,12 @@
 
 const fs = require('fs');
 const path = require('path');
+const mkdir = fs.promises.mkdir;
 
 const LighthouseRunner = require('../lighthouse-core/runner.js');
 const exorcist = require('exorcist');
 const browserify = require('browserify');
 const terser = require('terser');
-const makeDir = require('make-dir');
 
 const COMMIT_HASH = require('child_process')
   .execSync('git rev-parse HEAD')
@@ -36,6 +36,8 @@ const locales = fs.readdirSync(__dirname + '/../lighthouse-core/lib/i18n/locales
 const isDevtools = file => path.basename(file).includes('devtools');
 /** @param {string} file */
 const isExtension = file => path.basename(file).includes('extension');
+/** @param {string} file */
+const isLightrider = file => path.basename(file).includes('lightrider');
 
 /**
  * Browserify starting at the file at entryPath. Contains entry-point-specific
@@ -64,15 +66,15 @@ async function browserifyFile(entryPath, distPath) {
     .ignore('intl')
     .ignore('intl-pluralrules')
     .ignore('raven')
-    .ignore('mkdirp')
     .ignore('rimraf')
     .ignore('pako/lib/zlib/inflate.js');
 
   // Don't include the desktop protocol connection.
   bundle.ignore(require.resolve('../lighthouse-core/gather/connections/cri.js'));
 
-  // Dont include the stringified report in DevTools.
-  if (isDevtools(entryPath)) {
+  // Don't include the stringified report in DevTools - see devtools-report-assets.js
+  // Don't include in Lightrider - HTML generation isn't supported, so report assets aren't needed.
+  if (isDevtools(entryPath) || isLightrider(entryPath)) {
     bundle.ignore(require.resolve('../lighthouse-core/report/html/html-report-assets.js'));
   }
 
@@ -101,8 +103,8 @@ async function browserifyFile(entryPath, distPath) {
   const bundleStream = bundle.bundle();
 
   // Make sure path exists.
-  await makeDir(path.dirname(distPath));
-  await new Promise((resolve, reject) => {
+  await mkdir(path.dirname(distPath), {recursive: true});
+  return new Promise((resolve, reject) => {
     const writeStream = fs.createWriteStream(distPath);
     writeStream.on('finish', resolve);
     writeStream.on('error', reject);
