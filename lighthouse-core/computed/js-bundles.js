@@ -22,10 +22,6 @@ function computeGeneratedFileSizes(map, content) {
   const totalBytes = content.length;
   let unmappedBytes = totalBytes;
 
-  // If the map + contents don't line up, return a result that
-  // denotes nothing is mapped.
-  const failureResult = {files: {}, unmappedBytes, totalBytes};
-
   // @ts-ignore: This function is added in SDK.js. This will eventually be added to CDT.
   map.computeLastGeneratedColumns();
 
@@ -44,22 +40,24 @@ function computeGeneratedFileSizes(map, content) {
 
     const line = lines[lineNum];
     if (line === null) {
-      log.error('JSBundles', `${map.url()} mapping for line out of bounds: ${lineNum + 1}`);
-      return failureResult;
+      const error = `${map.url()} mapping for line out of bounds: ${lineNum + 1}`;
+      log.error('JSBundles', error);
+      return {error};
     }
 
     if (colNum > line.length) {
-      // eslint-disable-next-line max-len
-      log.error('JSBundles', `${map.url()} mapping for column out of bounds: ${lineNum + 1}:${colNum}`);
-      return failureResult;
+      const error = `${map.url()} mapping for column out of bounds: ${lineNum + 1}:${colNum}`;
+      log.error('JSBundles', error);
+      return {error};
     }
 
     let mappingLength = 0;
     if (lastColNum !== undefined) {
       if (lastColNum > line.length) {
         // eslint-disable-next-line max-len
-        log.error('JSBundles', `${map.url()} mapping for last column out of bounds: ${lineNum + 1}:${lastColNum}`);
-        return failureResult;
+        const error = `${map.url()} mapping for last column out of bounds: ${lineNum + 1}:${lastColNum}`;
+        log.error('JSBundles', error);
+        return {error};
       }
       mappingLength = lastColNum - colNum;
     } else {

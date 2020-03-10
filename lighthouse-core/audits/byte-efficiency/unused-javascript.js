@@ -115,6 +115,8 @@ class UnusedJavaScript extends ByteEfficiencyAudit {
    */
   static createBundleMultiData(item, wasteData, bundle, lengths, bundleSourceUnusedThreshold) {
     if (!bundle.script.content) return;
+    const sizes = bundle.sizes;
+    if ('error' in sizes) return;
 
     /** @type {Record<string, number>} */
     const files = {};
@@ -151,7 +153,7 @@ class UnusedJavaScript extends ByteEfficiencyAudit {
       .sort(([_, unusedBytes1], [__, unusedBytes2]) => unusedBytes2 - unusedBytes1)
       .slice(0, 5)
       .map(([key, unusedBytes]) => {
-        const total = key === '(unmapped)' ? bundle.sizes.unmappedBytes : bundle.sizes.files[key];
+        const total = key === '(unmapped)' ? sizes.unmappedBytes : sizes.files[key];
         return {
           key,
           unused: Math.round(unusedBytes * transferRatio),

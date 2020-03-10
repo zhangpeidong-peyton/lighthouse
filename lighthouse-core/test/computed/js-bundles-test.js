@@ -292,9 +292,7 @@ describe('JSBundles computed artifact', () => {
             "sourceURL": "src/foo.js",
           },
           "sizes": Object {
-            "files": Object {},
-            "totalBytes": 13,
-            "unmappedBytes": 13,
+            "error": "compiled.js.map mapping for last column out of bounds: 1:14",
           },
         }
       `);
@@ -314,9 +312,7 @@ describe('JSBundles computed artifact', () => {
             "sourceURL": "src/foo.js",
           },
           "sizes": Object {
-            "files": Object {},
-            "totalBytes": 0,
-            "unmappedBytes": 0,
+            "error": "compiled.js.map mapping for column out of bounds: 1:1",
           },
         }
       `);
