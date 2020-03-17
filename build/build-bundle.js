@@ -32,10 +32,13 @@ const gatherers = LighthouseRunner.getGathererList()
 const locales = fs.readdirSync(__dirname + '/../lighthouse-core/lib/i18n/locales/')
     .map(f => require.resolve(`../lighthouse-core/lib/i18n/locales/${f}`));
 
+// HACK: manually include the lighthouse-plugin-publisher-ads audits.
+/** @type {Array<string>} */
+// @ts-ignore
+const pubAdsAudits = require('lighthouse-plugin-publisher-ads/plugin.js').audits.map(a => a.path);
+
 /** @param {string} file */
 const isDevtools = file => path.basename(file).includes('devtools');
-/** @param {string} file */
-const isExtension = file => path.basename(file).includes('extension');
 /** @param {string} file */
 const isLightrider = file => path.basename(file).includes('lightrider');
 
@@ -78,13 +81,14 @@ async function browserifyFile(entryPath, distPath) {
     bundle.ignore(require.resolve('../lighthouse-core/report/html/html-report-assets.js'));
   }
 
-  // Don't include locales in DevTools or the extension for now.
-  if (isDevtools(entryPath) || isExtension(entryPath)) {
+  // Don't include locales in DevTools.
+  if (isDevtools(entryPath)) {
     // @ts-ignore bundle.ignore does accept an array of strings.
     bundle.ignore(locales);
   }
 
   // Expose the audits, gatherers, and computed artifacts so they can be dynamically loaded.
+  // Exposed path must be a relative path from lighthouse-core/config/config-helpers.js (where loading occurs).
   const corePath = './lighthouse-core/';
   const driverPath = `${corePath}gather/`;
   audits.forEach(audit => {
@@ -93,6 +97,15 @@ async function browserifyFile(entryPath, distPath) {
   gatherers.forEach(gatherer => {
     bundle = bundle.require(gatherer, {expose: gatherer.replace(driverPath, '../gather/')});
   });
+
+  // HACK: manually include the lighthouse-plugin-publisher-ads audits.
+  // TODO: there should be a test for this.
+  if (isDevtools(entryPath)) {
+    bundle.require('lighthouse-plugin-publisher-ads');
+    pubAdsAudits.forEach(pubAdAudit => {
+      bundle = bundle.require(pubAdAudit);
+    });
+  }
 
   // browerify's url shim doesn't work with .URL in node_modules,
   // and within robots-parser, it does `var URL = require('url').URL`, so we expose our own.

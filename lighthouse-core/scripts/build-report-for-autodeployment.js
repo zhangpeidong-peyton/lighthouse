@@ -77,10 +77,12 @@ async function generateErrorLHR() {
       `Something went wrong with recording the trace over your page load. Please run Lighthouse again. (NO_FCP)`, // eslint-disable-line max-len
     ],
     TestedAsMobileDevice: true,
+    HostFormFactor: 'desktop',
     HostUserAgent: 'Mozilla/5.0 ErrorUserAgent Chrome/66',
     NetworkUserAgent: 'Mozilla/5.0 ErrorUserAgent Chrome/66',
     BenchmarkIndex: 1000,
     WebAppManifest: null,
+    InstallabilityErrors: {errors: []},
     Stacks: [],
     settings: defaultSettings,
     URL: {

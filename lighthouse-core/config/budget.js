@@ -85,7 +85,7 @@ class Budget {
     // Assume resourceType is an allowed string, throw if not.
     if (!validResourceTypes.includes(/** @type {LH.Budget.ResourceType} */ (resourceType))) {
       throw new Error(`Invalid resource type: ${resourceType}. \n` +
-        `Valid resource types are: ${ validResourceTypes.join(', ') }`);
+        `Valid resource types are: ${validResourceTypes.join(', ') }`);
     }
     if (!isNumber(budget)) {
       throw new Error(`Invalid budget: ${budget}`);
@@ -130,6 +130,26 @@ class Budget {
       this.throwInvalidPathError(path, `'$' character should only occur at end of path.`);
     }
     return path;
+  }
+
+  /**
+   * Returns the budget that applies to a given URL.
+   * If multiple budgets match based on thier 'path' property,
+   * then the last-listed of those budgets is returned.
+   * @param {Array<LH.Budget>|null} budgets
+   * @param {string} url
+   * @return {LH.Budget | undefined} budget
+   */
+  static getMatchingBudget(budgets, url) {
+    if (budgets === null) return;
+
+    // Applies the LAST matching budget.
+    for (let i = budgets.length - 1; i >= 0; i--) {
+      const budget = budgets[i];
+      if (this.urlMatchesPattern(url, budget.path)) {
+        return budget;
+      }
+    }
   }
 
   /**
@@ -221,6 +241,41 @@ class Budget {
   }
 
   /**
+   * @param {string} hostname
+   * @return {string}
+   */
+  static validateHostname(hostname) {
+    const errMsg = `${hostname} is not a valid hostname.`;
+    if (hostname.length === 0) {
+      throw new Error(errMsg);
+    }
+    if (hostname.includes('/')) {
+      throw new Error(errMsg);
+    }
+    if (hostname.includes(':')) {
+      throw new Error(errMsg);
+    }
+    if (hostname.includes('*')) {
+      if (!hostname.startsWith('*.') || hostname.lastIndexOf('*') > 0) {
+        throw new Error(errMsg);
+      }
+    }
+    return hostname;
+  }
+
+  /**
+   * @param {unknown} hostnames
+   * @return {undefined|Array<string>}
+   */
+  static validateHostnames(hostnames) {
+    if (Array.isArray(hostnames) && hostnames.every(host => typeof host === 'string')) {
+      return hostnames.map(Budget.validateHostname);
+    } else if (hostnames !== undefined) {
+      throw new Error(`firstPartyHostnames should be defined as an array of strings.`);
+    }
+  }
+
+  /**
    * More info on the Budget format:
    * https://github.com/GoogleChrome/lighthouse/issues/6053#issuecomment-428385930
    * @param {unknown} budgetJson
@@ -237,10 +292,19 @@ class Budget {
       /** @type {LH.Budget} */
       const budget = {};
 
-      const {path, resourceSizes, resourceCounts, timings, ...invalidRest} = b;
+      const {path, options, resourceSizes, resourceCounts, timings, ...invalidRest} = b;
       Budget.assertNoExcessProperties(invalidRest, 'Budget');
 
       budget.path = Budget.validatePath(path);
+
+      if (isObjectOfUnknownProperties(options)) {
+        const {firstPartyHostnames, ...invalidRest} = options;
+        Budget.assertNoExcessProperties(invalidRest, 'Options property');
+        budget.options = {};
+        budget.options.firstPartyHostnames = Budget.validateHostnames(firstPartyHostnames);
+      } else if (options !== undefined) {
+        throw new Error(`Invalid options property in budget at index ${index}`);
+      }
 
       if (isArrayOfUnknownObjects(resourceSizes)) {
         budget.resourceSizes = resourceSizes.map(Budget.validateResourceBudget);

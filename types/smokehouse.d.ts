@@ -5,25 +5,11 @@
  */
 
  declare module Smokehouse {
-  export interface Difference {
-    path: string;
-    actual: any;
-    expected: any;
-  }
-
-  export interface Comparison {
-    name: string;
-    actual: any;
-    expected: any;
-    equal: boolean;
-    diff?: Difference | null;
-  }
-
   interface ExpectedLHR {
     audits: Record<string, any>;
     requestedUrl: string;
     finalUrl: string;
-    runWarnings?: Array<string>;
+    runWarnings?: Array<string|RegExp>;
     runtimeError?: {
       code?: any;
       message?: any;
@@ -38,12 +24,26 @@
   export interface TestDfn {
     id: string;
     expectations: ExpectedRunnerResult[];
-    config: LH.Config.Json;
-    batch: string;
+    config?: LH.Config.Json;
+    /** If test is performance sensitive, set to true so that it won't be run parallel to other tests. */
+    runSerially?: boolean;
   }
 
-  export interface FirehouseOptions {
-    runLighthouse: (url: string, config: LH.Config.Json) => Promise<Omit<LH.RunnerResult, 'report'>>;
+  export type LighthouseRunner =
+    (url: string, configJson?: LH.Config.Json, runnerOptions?: {isDebug?: boolean}) => Promise<{lhr: LH.Result, artifacts: LH.Artifacts, log: string}>;
+
+  export interface SmokehouseOptions {
+    /** If true, performs extra logging from the test runs. */
+    isDebug?: boolean;
+    /** Manually set the number of jobs to run at once. `1` runs all tests serially. */
+    jobs?: number;
+    /** The number of times to retry failing tests before accepting. Defaults to 0. */
+    retries?: number;
+    /** A function that runs Lighthouse with the given options. Defaults to running Lighthouse via the CLI. */
+    lighthouseRunner?: LighthouseRunner;
+  }
+
+  export interface SmokehouseLibOptions extends SmokehouseOptions {
     urlFilterRegex?: RegExp;
     skip?: (test: TestDfn, expectation: ExpectedRunnerResult) => string | false;
     modify?: (test: TestDfn, expectation: ExpectedRunnerResult) => void;

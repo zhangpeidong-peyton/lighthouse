@@ -9,39 +9,43 @@ const lighthouse = require('../lighthouse-core/index.js');
 const RawProtocol = require('../lighthouse-core/gather/connections/raw.js');
 const log = require('lighthouse-logger');
 const {registerLocaleData, lookupLocale} = require('../lighthouse-core/lib/i18n/i18n.js');
+const desktopDense4G = require('../lighthouse-core/config/constants.js').throttling.desktopDense4G;
 
 /** @typedef {import('../lighthouse-core/gather/connections/connection.js')} Connection */
 
 /**
- * Return a version of the default config, filtered to only run the specified
- * categories.
+ * Returns a config, which runs only certain categories.
+ * Varies the config to use based on device.
+ * If `lighthouse-plugin-publisher-ads` is in the list of
+ * `categoryIDs` the plugin will also be run.
+ * Counterpart to the CDT code that sets flags.
+ * @see https://cs.chromium.org/chromium/src/third_party/devtools-frontend/src/front_end/lighthouse/LighthouseController.js?type=cs&q=%22const+RuntimeSettings%22+f:lighthouse+-f:out&g=0&l=250
  * @param {Array<string>} categoryIDs
+ * @param {string} device
  * @return {LH.Config.Json}
  */
-function getDefaultConfigForCategories(categoryIDs) {
+function createConfig(categoryIDs, device) {
+  /** @type {LH.SharedFlagsSettings} */
+  const settings = {
+    onlyCategories: categoryIDs,
+  };
+  if (device === 'desktop') {
+    settings.throttling = desktopDense4G;
+  }
+
   return {
     extends: 'lighthouse:default',
-    settings: {
-      onlyCategories: categoryIDs,
-    },
+    plugins: ['lighthouse-plugin-publisher-ads'],
+    settings,
   };
 }
 
 /**
  * @param {RawProtocol.Port} port
- * @param {string} url
- * @param {LH.Flags} flags Lighthouse flags.
- * @param {Array<string>} categoryIDs Name values of categories to include.
- * @return {Promise<LH.RunnerResult|void>}
+ * @returns {RawProtocol}
  */
-function runLighthouseInWorker(port, url, flags, categoryIDs) {
-  // Default to 'info' logging level.
-  flags.logLevel = flags.logLevel || 'info';
-  flags.channel = 'devtools';
-  const config = getDefaultConfigForCategories(categoryIDs);
-  const connection = new RawProtocol(port);
-
-  return lighthouse(url, flags, config, connection);
+function setUpWorkerConnection(port) {
+  return new RawProtocol(port);
 }
 
 /** @param {(status: [string, string, string]) => void} listenCallback */
@@ -49,21 +53,28 @@ function listenForStatus(listenCallback) {
   log.events.addListener('status', listenCallback);
 }
 
+// For the bundle smoke test.
 if (typeof module !== 'undefined' && module.exports) {
-  // export for require()ing (via browserify).
-  module.exports = {
-    runLighthouseInWorker,
-    listenForStatus,
-    registerLocaleData,
-    lookupLocale,
-  };
+  // Ideally this could be exposed via browserify's `standalone`, but it doesn't
+  // work for LH because of https://github.com/browserify/browserify/issues/968
+  // Instead, since this file is only ever run in node for testing, expose a
+  // bundle entry point as global.
+  // @ts-ignore
+  global.runBundledLighthouse = lighthouse;
 }
 
 // Expose only in DevTools' worker
 // @ts-ignore
 if (typeof self !== 'undefined') {
+  // TODO: refactor and delete `global.isDevtools`.
+  global.isDevtools = true;
+
   // @ts-ignore
-  self.runLighthouseInWorker = runLighthouseInWorker;
+  self.setUpWorkerConnection = setUpWorkerConnection;
+  // @ts-ignore
+  self.runLighthouse = lighthouse;
+  // @ts-ignore
+  self.createConfig = createConfig;
   // @ts-ignore
   self.listenForStatus = listenForStatus;
   // @ts-ignore

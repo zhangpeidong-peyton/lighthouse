@@ -12,8 +12,10 @@ module.exports = {
     '**/lighthouse-core/**/*.js',
     '**/lighthouse-cli/**/*.js',
     '**/lighthouse-viewer/**/*.js',
-    '!**/test/',
-    '!**/scripts/',
+  ],
+  coveragePathIgnorePatterns: [
+    '/test/',
+    '/scripts/',
   ],
   setupFilesAfterEnv: ['./lighthouse-core/test/test-utils.js'],
   testEnvironment: 'node',
@@ -23,5 +25,6 @@ module.exports = {
     '**/lighthouse-viewer/**/*-test.js',
     '**/lighthouse-viewer/**/*-test-pptr.js',
     '**/clients/test/**/*-test.js',
+    '**/docs/**/*.test.js',
   ],
 };

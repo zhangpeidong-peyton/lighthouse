@@ -105,7 +105,7 @@ class SnippetRenderer {
     const {
       snippetCollapseButtonLabel,
       snippetExpandButtonLabel,
-    } = Util.UIStrings;
+    } = Util.i18n.strings;
     dom.find(
       '.lh-snippet__btn-label-collapse',
       header
@@ -336,7 +336,7 @@ class SnippetRenderer {
    * @param {ParentNode} templateContext
    * @param {LH.Audit.Details.SnippetValue} details
    * @param {DetailsRenderer} detailsRenderer
-   * @return {Element}
+   * @return {!Element}
    */
   static render(dom, templateContext, details, detailsRenderer) {
     const tmpl = dom.cloneTemplate('#tmpl-lh-snippet', templateContext);
