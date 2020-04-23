@@ -213,13 +213,15 @@ CTC is a name that is distinct and identifies this as the Chrome translation for
 
 # Appendix
 
+TODO(bckenny): update
+
 ##  Appendix A: How runtime string replacement works
 
 1.  String called in `.js` file, converted to i18n id.
 
 2.  i18n id in lookup table along with backup message.
 
-3.  Message is looked up via `replaceIcuMessageInstanceIds` &
+3.  Message is looked up via `replaceIcuMessages` &
     `getFormatted`.
 
 ##### Example:
@@ -255,7 +257,7 @@ CTC is a name that is distinct and identifies this as the Chrome translation for
     }
     ```
 
-3.  Lookup in `i18n.js`. `replaceIcuMessageInstanceIds` and `getFormatted` will attempt to lookup in this order:
+3.  Lookup in `i18n.js`. `replaceIcuMessages` and `getFormatted` will attempt to lookup in this order:
 
     1.  `locales/{locale}.json` The best result, the string is found in the target locale, and should appear correct.
 

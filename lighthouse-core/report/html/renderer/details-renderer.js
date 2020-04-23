@@ -20,6 +20,14 @@
 
 /** @typedef {import('./dom.js')} DOM */
 
+// Convenience types for localized AuditDetails.
+/** @typedef {LH.FormattedIcu<LH.Audit.Details>} AuditDetails */
+/** @typedef {LH.FormattedIcu<LH.Audit.Details.ItemValue>} TableItemValue */
+/** @typedef {LH.FormattedIcu<LH.Audit.Details.Opportunity>} OpportunityTable */
+/** @typedef {LH.FormattedIcu<LH.Audit.Details.OpportunityColumnHeading>} OpportunityTableHeading */
+/** @typedef {LH.FormattedIcu<LH.Audit.Details.Table>} Table */
+/** @typedef {LH.FormattedIcu<LH.Audit.Details.TableColumnHeading>} TableHeading */
+
 const URL_PREFIXES = ['http://', 'https://', 'data:'];
 
 class DetailsRenderer {
@@ -40,7 +48,7 @@ class DetailsRenderer {
   }
 
   /**
-   * @param {LH.Audit.Details} details
+   * @param {AuditDetails} details
    * @return {Element|null}
    */
   render(details) {
@@ -209,7 +217,7 @@ class DetailsRenderer {
    * Render a details item value for embedding in a table. Renders the value
    * based on the heading's valueType, unless the value itself has a `type`
    * property to override it.
-   * @param {LH.Audit.Details.ItemValue} value
+   * @param {TableItemValue} value
    * @param {LH.Audit.Details.OpportunityColumnHeading} heading
    * @return {Element|null}
    */
@@ -296,8 +304,8 @@ class DetailsRenderer {
    * Get the headings of a table-like details object, converted into the
    * OpportunityColumnHeading type until we have all details use the same
    * heading format.
-   * @param {LH.Audit.Details.Table|LH.Audit.Details.Opportunity} tableLike
-   * @return {Array<LH.Audit.Details.OpportunityColumnHeading>}
+   * @param {Table|OpportunityTable} tableLike
+   * @return {OpportunityTable['headings']}
    */
   _getCanonicalizedHeadingsFromTable(tableLike) {
     if (tableLike.type === 'opportunity') {
@@ -311,8 +319,8 @@ class DetailsRenderer {
    * Get the headings of a table-like details object, converted into the
    * OpportunityColumnHeading type until we have all details use the same
    * heading format.
-   * @param {LH.Audit.Details.TableColumnHeading} heading
-   * @return {LH.Audit.Details.OpportunityColumnHeading}
+   * @param {Table['headings'][number]} heading
+   * @return {OpportunityTable['headings'][number]}
    */
   _getCanonicalizedHeading(heading) {
     let subRows;
@@ -337,8 +345,8 @@ class DetailsRenderer {
   }
 
   /**
-   * @param {LH.Audit.Details.ItemValue[]} values
-   * @param {LH.Audit.Details.OpportunityColumnHeading} heading
+   * @param {TableItemValue[]} values
+   * @param {OpportunityTable['headings'][number]} heading
    * @return {Element}
    */
   _renderSubRows(values, heading) {
@@ -353,7 +361,7 @@ class DetailsRenderer {
   }
 
   /**
-   * @param {LH.Audit.Details.Table|LH.Audit.Details.Opportunity} details
+   * @param {OpportunityTable|Table} details
    * @return {Element}
    */
   _renderTable(details) {
