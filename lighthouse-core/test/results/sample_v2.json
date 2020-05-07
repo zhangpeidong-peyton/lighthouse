@@ -6,6 +6,7 @@
     "benchmarkIndex": 1000
   },
   "lighthouseVersion": "6.0.0-beta.0",
+  "axeVersion": "3.5.3",
   "fetchTime": "2018-03-13T00:55:45.840Z",
   "requestedUrl": "http://localhost:10200/dobetterweb/dbw_tester.html",
   "finalUrl": "http://localhost:10200/dobetterweb/dbw_tester.html",

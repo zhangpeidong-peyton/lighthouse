@@ -86,6 +86,7 @@ function runA11yChecks() {
       violations: axeResult.violations,
       notApplicable: axeResult.inapplicable,
       incomplete: axeResult.incomplete,
+      version: axeResult.testEngine.version,
     };
     return axeResult;
   });

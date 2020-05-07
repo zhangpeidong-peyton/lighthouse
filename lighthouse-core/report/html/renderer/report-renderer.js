@@ -121,6 +121,7 @@ class ReportRenderer {
 
     this._dom.find('.lh-footer__version_issue', footer).textContent = Util.i18n.strings.footerIssue;
     this._dom.find('.lh-footer__version', footer).textContent = report.lighthouseVersion;
+    this._dom.find('.lh-footer__axe_version', footer).textContent = report.axeVersion;
     return footer;
   }
 

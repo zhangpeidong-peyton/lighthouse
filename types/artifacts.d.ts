@@ -175,6 +175,7 @@ declare global {
         violations: Array<AxeResult>;
         notApplicable: Array<Pick<AxeResult, 'id'>>;
         incomplete: Array<AxeResult>;
+        version: string;
       }
 
       export interface CSSStyleSheetInfo {

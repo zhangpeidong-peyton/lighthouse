@@ -107,6 +107,12 @@ class Runner {
       // Entering: conclusion of the lighthouse result object
       const lighthouseVersion = require('../package.json').version;
 
+      // Use version from gathering stage. In case accessibility category doesn't run,
+      // fallback to package json so the report will always have some version.
+      const axeVersion = artifacts.Accessibility ?
+        artifacts.Accessibility.version :
+        require('../package.json').dependencies['axe-core'];
+
       /** @type {Object<string, LH.Audit.Result>} */
       const resultsById = {};
       for (const audit of auditResults) {
@@ -131,6 +137,7 @@ class Runner {
           benchmarkIndex: artifacts.BenchmarkIndex,
         },
         lighthouseVersion,
+        axeVersion,
         fetchTime: artifacts.fetchTime,
         requestedUrl: requestedUrl,
         finalUrl: artifacts.URL.finalUrl,
