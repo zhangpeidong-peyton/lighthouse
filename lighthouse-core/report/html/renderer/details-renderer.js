@@ -133,7 +133,7 @@ class DetailsRenderer {
 
   /**
    * @param {{text: string, url: string}} details
-   * @return {Element}
+   * @return {HTMLElement}
    */
   _renderLink(details) {
     const allowedProtocols = ['https:', 'http:'];
@@ -519,24 +519,50 @@ class DetailsRenderer {
       return null;
     }
 
+    /** @param {HTMLElement} el */
+    function addDevToolsData(el) {
+      el.classList.add('lh-source-location');
+      el.setAttribute('data-source-url', item.url);
+      // DevTools expects zero-indexed lines.
+      el.setAttribute('data-source-line', String(item.line));
+      el.setAttribute('data-source-column', String(item.column));
+      return el;
+    }
+
     // Lines are shown as one-indexed.
-    const line = item.line + 1;
-    const column = item.column;
+    const line = (item.original ? item.original.line : item.line) + 1;
+    const column = item.original ? item.original.column : item.column;
+
+    // First two cases: url is from network.
+    if (item.urlProvider === 'network') {
+      let element;
+      if (item.original) {
+        element = this._renderLink({
+          url: item.url,
+          text: `${item.original.file}:${line}:${column}`,
+        });
+        element.title = `${item.url}:${line}:${column}`;
+      } else {
+        element = this.renderTextURL(item.url);
+        this._dom.find('a', element).textContent += `:${line}:${column}`;
+      }
+
+      return addDevToolsData(element);
+    }
+
+    // Two cases remain:
+    // 1) urlProvider === 'comment' && item.original
+    // 2) urlProvider === 'comment' && !item.original
 
     let element;
-    if (item.urlProvider === 'network') {
-      element = this.renderTextURL(item.url);
-      this._dom.find('a', element).textContent += `:${line}:${column}`;
+    if (item.original) {
+      element = this._renderText(`${item.original.file}:${line}:${column} (from source map)`);
+      element.title = `${item.url}:${line}:${column} (from sourceURL)`;
     } else {
       element = this._renderText(`${item.url}:${line}:${column} (from sourceURL)`);
     }
 
-    element.classList.add('lh-source-location');
-    element.setAttribute('data-source-url', item.url);
-    // DevTools expects zero-indexed lines.
-    element.setAttribute('data-source-line', String(item.line));
-    element.setAttribute('data-source-column', String(item.column));
-    return element;
+    return addDevToolsData(element);
   }
 
   /**

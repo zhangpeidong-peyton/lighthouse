@@ -211,6 +211,11 @@ declare global {
         urlProvider: 'network' | 'comment';
         line: number;
         column: number;
+        original?: {
+          file: string;
+          line: number;
+          column: number;
+        };
       }
 
       /**

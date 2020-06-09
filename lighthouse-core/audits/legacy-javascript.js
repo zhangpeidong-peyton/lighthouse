@@ -382,6 +382,18 @@ class LegacyJavascript extends Audit {
       };
       for (const match of matches) {
         const {name, line, column} = match;
+
+        let original;
+        const bundle = bundles.find(bundle => bundle.script.src === url);
+        const entry = bundle && bundle.map.findEntry(line, column);
+        if (entry) {
+          original = {
+            file: entry.sourceURL || '<unmapped>',
+            line: entry.sourceLineNumber || 0,
+            column: entry.sourceColumnNumber || 0,
+          };
+        }
+
         /** @type {SubItem} */
         const subItem = {
           signal: name,
@@ -390,6 +402,7 @@ class LegacyJavascript extends Audit {
             url,
             line,
             column,
+            original,
             urlProvider: 'network',
           },
         };
