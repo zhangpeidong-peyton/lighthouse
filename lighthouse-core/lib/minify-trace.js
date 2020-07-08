@@ -24,6 +24,11 @@ const toplevelTaskNames = new Set([
   'TaskQueueManager::ProcessTaskFromWorkQueue', // m65 and below
 ]);
 
+const traceCategoriesToAlwaysKeep = new Set([
+  // Labels the threads correctly in DevTools Performance panel
+  '__metadata',
+]);
+
 const traceEventsToAlwaysKeep = new Set([
   'Screenshot',
   'TracingStartedInBrowser',
@@ -37,11 +42,18 @@ const traceEventsToAlwaysKeep = new Set([
   'ResourceFinish',
   'ResourceReceivedData',
   'EventDispatch',
+  // Not currently used by Lighthouse but might be used in the future for cross-frame LCP
+  'NavStartToLargestContentfulPaint::Invalidate::AllFrames::UKM',
+  'NavStartToLargestContentfulPaint::Candidate::AllFrames::UKM',
+  // Needed for CPU profiler task attribution
+  'Profile',
+  'ProfileChunk',
 ]);
 
 const traceEventsToKeepInToplevelTask = new Set([
   // Needed for CPU node timing simulations
   'Layout',
+  'RunMicrotasks',
   // All of these are needed to create graph relationships
   'TimerInstall',
   'TimerFire',
@@ -58,12 +70,17 @@ const traceEventsToKeepInToplevelTask = new Set([
 const traceEventsToKeepInProcess = new Set([
   ...toplevelTaskNames,
   ...traceEventsToKeepInToplevelTask,
+
+  // See the DevTools marker events
+  // https://cs.chromium.org/chromium/src/third_party/devtools-frontend/src/front_end/timeline_model/TimelineModel.js?type=cs&q=f:devtools+-f:out+%22MarkLoad:+%27%22&sq=package:chromium&g=0&l=1506
   'firstPaint',
   'firstContentfulPaint',
   'firstMeaningfulPaint',
   'firstMeaningfulPaintCandidate',
   'loadEventEnd',
+  'MarkLoad',
   'domContentLoadedEventEnd',
+  'MarkDOMContent',
   'largestContentfulPaint::Invalidate',
   'largestContentfulPaint::Candidate',
 ]);
@@ -77,6 +94,7 @@ function filterOutUnnecessaryTasksByNameAndDuration(events) {
   return events.filter(evt => {
     if (toplevelTaskNames.has(evt.name) && evt.dur < 1000) return false;
     if (evt.pid === pid && traceEventsToKeepInProcess.has(evt.name)) return true;
+    if (traceCategoriesToAlwaysKeep.has(evt.cat)) return true;
     return traceEventsToAlwaysKeep.has(evt.name);
   });
 }
