@@ -63,7 +63,7 @@ class CpuProfilerModel {
   }
 
   /**
-   * Initialization function to enable O(1) access to nodes by node ID.
+   * Initialization function to enable O(1) access to the set of active nodes in the stack by node ID.
    * @return {Map<number, Array<number>>}
    */
   _createActiveNodeArrays() {
@@ -114,7 +114,7 @@ class CpuProfilerModel {
    *    previousNodeIds 1,2,3
    *    currentNodeIds 1,2,4
    *
-   *    yields [end 3, begin 4]
+   *    yields [end 3 at ts 1234, begin 4 at ts 1234]
    *
    * @param {number} timestamp
    * @param {Array<number>} previousNodeIds
