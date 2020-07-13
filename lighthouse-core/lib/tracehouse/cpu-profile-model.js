@@ -18,7 +18,7 @@
  * It has a structure like this:
  *
  *    nodes: [function A, function B, function C]
- *    samples: [node at index 2, node at index 1, ...]
+ *    samples: [node with id 2, node with id 1, ...]
  *    timeDeltas: [4125μs since last sample, 121μs since last sample, ...]
  *
  * Helpful prior art:
