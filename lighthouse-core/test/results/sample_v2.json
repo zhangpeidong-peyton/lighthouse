@@ -6,6 +6,9 @@
     "benchmarkIndex": 1000
   },
   "lighthouseVersion": "6.1.0",
+  "credits": {
+    "axe-core": "2.1.1"
+  },
   "fetchTime": "2018-03-13T00:55:45.840Z",
   "requestedUrl": "http://localhost:10200/dobetterweb/dbw_tester.html",
   "finalUrl": "http://localhost:10200/dobetterweb/dbw_tester.html",
@@ -5996,6 +5999,7 @@
       "runtimeDesktopEmulation": "Emulated Desktop",
       "runtimeMobileEmulation": "Emulated Moto G4",
       "runtimeNoEmulation": "No emulation",
+      "runtimeSettingsAxeVersion": "Axe Version",
       "runtimeSettingsBenchmark": "CPU/Memory Power",
       "runtimeSettingsChannel": "Channel",
       "runtimeSettingsCPUThrottling": "CPU throttling",
