@@ -111,10 +111,10 @@ class ReportRenderer {
       {name: Util.i18n.strings.runtimeSettingsBenchmark, description: report.environment &&
         report.environment.benchmarkIndex.toFixed(0)},
       ];
-    if (report.credits['axe-core']) {
+    if (report.environment.credits && report.environment.credits['axe-core']) {
       runtimeValues.push({
         name: Util.i18n.strings.runtimeSettingsAxeVersion,
-        description: report.credits['axe-core'],
+        description: report.environment.credits['axe-core'],
       });
     }
 

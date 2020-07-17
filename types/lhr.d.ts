@@ -27,6 +27,8 @@ declare global {
       networkUserAgent: string;
       /** The benchmark index number that indicates rough device class. */
       benchmarkIndex: number;
+      /** The version of libraries with which these results were generated. Ex: axe-core. */
+      credits: Record<string, string>,
     }
 
     /**
@@ -41,8 +43,6 @@ declare global {
       fetchTime: string;
       /** The version of Lighthouse with which these results were generated. */
       lighthouseVersion: string;
-      /** The version of libraries with which these results were generated. Ex: axe-core. */
-      credits: Record<string, string>,
       /** An object containing the results of the audits, keyed by the audits' `id` identifier. */
       audits: Record<string, Audit.Result>;
       /** The top-level categories, their overall scores, and member audits. */
