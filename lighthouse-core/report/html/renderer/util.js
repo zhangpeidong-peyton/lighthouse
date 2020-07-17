@@ -487,6 +487,13 @@ class Util {
   }
 }
 
+/**
+ * Some parts of the report renderer require data found on the LHR. Instead of wiring it
+ * through, we have this global.
+ * @type {LH.ReportResult | null}
+ */
+Util.reportJson = null;
+
 /** @type {I18n} */
 // @ts-ignore: Is set in report renderer.
 Util.i18n = null;
@@ -496,7 +503,9 @@ Util.i18n = null;
  */
 Util.UIStrings = {
   /** Disclaimer shown to users below the metric values (First Contentful Paint, Time to Interactive, etc) to warn them that the numbers they see will likely change slightly the next time they run Lighthouse. */
-  varianceDisclaimer: 'Values are estimated and may vary. The performance score is [based only on these metrics](https://github.com/GoogleChrome/lighthouse/blob/d2ec9ffbb21de9ad1a0f86ed24575eda32c796f0/docs/scoring.md#how-are-the-scores-weighted).',
+  varianceDisclaimer: 'Values are estimated and may vary. The [performance score is calculated](https://web.dev/performance-scoring/) directly from these metrics.',
+  /** Text link pointing to an interactive calculator that explains Lighthouse scoring. The link text should be fairly short. */
+  calculatorLink: 'See calculator.',
   /** Column heading label for the listing of opportunity audits. Each audit title represents an opportunity. There are only 2 columns, so no strict character limit.  */
   opportunityResourceColumnLabel: 'Opportunity',
   /** Column heading label for the estimated page load savings of opportunity audits. Estimated Savings is the total amount of time (in seconds) that Lighthouse computed could be reduced from the total page load time, if the suggested action is taken. There are only 2 columns, so no strict character limit. */
@@ -577,6 +586,8 @@ Util.UIStrings = {
   runtimeSettingsUANetwork: 'User agent (network)',
   /** Label for a row in a table that shows the estimated CPU power of the machine running Lighthouse. Example row values: 532, 1492, 783. */
   runtimeSettingsBenchmark: 'CPU/Memory Power',
+  /** Label for a row in a table that shows the version of the Axe library used. Example row values: 2.1.0, 3.2.3 */
+  runtimeSettingsAxeVersion: 'Axe Version',
 
   /** Label for button to create an issue against the Lighthouse Github project. */
   footerIssue: 'File an issue',

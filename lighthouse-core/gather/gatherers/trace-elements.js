@@ -7,54 +7,132 @@
 
 /**
  * @fileoverview
- * This gatherer identifies the Largest Contentful Paint element from the trace. Since the trace only has the nodeId of the element,
- * we temporarily add an attribute so that we can identify the element in the DOM.
+ * This gatherer identifies elements that contribrute to metrics in the trace (LCP, CLS, etc.).
+ * We take the backend nodeId from the trace and use it to find the corresponding element in the DOM.
  */
 
 const Gatherer = require('./gatherer.js');
 const pageFunctions = require('../../lib/page-functions.js');
 const TraceProcessor = require('../../lib/tracehouse/trace-processor.js');
+const RectHelpers = require('../../lib/rect-helpers.js');
 
-const LH_ATTRIBUTE_MARKER = 'lhtemp';
+/** @typedef {{nodeId: number, score?: number}} TraceElementData */
 
 /**
- * @param {string} attributeMarker
- * @return {LH.Artifacts['TraceElements']}
+ * @this {HTMLElement}
+ * @param {string} metricName
+ * @return {LH.Artifacts.TraceElement | undefined}
  */
 /* istanbul ignore next */
-function collectTraceElements(attributeMarker) {
-  /** @type {Array<HTMLElement>} */
-  // @ts-ignore - put into scope via stringification
-  const markedElements = getElementsInDocument('[' + attributeMarker + ']'); // eslint-disable-line no-undef
-  /** @type {LH.Artifacts['TraceElements']} */
-  const TraceElements = [];
-  for (const element of markedElements) {
-    const metricName = element.getAttribute(attributeMarker) || '';
-    element.removeAttribute(attributeMarker);
-    // @ts-ignore - put into scope via stringification
-    TraceElements.push({
+function setAttributeMarker(metricName) {
+  const elem = this.nodeType === document.ELEMENT_NODE ? this : this.parentElement; // eslint-disable-line no-undef
+  let traceElement;
+  if (elem) {
+    traceElement = {
       metricName,
       // @ts-ignore - put into scope via stringification
-      devtoolsNodePath: getNodePath(element), // eslint-disable-line no-undef
+      devtoolsNodePath: getNodePath(elem), // eslint-disable-line no-undef
       // @ts-ignore - put into scope via stringification
-      selector: getNodeSelector(element), // eslint-disable-line no-undef
+      selector: getNodeSelector(elem), // eslint-disable-line no-undef
       // @ts-ignore - put into scope via stringification
-      nodeLabel: getNodeLabel(element), // eslint-disable-line no-undef
+      nodeLabel: getNodeLabel(elem), // eslint-disable-line no-undef
       // @ts-ignore - put into scope via stringification
-      snippet: getOuterHTMLSnippet(element), // eslint-disable-line no-undef
-    });
+      snippet: getOuterHTMLSnippet(elem), // eslint-disable-line no-undef
+    };
   }
-  return TraceElements;
+  return traceElement;
 }
 
 class TraceElements extends Gatherer {
   /**
-   * @param {LH.TraceEvent | undefined} lcpEvent
+   * @param {LH.TraceEvent | undefined} event
    * @return {number | undefined}
    */
-  static getNodeIDFromTraceEvent(lcpEvent) {
-    return lcpEvent && lcpEvent.args &&
-      lcpEvent.args.data && lcpEvent.args.data.nodeId;
+  static getNodeIDFromTraceEvent(event) {
+    return event && event.args &&
+      event.args.data && event.args.data.nodeId;
+  }
+
+  /**
+   * @param {Array<number>} rect
+   * @return {LH.Artifacts.Rect}
+   */
+  static traceRectToLHRect(rect) {
+    const rectArgs = {
+      x: rect[0],
+      y: rect[1],
+      width: rect[2],
+      height: rect[3],
+    };
+    return RectHelpers.addRectTopAndBottom(rectArgs);
+  }
+
+  /**
+   * This function finds the top (up to 5) elements that contribute to the CLS score of the page.
+   * Each layout shift event has a 'score' which is the amount added to the CLS as a result of the given shift(s).
+   * We calculate the score per element by taking the 'score' of each layout shift event and
+   * distributing it between all the nodes that were shifted, proportianal to the impact region of
+   * each shifted element.
+   * @param {Array<LH.TraceEvent>} mainThreadEvents
+   * @return {Array<TraceElementData>}
+   */
+  static getTopLayoutShiftElements(mainThreadEvents) {
+    /** @type {Map<number, number>} */
+    const clsPerNode = new Map();
+    const shiftEvents = mainThreadEvents
+      .filter(e => e.name === 'LayoutShift')
+      .map(e => e.args && e.args.data);
+    const indexFirstEventWithoutInput =
+      shiftEvents.findIndex(event => event && !event.had_recent_input);
+
+    shiftEvents.forEach((event, index) => {
+      if (!event || !event.impacted_nodes || !event.score) {
+        return;
+      }
+
+      // Ignore events with input, unless it's one of the initial events.
+      // See comment in computed/metrics/cumulative-layout-shift.js.
+      if (indexFirstEventWithoutInput !== -1 && index >= indexFirstEventWithoutInput) {
+        if (event.had_recent_input) return;
+      }
+
+      let totalAreaOfImpact = 0;
+      /** @type {Map<number, number>} */
+      const pixelsMovedPerNode = new Map();
+
+      event.impacted_nodes.forEach(node => {
+        if (!node.node_id || !node.old_rect || !node.new_rect) {
+          return;
+        }
+
+        const oldRect = TraceElements.traceRectToLHRect(node.old_rect);
+        const newRect = TraceElements.traceRectToLHRect(node.new_rect);
+        const areaOfImpact = RectHelpers.getRectArea(oldRect) +
+          RectHelpers.getRectArea(newRect) -
+          RectHelpers.getRectOverlapArea(oldRect, newRect);
+
+        pixelsMovedPerNode.set(node.node_id, areaOfImpact);
+        totalAreaOfImpact += areaOfImpact;
+      });
+
+      for (const [nodeId, pixelsMoved] of pixelsMovedPerNode.entries()) {
+        let clsContribution = clsPerNode.get(nodeId) || 0;
+        clsContribution += (pixelsMoved / totalAreaOfImpact) * event.score;
+        clsPerNode.set(nodeId, clsContribution);
+      }
+    });
+
+    const topFive = [...clsPerNode.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5)
+    .map(([nodeId, clsContribution]) => {
+      return {
+        nodeId: nodeId,
+        score: clsContribution,
+      };
+    });
+
+    return topFive;
   }
 
   /**
@@ -67,38 +145,46 @@ class TraceElements extends Gatherer {
     if (!loadData.trace) {
       throw new Error('Trace is missing!');
     }
-    const traceOfTab = TraceProcessor.computeTraceOfTab(loadData.trace);
-    const lcpEvent = traceOfTab.largestContentfulPaintEvt;
-    /** @type {Array<number>} */
-    const backendNodeIds = [];
 
-    const lcpNodeId = TraceElements.getNodeIDFromTraceEvent(lcpEvent);
+    const {largestContentfulPaintEvt, mainThreadEvents} =
+      TraceProcessor.computeTraceOfTab(loadData.trace);
+    /** @type {Array<TraceElementData>} */
+    const backendNodeData = [];
+
+    const lcpNodeId = TraceElements.getNodeIDFromTraceEvent(largestContentfulPaintEvt);
+    const clsNodeData = TraceElements.getTopLayoutShiftElements(mainThreadEvents);
     if (lcpNodeId) {
-      backendNodeIds.push(lcpNodeId);
+      backendNodeData.push({nodeId: lcpNodeId});
     }
-    // DOM.getDocument is necessary for pushNodesByBackendIdsToFrontend to properly retrieve nodeIds.
-    await driver.sendCommand('DOM.getDocument', {depth: -1, pierce: true});
-    const translatedIds = await driver.sendCommand('DOM.pushNodesByBackendIdsToFrontend',
-      {backendNodeIds: backendNodeIds});
+    backendNodeData.push(...clsNodeData);
 
-    // Mark the LCP element so we can find it in the page.
-    await driver.sendCommand('DOM.setAttributeValue', {
-      nodeId: translatedIds.nodeIds[0],
-      name: LH_ATTRIBUTE_MARKER,
-      value: 'largest-contentful-paint',
-    });
+    const traceElements = [];
+    for (let i = 0; i < backendNodeData.length; i++) {
+      const backendNodeId = backendNodeData[i].nodeId;
+      const metricName =
+        lcpNodeId === backendNodeId ? 'largest-contentful-paint' : 'cumulative-layout-shift';
+      const objectId = await driver.resolveNodeIdToObjectId(backendNodeId);
+      if (!objectId) continue;
+      const response = await driver.sendCommand('Runtime.callFunctionOn', {
+        objectId,
+        functionDeclaration: `function () {
+          ${setAttributeMarker.toString()};
+          ${pageFunctions.getNodePathString};
+          ${pageFunctions.getNodeSelectorString};
+          ${pageFunctions.getNodeLabelString};
+          ${pageFunctions.getOuterHTMLSnippetString};
+          return setAttributeMarker.call(this, '${metricName}');
+        }`,
+        returnByValue: true,
+        awaitPromise: true,
+      });
 
-    const expression = `(() => {
-      ${pageFunctions.getElementsInDocumentString};
-      ${pageFunctions.getNodePathString};
-      ${pageFunctions.getNodeSelectorString};
-      ${pageFunctions.getNodeLabelString};
-      ${pageFunctions.getOuterHTMLSnippetString};
+      if (response && response.result && response.result.value) {
+        traceElements.push({...response.result.value, score: backendNodeData[i].score});
+      }
+    }
 
-      return (${collectTraceElements})('${LH_ATTRIBUTE_MARKER}');
-    })()`;
-
-    return driver.evaluateAsync(expression, {useIsolation: true});
+    return traceElements;
   }
 }
 

@@ -110,6 +110,8 @@ declare global {
       Fonts: Artifacts.Font[];
       /** Information on poorly sized font usage and the text affected by it. */
       FontSize: Artifacts.FontSize;
+      /** The issues surfaced in the devtools Issues panel */
+      InspectorIssues: Artifacts.InspectorIssues;
       /** The page's document body innerText if loaded with JavaScript disabled. */
       HTMLWithoutJavaScript: {bodyText: string, hasNoScript: boolean};
       /** Whether the page ended up on an HTTPS page after attempting to load the HTTP version. */
@@ -319,13 +321,22 @@ declare global {
       /** @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#Attributes */
       export interface AnchorElement {
         rel: string
+        /** The computed href property: https://www.w3.org/TR/DOM-Level-2-HTML/html.html#ID-88517319, use `rawHref` for the exact attribute value */
         href: string
+        /** The exact value of the href attribute value, as it is in the DOM */
+        rawHref: string
+        name?: string
         text: string
+        role: string
         target: string
         devtoolsNodePath: string
         selector: string
         nodeLabel: string
         outerHTML: string
+        onclick: string
+        listeners?: Array<{
+          type: Crdp.DOMDebugger.EventListener['type']
+        }>
       }
 
       export interface Font {
@@ -379,6 +390,8 @@ declare global {
 
       export interface ImageElement {
         src: string;
+        /** The srcset attribute value. @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/srcset */
+        srcset: string;
         /** The displayed width of the image, uses img.width when available falling back to clientWidth. See https://codepen.io/patrickhulce/pen/PXvQbM for examples. */
         displayedWidth: number;
         /** The displayed height of the image, uses img.height when available falling back to clientHeight. See https://codepen.io/patrickhulce/pen/PXvQbM for examples. */
@@ -473,6 +486,7 @@ declare global {
         nodeLabel?: string;
         devtoolsNodePath: string;
         snippet?: string;
+        score?: number;
       }
 
       export interface ViewportDimensions {
@@ -481,6 +495,10 @@ declare global {
         outerWidth: number;
         outerHeight: number;
         devicePixelRatio: number;
+      }
+
+      export interface InspectorIssues {
+        mixedContent: Crdp.Audits.MixedContentIssueDetails[];
       }
 
       // Computed artifact types below.
@@ -564,7 +582,6 @@ declare global {
         traceEnd: number;
         load?: number;
         domContentLoaded?: number;
-        cumulativeLayoutShift?: number;
       }
 
       export interface TraceOfTab {
@@ -638,7 +655,6 @@ declare global {
         observedNavigationStart: number;
         observedNavigationStartTs: number;
         observedCumulativeLayoutShift: number | undefined;
-        observedCumulativeLayoutShiftTs: number | undefined;
         observedFirstPaint: number | undefined;
         observedFirstPaintTs: number | undefined;
         observedFirstContentfulPaint: number;

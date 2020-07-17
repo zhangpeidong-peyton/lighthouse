@@ -223,7 +223,7 @@ declare global {
       /** Flag to print a list of all required trace categories. */
       listTraceCategories: boolean;
       /** A preset audit of selected audit categories to run. */
-      preset?: 'full'|'mixed-content'|'perf';
+      preset?: 'experimental'|'perf';
       /** A flag to enable logLevel 'verbose'. */
       verbose: boolean;
       /** A flag to enable logLevel 'silent'. */
@@ -314,6 +314,8 @@ declare global {
             old_rect?: Array<number>,
             new_rect?: Array<number>,
           }>;
+          score?: number,
+          had_recent_input?: boolean;
         };
         frame?: string;
         name?: string;
@@ -321,6 +323,7 @@ declare global {
       };
       pid: number;
       tid: number;
+      /** Timestamp of the event in microseconds. */
       ts: number;
       dur: number;
       ph: 'B'|'b'|'D'|'E'|'e'|'F'|'I'|'M'|'N'|'n'|'O'|'R'|'S'|'T'|'X';

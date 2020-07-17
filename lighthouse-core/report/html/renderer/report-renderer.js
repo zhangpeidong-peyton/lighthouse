@@ -99,7 +99,7 @@ class ReportRenderer {
     this._dom.find('.lh-env__title', footer).textContent = Util.i18n.strings.runtimeSettingsTitle;
 
     const envValues = Util.getEnvironmentDisplayValues(report.configSettings || {});
-    [
+    const runtimeValues = [
       {name: Util.i18n.strings.runtimeSettingsUrl, description: report.finalUrl},
       {name: Util.i18n.strings.runtimeSettingsFetchTime,
         description: Util.i18n.formatDateTime(report.fetchTime)},
@@ -110,18 +110,25 @@ class ReportRenderer {
         report.environment.networkUserAgent},
       {name: Util.i18n.strings.runtimeSettingsBenchmark, description: report.environment &&
         report.environment.benchmarkIndex.toFixed(0)},
-    ].forEach(runtime => {
-      if (!runtime.description) return;
+      ];
+    if (report.credits['axe-core']) {
+      runtimeValues.push({
+        name: Util.i18n.strings.runtimeSettingsAxeVersion,
+        description: report.credits['axe-core'],
+      });
+    }
+
+    for (const runtime of runtimeValues) {
+      if (!runtime.description) continue;
 
       const item = this._dom.cloneTemplate('#tmpl-lh-env__items', env);
       this._dom.find('.lh-env__name', item).textContent = runtime.name;
       this._dom.find('.lh-env__description', item).textContent = runtime.description;
       env.appendChild(item);
-    });
+    };
 
     this._dom.find('.lh-footer__version_issue', footer).textContent = Util.i18n.strings.footerIssue;
     this._dom.find('.lh-footer__version', footer).textContent = report.lighthouseVersion;
-    this._dom.find('.lh-footer__axe_version', footer).textContent = report.axeVersion;
     return footer;
   }
 
@@ -192,6 +199,7 @@ class ReportRenderer {
       ...report.i18n.rendererFormattedStrings,
     });
     Util.i18n = i18n;
+    Util.reportJson = report;
 
     const detailsRenderer = new DetailsRenderer(this._dom);
     const categoryRenderer = new CategoryRenderer(this._dom, detailsRenderer);
