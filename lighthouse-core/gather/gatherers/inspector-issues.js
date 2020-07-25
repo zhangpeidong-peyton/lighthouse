@@ -38,28 +38,47 @@ class InspectorIssues extends Gatherer {
 
   /**
    * @param {LH.Gatherer.PassContext} passContext
-   * @param {LH.Gatherer.LoadData} loadData
    * @return {Promise<LH.Artifacts['InspectorIssues']>}
    */
-  async afterPass(passContext, loadData) {
+  async afterPass(passContext) {
     const driver = passContext.driver;
-    const networkRecords = loadData.networkRecords;
 
     driver.off('Audits.issueAdded', this._onIssueAdded);
     await driver.sendCommand('Audits.disable');
     const artifact = {
       /** @type {Array<LH.Crdp.Audits.MixedContentIssueDetails>} */
       mixedContent: [],
+      /** @type {Array<LH.Crdp.Audits.SameSiteCookieIssueDetails>} */
+      sameSiteCookies: [],
+      /** @type {Array<LH.Crdp.Audits.BlockedByResponseIssueDetails>} */
+      blockedByResponse: [],
+      /** @type {Array<LH.Crdp.Audits.HeavyAdIssueDetails>} */
+      heavyAds: [],
+      /** @type {Array<LH.Crdp.Audits.ContentSecurityPolicyIssueDetails>} */
+      contentSecurityPolicy: [],
     };
 
     for (const issue of this._issues) {
-      if (issue.details.mixedContentIssueDetails) {
-        const issueDetails = issue.details.mixedContentIssueDetails;
-        const issueReqId = issueDetails.request && issueDetails.request.requestId;
-        if (issueReqId &&
-          networkRecords.find(req => req.requestId === issueReqId)) {
-          artifact.mixedContent.push(issue.details.mixedContentIssueDetails);
-        }
+      switch (issue.code) {
+        case 'MixedContentIssue':
+          issue.details.mixedContentIssueDetails &&
+            artifact.mixedContent.push(issue.details.mixedContentIssueDetails);
+          break;
+        case 'SameSiteCookieIssue':
+          issue.details.sameSiteCookieIssueDetails &&
+            artifact.sameSiteCookies.push(issue.details.sameSiteCookieIssueDetails);
+          break;
+        case 'BlockedByResponseIssue':
+          issue.details.blockedByResponseIssueDetails &&
+            artifact.blockedByResponse.push(issue.details.blockedByResponseIssueDetails);
+          break;
+        case 'HeavyAdIssue':
+          issue.details.heavyAdIssueDetails &&
+            artifact.heavyAds.push(issue.details.heavyAdIssueDetails);
+          break;
+        case 'ContentSecurityPolicyIssue':
+          issue.details.contentSecurityPolicyIssueDetails &&
+            artifact.contentSecurityPolicy.push(issue.details.contentSecurityPolicyIssueDetails);
       }
     }
 

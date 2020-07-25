@@ -88,6 +88,8 @@ const UIStrings = {
   columnStartTime: 'Start Time',
   /** Label for a column in a data table; entries will be the total number of milliseconds from the start time until the end time. */
   columnDuration: 'Duration',
+  /** Label for a column in a data table; entries will be a description of the table item. */
+  columnDescription: 'Description',
   /** Label for a row in a data table; entries will be the total number and byte size of all resources loaded by a web page. */
   totalResourceType: 'Total',
   /** Label for a row in a data table; entries will be the total number and byte size of all 'Document' resources loaded by a web page. */

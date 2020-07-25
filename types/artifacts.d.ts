@@ -511,6 +511,10 @@ declare global {
 
       export interface InspectorIssues {
         mixedContent: Crdp.Audits.MixedContentIssueDetails[];
+        sameSiteCookies: Crdp.Audits.SameSiteCookieIssueDetails[];
+        blockedByResponse: Crdp.Audits.BlockedByResponseIssueDetails[];
+        heavyAds: Crdp.Audits.HeavyAdIssueDetails[];
+        contentSecurityPolicy: Crdp.Audits.ContentSecurityPolicyIssueDetails[];
       }
 
       // Computed artifact types below.
