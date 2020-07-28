@@ -12,14 +12,32 @@ const UIStrings = {
   /** Title of a Lighthouse audit that provides detail on inspector issues. This descriptive title is shown to users when no issues were logged into the devtools Issues panel. */
   title: 'No issues in the Issues panel',
   /** Title of a Lighthouse audit that provides detail on inspector issues. This descriptive title is shown to users when issues are detected and logged into the devtools Issues panel. */
-  failureTitle: 'Browser errors were logged to the console',
+  failureTitle: 'Isssues were logged in the Issues panel',
   /** Description of a Lighthouse audit that tells the user why issues being logged to the devtools Issues panel are a cause for concern and so should be fixed. This is displayed after a user expands the section to see more. No character length limits. */
   description: 'Description TBD',
   /** Table column header for the type of issue. */
   columnIssueType: 'Issue Type',
+  /** Message shown in a data table when the item is a SameSiteCookie issue. */
+  sameSiteMsg: 'This is a SameSite Cookies issue',
+  /** Message shown in a data table when the item is a MixedContent issue. */
+  mixedContentMsg: 'This is a Mixed Content issue',
+  /** Message shown in a data table when the item is a BlockedByResponse issue. */
+  blockedByResponseMsg: 'This is a Blocked By Response issue',
+  /** Message shown in a data table when the item is a HeavyAds issue. */
+  heavyAdsMsg: 'This is a Heavy Ads issue',
+  /** Message shown in a data table when the item is a ContentSecurityPolicy issue. */
+  contentSecurityPolicyMsg: 'This is a Content Security Policy issue',
 };
 
 const str_ = i18n.createMessageInstanceIdFn(__filename, UIStrings);
+/** @type {Object<string, string>} */
+const issueMap = {
+  'sameSiteCookies': str_(UIStrings.sameSiteMsg),
+  'mixedContent': str_(UIStrings.mixedContentMsg),
+  'blockedByResponse': str_(UIStrings.blockedByResponseMsg),
+  'heavyAds': str_(UIStrings.heavyAdsMsg),
+  'contentSecurityPolicy': str_(UIStrings.contentSecurityPolicyMsg),
+};
 
 class IssuesPanelEntries extends Audit {
   /**
@@ -40,7 +58,7 @@ class IssuesPanelEntries extends Audit {
    * @return {LH.Audit.Product}
    */
   static audit(artifacts) {
-
+    /** @type {LH.Audit.Details.Table['headings']} */
     const headings = [
       {key: 'issueType', itemType: 'text', text: str_(UIStrings.columnIssueType)},
       {key: 'reason', itemType: 'text', text: 'Reason'},
@@ -50,16 +68,16 @@ class IssuesPanelEntries extends Audit {
     const items = [];
 
     for (const [issueType, issuesOfType] of Object.entries(issues)) {
-      for (const issue of issuesOfType) {
+      for (const _ of issuesOfType) {
         items.push({
           issueType,
-          reason: issue.reason || issue.violatedDirective || issue.insecureURL,
+          reason: issueMap[issueType],
         });
       }
     }
 
     return {
-      score: 1,
+      score: items.length > 0 ? 0 : 1,
       details: Audit.makeTableDetails(headings, items),
     };
   }
