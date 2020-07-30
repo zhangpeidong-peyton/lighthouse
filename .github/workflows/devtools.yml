@@ -51,7 +51,7 @@ jobs:
     - name: Download Blink Tools
       run: bash $GITHUB_WORKSPACE/lighthouse/lighthouse-core/scripts/chromium-web-tests/download-blink-tools.sh
     - name: Download Content Shell
-      run: node $GITHUB_WORKSPACE/lighthouse/lighthouse-core/scripts/chromium-web-tests/download-content-shell.js
+      run: bash $GITHUB_WORKSPACE/lighthouse/lighthouse-core/scripts/chromium-web-tests/download-content-shell.sh
 
     - name: Run Web Tests
       run: bash $GITHUB_WORKSPACE/lighthouse/lighthouse-core/scripts/chromium-web-tests/run-web-tests.sh

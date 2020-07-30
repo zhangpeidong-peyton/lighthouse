@@ -6,17 +6,7 @@
 # Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
 ##
 
-# Install depot_tools.
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+LH_ROOT="$SCRIPT_DIR/../../.."
 
-if command -v fetch &> /dev/null
-then
-  echo "depot_tools already installed"
-  exit 0
-fi
-
-if [ x"$DEPOT_TOOLS_PATH" == x ]; then
-  echo "Error: Environment variable DEPOT_TOOLS_PATH not set"
-  exit 1
-fi
-
-git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git "$DEPOT_TOOLS_PATH"
+node "$LH_ROOT/third-party/download-content-shell/download-content-shell.js"

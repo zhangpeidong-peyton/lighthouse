@@ -6,6 +6,8 @@
 # Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
 ##
 
+set -e
+
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 LH_ROOT="$SCRIPT_DIR/../../.."
 TEST_DIR="$LH_ROOT/.tmp/chromium-web-tests"
@@ -19,7 +21,7 @@ export PATH=$DEPOT_TOOLS_PATH:$PATH
 bash "$SCRIPT_DIR/download-depot-tools.sh"
 bash "$SCRIPT_DIR/download-devtools.sh"
 bash "$SCRIPT_DIR/download-blink-tools.sh"
-node "$SCRIPT_DIR/download-content-shell.js"
+bash "$SCRIPT_DIR/download-content-shell.sh"
 
 # Run web tests.
 bash "$SCRIPT_DIR/run-web-tests.sh" $*
