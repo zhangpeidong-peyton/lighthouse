@@ -69,14 +69,13 @@ jobs:
     - name: Reset Results
       if: failure() && github.actor != 'patrickhulce' && github.actor != 'brendankenny'
       run: bash $GITHUB_WORKSPACE/lighthouse/lighthouse-core/scripts/chromium-web-tests/run-web-tests.sh --reset-results
-    - run: cd $GITHUB_WORKSPACE/lighthouse && git status
-      if: failure() && github.actor != 'patrickhulce' && github.actor != 'brendankenny'
-    - name: Commit new expectations
-      if: failure() && github.actor != 'patrickhulce' && github.actor != 'brendankenny'
-      uses: EndBug/add-and-commit@v4
-      with:
-        cwd: ${{ github.workspace }}/lighthouse
-        add: lighthouse-core/scripts/chromium-web-tests/webtests
-        message: update webtest expectations
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    # TODO: https://github.com/EndBug/add-and-commit/issues/48
+    # - name: Commit new expectations
+    #   if: failure() && github.actor != 'patrickhulce' && github.actor != 'brendankenny'
+    #   uses: EndBug/add-and-commit@v4
+    #   with:
+    #     cwd: ${{ github.workspace }}/lighthouse
+    #     add: lighthouse-core/scripts/chromium-web-tests/webtests
+    #     message: update webtest expectations
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
