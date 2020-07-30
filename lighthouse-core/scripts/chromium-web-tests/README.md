@@ -8,10 +8,10 @@ This runs the Chromium webtests using the devtools integration tester.
 
 ```sh
 yarn build-devtools
-node lighthouse-core/scripts/chromium-web-tests/test.sh
+node lighthouse-core/scripts/chromium-web-tests/test-locally.sh
 
 # Reset the results.
-node lighthouse-core/scripts/chromium-web-tests/test.sh --reset-results
+node lighthouse-core/scripts/chromium-web-tests/test-locally.sh --reset-results
 ```
 
 ## How it works
@@ -52,7 +52,7 @@ To run the devtools webtests, `run_web_tests.py` requires the inspector resource
 
 #### How to modify blink-tools.patch?
 
-Simply make your changes in $BLINK_TOOLS_PATH, run `git diff | pbcopy` (copies to clipboard), and save the new patch as `blink-tools.patch`.
+Simply make your changes in `.tmp/chromium-web-tests/blink_tools`, and run: `git -C .tmp/chromium-web-tests/blink_tools diff > lighthouse-core/scripts/chromium-web-tests/blink-tools.patch`
 
 #### How does the python module `typ` get added to python sys path?
 
