@@ -98,11 +98,15 @@ class ReportUIFeatures {
       turnOffTheLights = true;
     }
 
-    // Fireworks.
-    const scoresAll100 = Object.values(report.categories).every(cat => cat.score === 1);
-    const hasAllCoreCategories =
-      Object.keys(report.categories).filter(id => !Util.isPluginCategory(id)).length >= 5;
-    if (scoresAll100 && hasAllCoreCategories) {
+    // Fireworks!
+    // To get fireworks you need 100 scores in all categories…
+    // except plugins and PWA (because going the PWA route is discretionary).
+    const fireworksEligibleCategories = Object.values(report.categories)
+      .filter(cat => !Util.isPluginCategory(cat.id))
+      .filter(cat => cat.id != 'pwa');
+    const scoresAll100 = fireworksEligibleCategories.every(cat => cat.score === 1);
+    const doesRunIncludeCoreCategories = fireworksEligibleCategories.length === 4;
+    if (scoresAll100 && doesRunIncludeCoreCategories) {
       turnOffTheLights = true;
       this._enableFireworks();
     }
