@@ -103,7 +103,7 @@ class ReportUIFeatures {
     // except plugins and PWA (because going the PWA route is discretionary).
     const fireworksEligibleCategories = Object.values(report.categories)
       .filter(cat => !Util.isPluginCategory(cat.id))
-      .filter(cat => cat.id != 'pwa');
+      .filter(cat => cat.id !== 'pwa');
     const scoresAll100 = fireworksEligibleCategories.every(cat => cat.score === 1);
     const doesRunIncludeCoreCategories = fireworksEligibleCategories.length === 4;
     if (scoresAll100 && doesRunIncludeCoreCategories) {
