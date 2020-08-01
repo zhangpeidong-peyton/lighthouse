@@ -72,7 +72,7 @@ jobs:
       run: bash $GITHUB_WORKSPACE/lighthouse/lighthouse-core/scripts/chromium-web-tests/run-web-tests.sh --reset-results
     - name: Commit new expectations
       if: failure() && github.actor != 'patrickhulce' && github.actor != 'brendankenny'
-      uses: EndBug/add-and-commit@pr-support
+      uses: EndBug/add-and-commit@v4
       with:
         cwd: ${{ github.workspace }}/lighthouse
         add: lighthouse-core/scripts/chromium-web-tests/webtests
