@@ -57,7 +57,7 @@ rsync -avh "$lh_locales_dir" "$fe_locales_dir" --exclude="*.ctc.json" --delete
 echo -e "$check Locale JSON files copied."
 
 # copy webtests
-lh_webtests_dir="lighthouse-core/scripts/chromium-web-tests/webtests/http/tests/devtools/lighthouse/"
+lh_webtests_dir="lighthouse-core/test/chromium-web-tests/webtests/http/tests/devtools/lighthouse/"
 fe_webtests_dir="$dt_dir/test/webtests/http/tests/devtools/lighthouse"
 rsync -avh "$lh_webtests_dir" "$fe_webtests_dir" --exclude="OWNERS" --delete
 

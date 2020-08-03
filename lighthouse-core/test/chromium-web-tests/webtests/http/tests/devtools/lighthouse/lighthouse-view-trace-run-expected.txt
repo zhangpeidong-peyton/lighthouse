@@ -18,7 +18,6 @@ critical-request-chains
 cumulative-layout-shift
 diagnostics
 dom-size
-duplicated-javascript
 efficient-animated-content
 estimated-input-latency
 final-screenshot
@@ -30,7 +29,6 @@ interactive
 largest-contentful-paint
 largest-contentful-paint-element
 layout-shift-elements
-legacy-javascript
 long-tasks
 main-thread-tasks
 mainthread-work-breakdown

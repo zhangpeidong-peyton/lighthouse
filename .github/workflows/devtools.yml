@@ -32,7 +32,7 @@ jobs:
           ${{ env.DEVTOOLS_PATH }}
           ${{ env.BLINK_TOOLS_PATH }}
           ${{ github.workspace }}/lighthouse/.tmp/chromium-web-tests/content-shells
-        key: ${{ runner.os }}-${{ hashFiles('lighthouse/lighthouse-core/scripts/chromium-web-tests/download-*') }}
+        key: ${{ runner.os }}-${{ hashFiles('lighthouse/lighthouse-core/test/chromium-web-tests/download-*') }}
 
     - name: Use Node.js 10.x
       uses: actions/setup-node@v1
@@ -45,16 +45,16 @@ jobs:
       working-directory: ${{ github.workspace }}/lighthouse
 
     - name: Download depot tools
-      run: bash $GITHUB_WORKSPACE/lighthouse/lighthouse-core/scripts/chromium-web-tests/download-depot-tools.sh
+      run: bash $GITHUB_WORKSPACE/lighthouse/lighthouse-core/test/chromium-web-tests/download-depot-tools.sh
     - name: Download DevTools Frontend
-      run: bash $GITHUB_WORKSPACE/lighthouse/lighthouse-core/scripts/chromium-web-tests/download-devtools.sh
+      run: bash $GITHUB_WORKSPACE/lighthouse/lighthouse-core/test/chromium-web-tests/download-devtools.sh
     - name: Download Blink Tools
-      run: bash $GITHUB_WORKSPACE/lighthouse/lighthouse-core/scripts/chromium-web-tests/download-blink-tools.sh
+      run: bash $GITHUB_WORKSPACE/lighthouse/lighthouse-core/test/chromium-web-tests/download-blink-tools.sh
     - name: Download Content Shell
-      run: bash $GITHUB_WORKSPACE/lighthouse/lighthouse-core/scripts/chromium-web-tests/download-content-shell.sh
+      run: bash $GITHUB_WORKSPACE/lighthouse/lighthouse-core/test/chromium-web-tests/download-content-shell.sh
 
     - name: Run Web Tests
-      run: bash $GITHUB_WORKSPACE/lighthouse/lighthouse-core/scripts/chromium-web-tests/run-web-tests.sh
+      run: bash $GITHUB_WORKSPACE/lighthouse/lighthouse-core/test/chromium-web-tests/run-web-tests.sh
 
     - name: Print diff
       if: failure()
@@ -69,13 +69,13 @@ jobs:
     # TODO: https://github.com/EndBug/add-and-commit/issues/48
     - name: Reset Results
       if: failure() && github.actor != 'patrickhulce' && github.actor != 'brendankenny'
-      run: bash $GITHUB_WORKSPACE/lighthouse/lighthouse-core/scripts/chromium-web-tests/run-web-tests.sh --reset-results
+      run: bash $GITHUB_WORKSPACE/lighthouse/lighthouse-core/test/chromium-web-tests/run-web-tests.sh --reset-results
     - name: Commit new expectations
       if: failure() && github.actor != 'patrickhulce' && github.actor != 'brendankenny'
       uses: EndBug/add-and-commit@v4
       with:
         cwd: ${{ github.workspace }}/lighthouse
-        add: lighthouse-core/scripts/chromium-web-tests/webtests
+        add: lighthouse-core/test/chromium-web-tests/webtests
         message: update webtest expectations
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

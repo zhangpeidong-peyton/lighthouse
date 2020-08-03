@@ -39,7 +39,6 @@ Gathering setup: LinkElements
 Gathering setup: MetaElements
 Gathering setup: ScriptElements
 Gathering setup: MainDocumentContent
-Gathering setup: GlobalListeners
 Gathering setup: AppCacheManifest
 Gathering setup: Doctype
 Gathering setup: DOMStats
@@ -53,7 +52,6 @@ Gathering setup: RobotsTxt
 Gathering setup: TapTargets
 Gathering setup: Accessibility
 Gathering setup: TraceElements
-Gathering setup: InspectorIssues
 Gathering setup: SourceMaps
 Beginning devtoolsLog and trace
 Getting browser version
@@ -70,7 +68,6 @@ Gathering in-page: LinkElements
 Gathering in-page: MetaElements
 Gathering in-page: ScriptElements
 Gathering in-page: MainDocumentContent
-Gathering in-page: GlobalListeners
 Gathering in-page: AppCacheManifest
 Gathering in-page: Doctype
 Gathering in-page: DOMStats
@@ -84,7 +81,6 @@ Gathering in-page: RobotsTxt
 Gathering in-page: TapTargets
 Gathering in-page: Accessibility
 Gathering in-page: TraceElements
-Gathering in-page: InspectorIssues
 Gathering in-page: SourceMaps
 Gathering trace
 Gathering devtoolsLog & network records
@@ -100,7 +96,6 @@ Gathering: LinkElements
 Gathering: MetaElements
 Gathering: ScriptElements
 Gathering: MainDocumentContent
-Gathering: GlobalListeners
 Gathering: AppCacheManifest
 Gathering: Doctype
 Gathering: DOMStats
@@ -114,7 +109,6 @@ Gathering: RobotsTxt
 Gathering: TapTargets
 Gathering: Accessibility
 Gathering: TraceElements
-Gathering: InspectorIssues
 Gathering: SourceMaps
 Running offlinePass pass
 Resetting state with about:blank
@@ -240,7 +234,6 @@ Auditing: Minimize third-party usage
 Auditing: Largest Contentful Paint element
 Auditing: Avoid large layout shifts
 Auditing: Avoid long main-thread tasks
-Auditing: Avoids `unload` event listeners
 Auditing: Site works cross-browser
 Auditing: Page transitions don't feel like they block on the network
 Auditing: Each page has a URL
@@ -312,10 +305,6 @@ Auditing: Efficiently encode images
 Auditing: Enable text compression
 Auditing: Properly size images
 Auditing: Use video formats for animated content
-Auditing: Remove duplicate modules in JavaScript bundles
-Computing artifact: ModuleDuplication
-Computing artifact: JSBundles
-Auditing: Avoid serving legacy JavaScript to modern browsers
 Auditing: Avoids Application Cache
 Auditing: Page has the HTML doctype
 Auditing: Properly defines charset
@@ -327,7 +316,7 @@ Auditing: Avoids front-end JavaScript libraries with known security vulnerabilit
 Auditing: Detected JavaScript libraries
 Auditing: Avoids requesting the notification permission on page load
 Auditing: Allows users to paste into password fields
-Auditing: Use HTTP/2
+Auditing: Uses HTTP/2 for its own resources
 Auditing: Uses passive listeners to improve scrolling performance
 Auditing: Document has a meta description
 Auditing: Page has successful HTTP status code
@@ -374,7 +363,7 @@ bootup-time: flaky
 button-name: notApplicable
 bypass: notApplicable
 canonical: notApplicable
-charset: pass
+charset: fail
 color-contrast: pass
 content-width: fail
 crawlable-anchors: pass
@@ -391,7 +380,6 @@ document-title: fail
 dom-size: numeric
 duplicate-id-active: notApplicable
 duplicate-id-aria: notApplicable
-duplicated-javascript: numeric
 efficient-animated-content: flaky
 errors-in-console: pass
 estimated-input-latency: flaky
@@ -427,7 +415,6 @@ largest-contentful-paint: numeric
 largest-contentful-paint-element: informative
 layout-shift-elements: notApplicable
 layout-table: notApplicable
-legacy-javascript: numeric
 link-name: notApplicable
 link-text: pass
 list: notApplicable
@@ -448,7 +435,6 @@ network-requests: informative
 network-rtt: informative
 network-server-latency: informative
 no-document-write: pass
-no-unload-listeners: pass
 no-vulnerable-libraries: pass
 notification-on-start: pass
 object-alt: notApplicable
@@ -487,7 +473,7 @@ unused-css-rules: flaky
 unused-javascript: numeric
 use-landmarks: manual
 user-timings: flaky
-uses-http2: pass
+uses-http2: fail
 uses-long-cache-ttl: numeric
 uses-optimized-images: flaky
 uses-passive-event-listeners: pass
@@ -504,5 +490,5 @@ visual-order-follows-dom: manual
 without-javascript: pass
 works-offline: fail
 
-# of .lh-audit divs: 131
+# of .lh-audit divs: 128
 
