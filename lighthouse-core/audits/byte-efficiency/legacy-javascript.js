@@ -12,14 +12,17 @@
  * ./lighthouse-core/scripts/legacy-javascript - verification tool.
  */
 
-/** @typedef {{name: string, expression: string}} Pattern */
-/** @typedef {{name: string, line: number, column: number}} PatternMatchResult */
+/** @typedef {{name: string, expression: string, estimateBytes?: (result: PatternMatchResult) => number}} Pattern */
+/** @typedef {{name: string, line: number, column: number, count: number}} PatternMatchResult */
+/** @typedef {import('./byte-efficiency-audit.js').ByteEfficiencyProduct} ByteEfficiencyProduct */
+/** @typedef {LH.Audit.ByteEfficiencyItem & {subItems: {type: 'subitems', items: SubItem[]}}} Item */
+/** @typedef {{signal: string, location: LH.Audit.Details.SourceLocationValue}} SubItem */
 
-const Audit = require('./audit.js');
-const NetworkRecords = require('../computed/network-records.js');
-const JSBundles = require('../computed/js-bundles.js');
-const i18n = require('../lib/i18n/i18n.js');
-const thirdPartyWeb = require('../lib/third-party-web.js');
+const ByteEfficiencyAudit = require('./byte-efficiency-audit.js');
+const JsBundles = require('../../computed/js-bundles.js');
+const i18n = require('../../lib/i18n/i18n.js');
+const thirdPartyWeb = require('../../lib/third-party-web.js');
+const NetworkAnalyzer = require('../../lib/dependency-graph/simulator/network-analyzer.js');
 
 const UIStrings = {
   /** Title of a Lighthouse audit that tells the user about legacy polyfills and transforms used on the page. This is displayed in a list of audit titles that Lighthouse generates. */
@@ -77,11 +80,9 @@ class CodePatternMatcher {
       }
       const pattern = this.patterns[patternExpressionMatches.findIndex(Boolean)];
 
-      // Don't report more than one instance of a pattern for this code.
-      // Would result in multiple matches for the same pattern, ex: if both '='
-      // and 'Object.defineProperty' are used conditionally based on feature detection.
-      // Would also result in many matches for transform patterns.
       if (seen.has(pattern)) {
+        const existingMatch = matches.find(m => m.name === pattern.name);
+        if (existingMatch) existingMatch.count += 1;
         continue;
       }
       seen.add(pattern);
@@ -90,6 +91,7 @@ class CodePatternMatcher {
         name: pattern.name,
         line,
         column: result.index - lineBeginsAtIndex,
+        count: 1,
       });
     }
 
@@ -97,17 +99,17 @@ class CodePatternMatcher {
   }
 }
 
-class LegacyJavascript extends Audit {
+class LegacyJavascript extends ByteEfficiencyAudit {
   /**
    * @return {LH.Audit.Meta}
    */
   static get meta() {
     return {
       id: 'legacy-javascript',
-      scoreDisplayMode: Audit.SCORING_MODES.INFORMATIVE,
+      scoreDisplayMode: ByteEfficiencyAudit.SCORING_MODES.NUMERIC,
       description: str_(UIStrings.description),
       title: str_(UIStrings.title),
-      requiredArtifacts: ['devtoolsLogs', 'ScriptElements', 'SourceMaps', 'URL'],
+      requiredArtifacts: ['devtoolsLogs', 'traces', 'ScriptElements', 'SourceMaps', 'URL'],
     };
   }
 
@@ -166,7 +168,6 @@ class LegacyJavascript extends Audit {
 
   static getPolyfillData() {
     return [
-      /* eslint-disable max-len */
       ['Array.prototype.fill', 'es6.array.fill'],
       ['Array.prototype.filter', 'es6.array.filter'],
       ['Array.prototype.find', 'es6.array.find'],
@@ -174,7 +175,6 @@ class LegacyJavascript extends Audit {
       ['Array.prototype.forEach', 'es6.array.for-each'],
       ['Array.from', 'es6.array.from'],
       ['Array.isArray', 'es6.array.is-array'],
-      ['Array.prototype.lastIndexOf', 'es6.array.last-index-of'],
       ['Array.prototype.map', 'es6.array.map'],
       ['Array.of', 'es6.array.of'],
       ['Array.prototype.reduce', 'es6.array.reduce'],
@@ -185,17 +185,12 @@ class LegacyJavascript extends Audit {
       ['Date.prototype.toJSON', 'es6.date.to-json'],
       ['Date.prototype.toString', 'es6.date.to-string'],
       ['Function.prototype.name', 'es6.function.name'],
-      ['Map', 'es6.map'],
       ['Number.isInteger', 'es6.number.is-integer'],
       ['Number.isSafeInteger', 'es6.number.is-safe-integer'],
-      ['Number.parseFloat', 'es6.number.parse-float'],
       ['Number.parseInt', 'es6.number.parse-int'],
-      ['Object.assign', 'es6.object.assign'],
-      ['Object.create', 'es6.object.create'],
       ['Object.defineProperties', 'es6.object.define-properties'],
       ['Object.defineProperty', 'es6.object.define-property'],
       ['Object.freeze', 'es6.object.freeze'],
-      ['Object.getOwnPropertyDescriptor', 'es6.object.get-own-property-descriptor'],
       ['Object.getOwnPropertyNames', 'es6.object.get-own-property-names'],
       ['Object.getPrototypeOf', 'es6.object.get-prototype-of'],
       ['Object.isExtensible', 'es6.object.is-extensible'],
@@ -205,7 +200,6 @@ class LegacyJavascript extends Audit {
       ['Object.preventExtensions', 'es6.object.prevent-extensions'],
       ['Object.seal', 'es6.object.seal'],
       ['Object.setPrototypeOf', 'es6.object.set-prototype-of'],
-      ['Promise', 'es6.promise'],
       ['Reflect.apply', 'es6.reflect.apply'],
       ['Reflect.construct', 'es6.reflect.construct'],
       ['Reflect.defineProperty', 'es6.reflect.define-property'],
@@ -217,41 +211,16 @@ class LegacyJavascript extends Audit {
       ['Reflect.isExtensible', 'es6.reflect.is-extensible'],
       ['Reflect.ownKeys', 'es6.reflect.own-keys'],
       ['Reflect.preventExtensions', 'es6.reflect.prevent-extensions'],
-      ['Reflect.set', 'es6.reflect.set'],
       ['Reflect.setPrototypeOf', 'es6.reflect.set-prototype-of'],
-      ['Set', 'es6.set'],
       ['String.prototype.codePointAt', 'es6.string.code-point-at'],
-      ['String.prototype.endsWith', 'es6.string.ends-with'],
       ['String.fromCodePoint', 'es6.string.from-code-point'],
-      ['String.prototype.includes', 'es6.string.includes'],
       ['String.raw', 'es6.string.raw'],
       ['String.prototype.repeat', 'es6.string.repeat'],
-      ['String.prototype.startsWith', 'es6.string.starts-with'],
-      ['String.prototype.trim', 'es6.string.trim'],
-      // These break the coreJs2/coreJs3 naming pattern so are set explicitly.
-      {name: 'ArrayBuffer', coreJs2Module: 'es6.typed.array-buffer', coreJs3Module: 'es.array-buffer.constructor'},
-      {name: 'DataView', coreJs2Module: 'es6.typed.data-view', coreJs3Module: 'es.data-view'},
-      ['Float32Array', 'es6.typed.float32-array'],
-      ['Float64Array', 'es6.typed.float64-array'],
-      ['Int16Array', 'es6.typed.int16-array'],
-      ['Int32Array', 'es6.typed.int32-array'],
-      ['Int8Array', 'es6.typed.int8-array'],
-      ['Uint16Array', 'es6.typed.uint16-array'],
-      ['Uint32Array', 'es6.typed.uint32-array'],
-      ['Uint8Array', 'es6.typed.uint8-array'],
-      ['Uint8ClampedArray', 'es6.typed.uint8-clamped-array'],
-      ['WeakMap', 'es6.weak-map'],
-      ['WeakSet', 'es6.weak-set'],
       ['Array.prototype.includes', 'es7.array.includes'],
       ['Object.entries', 'es7.object.entries'],
       ['Object.getOwnPropertyDescriptors', 'es7.object.get-own-property-descriptors'],
       ['Object.values', 'es7.object.values'],
-      ['String.prototype.padEnd', 'es7.string.pad-end'],
-      ['String.prototype.padStart', 'es7.string.pad-start'],
-      /* eslint-enable max-len */
     ].map(data => {
-      if (!Array.isArray(data)) return data;
-
       const [name, coreJs2Module] = data;
       return {
         name,
@@ -287,14 +256,19 @@ class LegacyJavascript extends Audit {
       {
         name: '@babel/plugin-transform-classes',
         expression: 'Cannot call a class as a function',
+        estimateBytes: result => 150 + result.count * '_classCallCheck()'.length,
       },
       {
         name: '@babel/plugin-transform-regenerator',
         expression: /regeneratorRuntime\.a?wrap/.source,
+        // Example of this transform: https://gist.github.com/connorjclark/af8bccfff377ac44efc104a79bc75da2
+        // `regeneratorRuntime.awrap` is generated for every usage of `await`, and adds ~80 bytes each.
+        estimateBytes: result => result.count * 80,
       },
       {
         name: '@babel/plugin-transform-spread',
         expression: /\.apply\(void 0,\s?_toConsumableArray/.source,
+        estimateBytes: result => 1169 + result.count * '_toConsumableArray()'.length,
       },
     ];
   }
@@ -334,9 +308,9 @@ class LegacyJavascript extends Audit {
 
           const mapping = bundle.map.mappings().find(m => m.sourceURL === source);
           if (mapping) {
-            matches.push({name, line: mapping.lineNumber, column: mapping.columnNumber});
+            matches.push({name, line: mapping.lineNumber, column: mapping.columnNumber, count: 1});
           } else {
-            matches.push({name, line: 0, column: 0});
+            matches.push({name, line: 0, column: 0, count: 1});
           }
         }
       }
@@ -349,36 +323,116 @@ class LegacyJavascript extends Audit {
   }
 
   /**
-   * @param {LH.Artifacts} artifacts
-   * @param {LH.Audit.Context} context
-   * @return {Promise<LH.Audit.Product>}
+   * @param {PatternMatchResult[]} matches
+   * @return {number}
    */
-  static async audit(artifacts, context) {
-    const devtoolsLog = artifacts.devtoolsLogs[LegacyJavascript.DEFAULT_PASS];
-    const networkRecords = await NetworkRecords.request(devtoolsLog, context);
-    const bundles = await JSBundles.request(artifacts, context);
+  static estimateWastedBytes(matches) {
+    // Split up results based on polyfill / transform. Only transforms start with @.
+    const polyfillResults = matches.filter(m => !m.name.startsWith('@'));
+    const transformResults = matches.filter(m => m.name.startsWith('@'));
 
-    /** @typedef {{signal: string, location: LH.Audit.Details.SourceLocationValue}} SubItem */
-    /** @type {Array<{url: string, subItems: LH.Audit.Details.TableSubItems}>} */
-    const tableRows = [];
-    let signalCount = 0;
+    let estimatedWastedBytesFromPolyfills = 0;
+    /** @type {import('../../scripts/legacy-javascript/create-polyfill-size-estimation.js').PolyfillSizeEstimator} */
+    const graph = require('./polyfill-graph-data.json');
+    const modulesSeen = new Set();
+    for (const result of polyfillResults) {
+      const modules = graph.dependencies[result.name];
+      if (!modules) continue; // Shouldn't happen.
+      for (const module of modules) {
+        modulesSeen.add(module);
+      }
+    }
 
-    // TODO(cjamcl): Use SourceMaps, and only pattern match if maps are not available.
+    if (polyfillResults.length > 0) estimatedWastedBytesFromPolyfills += graph.baseSize;
+    estimatedWastedBytesFromPolyfills += [...modulesSeen].reduce((acc, moduleIndex) => {
+      return acc + graph.moduleSizes[moduleIndex];
+    }, 0);
+    estimatedWastedBytesFromPolyfills = Math.min(estimatedWastedBytesFromPolyfills, graph.maxSize);
+
+    let estimatedWastedBytesFromTransforms = 0;
+
+    for (const result of transformResults) {
+      const pattern = this.getTransformPatterns().find(p => p.name === result.name);
+      if (!pattern || !pattern.estimateBytes) continue;
+      estimatedWastedBytesFromTransforms += pattern.estimateBytes(result);
+    }
+
+    const estimatedWastedBytes =
+      estimatedWastedBytesFromPolyfills + estimatedWastedBytesFromTransforms;
+    return estimatedWastedBytes;
+  }
+
+  /**
+   * Utility function to estimate transfer size and cache calculation.
+   *
+   * Note: duplicated-javascript does this exact thing. In the future, consider
+   * making a generic estimator on ByteEfficienyAudit.
+   * @param {Map<string, number>} transferRatioByUrl
+   * @param {string} url
+   * @param {LH.Artifacts} artifacts
+   * @param {Array<LH.Artifacts.NetworkRequest>} networkRecords
+   */
+  static async estimateTransferRatioForScript(transferRatioByUrl, url, artifacts, networkRecords) {
+    let transferRatio = transferRatioByUrl.get(url);
+    if (transferRatio !== undefined) return transferRatio;
+
+    const mainDocumentRecord = await NetworkAnalyzer.findMainDocument(networkRecords);
+    const networkRecord = url === artifacts.URL.finalUrl ?
+      mainDocumentRecord :
+      networkRecords.find(n => n.url === url);
+    const script = artifacts.ScriptElements.find(script => script.src === url);
+
+    if (!script || script.content === null) {
+      // Can't find content, so just use 1.
+      transferRatio = 1;
+    } else {
+      const contentLength = script.content.length;
+      const transferSize =
+        ByteEfficiencyAudit.estimateTransferSize(networkRecord, contentLength, 'Script');
+      transferRatio = transferSize / contentLength;
+    }
+
+    transferRatioByUrl.set(url, transferRatio);
+    return transferRatio;
+  }
+
+  /**
+   * @param {LH.Artifacts} artifacts
+   * @param {Array<LH.Artifacts.NetworkRequest>} networkRecords
+   * @param {LH.Audit.Context} context
+   * @return {Promise<ByteEfficiencyProduct>}
+   */
+  static async audit_(artifacts, networkRecords, context) {
+    const mainDocumentEntity = thirdPartyWeb.getEntity(artifacts.URL.finalUrl);
+    const bundles = await JsBundles.request(artifacts, context);
+
+    /** @type {Item[]} */
+    const items = [];
+
     const matcher = new CodePatternMatcher([
       ...this.getPolyfillPatterns(),
       ...this.getTransformPatterns(),
     ]);
 
+    /** @type {Map<string, number>} */
+    const transferRatioByUrl = new Map();
+
     const urlToMatchResults =
       this.detectAcrossScripts(matcher, artifacts.ScriptElements, networkRecords, bundles);
-    urlToMatchResults.forEach((matches, url) => {
-      /** @type {typeof tableRows[number]} */
-      const row = {
+    for (const [url, matches] of urlToMatchResults.entries()) {
+      const transferRatio = await this.estimateTransferRatioForScript(
+        transferRatioByUrl, url, artifacts, networkRecords);
+      const wastedBytes = Math.round(this.estimateWastedBytes(matches) * transferRatio);
+      /** @type {typeof items[number]} */
+      const item = {
         url,
+        wastedBytes,
         subItems: {
           type: 'subitems',
           items: [],
         },
+        // Not needed, but keeps typescript happy.
+        totalBytes: 0,
       };
       for (const match of matches) {
         const {name, line, column} = match;
@@ -406,33 +460,33 @@ class LegacyJavascript extends Audit {
             urlProvider: 'network',
           },
         };
-        row.subItems.items.push(subItem);
+        item.subItems.items.push(subItem);
       }
-      tableRows.push(row);
-      signalCount += row.subItems.items.length;
-    });
+      items.push(item);
+    }
 
-    /** @type {LH.Audit.Details.Table['headings']} */
+    /** @type {Map<string, number>} */
+    const wastedBytesByUrl = new Map();
+    for (const item of items) {
+      // Only estimate savings if first party code has legacy code.
+      if (thirdPartyWeb.isFirstParty(item.url, mainDocumentEntity)) {
+        wastedBytesByUrl.set(item.url, item.wastedBytes);
+      }
+    }
+
+    /** @type {LH.Audit.Details.OpportunityColumnHeading[]} */
     const headings = [
       /* eslint-disable max-len */
-      {key: 'url', itemType: 'url', subHeading: {key: 'location', itemType: 'source-location'}, text: str_(i18n.UIStrings.columnURL)},
-      {key: null, itemType: 'code', subHeading: {key: 'signal'}, text: ''},
+      {key: 'url', valueType: 'url', subItemsHeading: {key: 'location', valueType: 'source-location'}, label: str_(i18n.UIStrings.columnURL)},
+      {key: null, valueType: 'code', subItemsHeading: {key: 'signal'}, label: ''},
+      {key: 'wastedBytes', valueType: 'bytes', label: str_(i18n.UIStrings.columnWastedBytes)},
       /* eslint-enable max-len */
     ];
-    const details = Audit.makeTableDetails(headings, tableRows);
 
-    // Only fail if first party code has legacy code.
-    const mainDocumentEntity = thirdPartyWeb.getEntity(artifacts.URL.finalUrl);
-    const foundSignalInFirstPartyCode = tableRows.some(row => {
-      return thirdPartyWeb.isFirstParty(row.url, mainDocumentEntity);
-    });
     return {
-      score: foundSignalInFirstPartyCode ? 0 : 1,
-      notApplicable: !foundSignalInFirstPartyCode,
-      extendedInfo: {
-        signalCount,
-      },
-      details,
+      items,
+      headings,
+      wastedBytesByUrl,
     };
   }
 }

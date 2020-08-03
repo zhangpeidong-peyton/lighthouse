@@ -13,6 +13,7 @@ declare global {
       Details.List |
       Details.Opportunity |
       Details.Screenshot |
+      Details.FullPageScreenshot |
       Details.Table;
 
     // Details namespace.
@@ -61,6 +62,17 @@ declare global {
         data: string;
       }
 
+      /**
+       * A screenshot of the entire page, including width and height information.
+       * Used for element screenshots.
+       */
+      export interface FullPageScreenshot {
+        type: 'full-page-screenshot';
+        data: string;
+        width: number;
+        height: number;
+      }
+
       export interface Table {
         type: 'table';
         headings: TableColumnHeading[];
@@ -99,7 +111,7 @@ declare global {
       export interface TableColumnHeading {
         /**
          * The name of the property within items being described.
-         * If null, subHeading must be defined, and the first table row in this column for
+         * If null, subItemsHeading must be defined, and the first table row in this column for
          * every item will be empty.
          * See legacy-javascript for an example.
          */
@@ -116,7 +128,7 @@ declare global {
          * Optional - defines an inner table of values that correspond to this column.
          * Key is required - if other properties are not provided, the value for the heading is used.
          */
-        subHeading?: {key: string, itemType?: ItemValueType, displayUnit?: string, granularity?: number};
+        subItemsHeading?: {key: string, itemType?: ItemValueType, displayUnit?: string, granularity?: number};
 
         displayUnit?: string;
         granularity?: number;
@@ -131,7 +143,7 @@ declare global {
       export interface OpportunityColumnHeading {
         /**
         * The name of the property within items being described.
-         * If null, subHeading must be defined, and the first table row in this column for
+         * If null, subItemsHeading must be defined, and the first table row in this column for
          * every item will be empty.
          * See legacy-javascript for an example.
          */
@@ -148,7 +160,7 @@ declare global {
          * Optional - defines an inner table of values that correspond to this column.
          * Key is required - if other properties are not provided, the value for the heading is used.
          */
-        subHeading?: {key: string, valueType?: ItemValueType, displayUnit?: string, granularity?: number};
+        subItemsHeading?: {key: string, valueType?: ItemValueType, displayUnit?: string, granularity?: number};
 
         // NOTE: not used by opportunity details, but used in the renderer until table/opportunity unification.
         displayUnit?: string;
@@ -193,6 +205,7 @@ declare global {
         type: 'node';
         path?: string;
         selector?: string;
+        boundingRect?: Artifacts.Rect;
         /** An HTML snippet used to identify the node. */
         snippet?: string;
         /** A human-friendly text descriptor that's used to identify the node more quickly. */
