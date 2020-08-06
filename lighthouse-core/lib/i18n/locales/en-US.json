@@ -1301,6 +1301,15 @@
   "lighthouse-core/audits/uses-rel-preconnect.js | tooManyPreconnectLinksWarning": {
     "message": "More than 2 preconnect links were found. Preconnect links should be used sparingly and only to the most important origins."
   },
+  "lighthouse-core/audits/uses-rel-preload-and-font-display.js | description": {
+    "message": "new audit description"
+  },
+  "lighthouse-core/audits/uses-rel-preload-and-font-display.js | failureTitle": {
+    "message": "fail new audit"
+  },
+  "lighthouse-core/audits/uses-rel-preload-and-font-display.js | title": {
+    "message": "new audit"
+  },
   "lighthouse-core/audits/uses-rel-preload.js | crossoriginWarning": {
     "message": "A preload <link> was found for \"{preloadURL}\" but was not used by the browser. Check that you are using the `crossorigin` attribute properly."
   },

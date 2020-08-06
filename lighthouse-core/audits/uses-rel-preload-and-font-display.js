@@ -18,11 +18,11 @@ const FontDisplay = require('./../audits/font-display.js');
 
 const UIStrings = {
   /** Title of a Lighthouse audit that provides detail on whether . This descriptive title is shown to users when */
-  title: '',
+  title: 'new audit',
   /** Title of a Lighthouse audit that provides detail on whether . This descriptive title is shown to users when */
-  failureTitle: '',
+  failureTitle: 'fail new audit',
   /** Description of a Lighthouse audit that tells the user why they should include . This is displayed after a user expands the section to see more. No character length limits. 'Learn More' becomes link text to additional documentation. */
-  description: '',
+  description: 'new audit description',
 };
 
 const str_ = i18n.createMessageInstanceIdFn(__filename, UIStrings);
@@ -52,8 +52,6 @@ class UsesRelPreloadAndFontDisplayAudit extends Audit {
     const networkRecords = await NetworkRecords.request(devtoolsLogs, context);
     const URL = artifacts.URL;
     const {passingURLs, failingURLs} = FontDisplay.findFontDisplayDeclarations(artifacts);
-    console.log(JSON.stringify(passingURLs), null, 4);
-    console.log(JSON.stringify(failingURLs), null, 4);
 
 
     return {
