@@ -241,6 +241,8 @@ Auditing: Largest Contentful Paint element
 Auditing: Avoid large layout shifts
 Auditing: Avoid long main-thread tasks
 Auditing: Avoids `unload` event listeners
+Auditing: Avoid non-composited animations
+Auditing: Image elements have explicit `width` and `height`
 Auditing: Site works cross-browser
 Auditing: Page transitions don't feel like they block on the network
 Auditing: Each page has a URL
@@ -450,6 +452,7 @@ network-server-latency: informative
 no-document-write: pass
 no-unload-listeners: pass
 no-vulnerable-libraries: pass
+non-composited-animations: notApplicable
 notification-on-start: pass
 object-alt: notApplicable
 offline-start-url: fail
@@ -483,6 +486,7 @@ total-blocking-time: numeric
 total-byte-weight: numeric
 unminified-css: flaky
 unminified-javascript: flaky
+unsized-images: notApplicable
 unused-css-rules: flaky
 unused-javascript: numeric
 use-landmarks: manual
@@ -504,5 +508,5 @@ visual-order-follows-dom: manual
 without-javascript: pass
 works-offline: fail
 
-# of .lh-audit divs: 131
+# of .lh-audit divs: 133
 
