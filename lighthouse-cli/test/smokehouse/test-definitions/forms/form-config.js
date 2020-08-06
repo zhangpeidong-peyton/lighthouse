@@ -6,22 +6,11 @@
 'use strict';
 
 /**
- * @fileoverview Config for new audits that aren't quite ready for
- * being enabled by default.
+ * @type {LH.Config.Json}
+ * Config file for running form gatherer  tests.
  */
-
-/** @type {LH.Config.Json} */
 const config = {
   extends: 'lighthouse:default',
-  audits: [
-    'full-page-screenshot',
-  ],
-  passes: [{
-    passName: 'defaultPass',
-    gatherers: [
-      'full-page-screenshot',
-    ],
-  }],
 };
 
 module.exports = config;
