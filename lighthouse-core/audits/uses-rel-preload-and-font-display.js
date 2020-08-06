@@ -43,10 +43,11 @@ class UsesRelPreloadAndFontDisplayAudit extends Audit {
 
   /**
    * @param {LH.Artifacts} artifacts
+   * @param {LH.Audit.Context} context
    * @return {Promise<LH.Audit.Product>}
    */
   static async audit(artifacts, context) {
-    const trace = artifacts.traces[UsesRelPreloadAudit.DEFAULT_PASS];
+    const trace = artifacts.traces[UsesRelPreloadAndFontDisplayAudit.DEFAULT_PASS];
     const devtoolsLogs = artifacts.devtoolsLogs[this.DEFAULT_PASS];
     const networkRecords = await NetworkRecords.request(devtoolsLogs, context);
     const URL = artifacts.URL;
