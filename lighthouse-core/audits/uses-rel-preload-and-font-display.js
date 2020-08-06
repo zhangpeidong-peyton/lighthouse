@@ -13,6 +13,8 @@
 const Audit = require('./audit.js');
 const i18n = require('./../lib/i18n/i18n.js');
 const URL = require('./../lib/url-shim.js');
+const NetworkRecords = require('../computed/network-records.js');
+const FontDisplay = require('./../audits/font-display.js');
 
 const UIStrings = {
   /** Title of a Lighthouse audit that provides detail on whether . This descriptive title is shown to users when */
@@ -35,7 +37,7 @@ class UsesRelPreloadAndFontDisplayAudit extends Audit {
       title: str_(UIStrings.title),
       failureTitle: str_(UIStrings.failureTitle),
       description: str_(UIStrings.description),
-      requiredArtifacts: [],
+      requiredArtifacts: ['devtoolsLogs', 'CSSUsage', 'URL', 'traces'],
     };
   }
 
@@ -43,7 +45,13 @@ class UsesRelPreloadAndFontDisplayAudit extends Audit {
    * @param {LH.Artifacts} artifacts
    * @return {Promise<LH.Audit.Product>}
    */
-  static async audit(artifacts) {
+  static async audit(artifacts, context) {
+    const trace = artifacts.traces[UsesRelPreloadAudit.DEFAULT_PASS];
+    const devtoolsLogs = artifacts.devtoolsLogs[this.DEFAULT_PASS];
+    const networkRecords = await NetworkRecords.request(devtoolsLogs, context);
+    const URL = artifacts.URL;
+    const {passingURLs, failingURLs} = FontDisplay.findFontDisplayDeclarations(artifacts);
+
     return {
       score: 0,
       notApplicable: 0,

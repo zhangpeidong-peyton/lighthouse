@@ -188,3 +188,4 @@ class FontDisplay extends Audit {
 
 module.exports = FontDisplay;
 module.exports.UIStrings = UIStrings;
+module.exports.findFontDisplayDeclarations = FontDisplay.findFontDisplayDeclarations;
