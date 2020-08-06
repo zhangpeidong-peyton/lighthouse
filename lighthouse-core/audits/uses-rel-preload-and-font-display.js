@@ -52,11 +52,13 @@ class UsesRelPreloadAndFontDisplayAudit extends Audit {
     const networkRecords = await NetworkRecords.request(devtoolsLogs, context);
     const URL = artifacts.URL;
     const {passingURLs, failingURLs} = FontDisplay.findFontDisplayDeclarations(artifacts);
+    console.log(JSON.stringify(passingURLs), null, 4);
+    console.log(JSON.stringify(failingURLs), null, 4);
+
 
     return {
-      score: 0,
-      notApplicable: 0,
-      details: {},
+      score: 1,
+      details: undefined,
     };
   }
 }
