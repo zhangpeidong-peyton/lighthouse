@@ -13,7 +13,6 @@
 const Audit = require('./audit.js');
 const i18n = require('./../lib/i18n/i18n.js');
 const FontDisplay = require('./../audits/font-display.js');
-const PageDependencyGraph = require('../computed/page-dependency-graph.js');
 const PASSING_FONT_DISPLAY_REGEX = /^(optional)$/;
 const NetworkRecords = require('../computed/network-records.js');
 
@@ -38,7 +37,7 @@ class UsesRelPreloadAndFontDisplayAudit extends Audit {
       title: str_(UIStrings.title),
       failureTitle: str_(UIStrings.failureTitle),
       description: str_(UIStrings.description),
-      requiredArtifacts: ['devtoolsLogs', 'CSSUsage', 'URL', 'traces'],
+      requiredArtifacts: ['devtoolsLogs', 'URL', 'CSSUsage'],
     };
   }
 
@@ -70,12 +69,28 @@ class UsesRelPreloadAndFontDisplayAudit extends Audit {
    * @return {Set<string>}
    */
   static getURLsAttemptedToPreload(networkRecords) {
-    const attemptedURLs = networkRecords
-      .filter(req => req.resourceType === 'Font')
-      .filter(req => !/^data:/.test(req.url))
-      .filter(req => !/^blob:/.test(req.url))
+    /** const attemptedStylesheetURLs = networkRecords
+      .filter(req => req.resourceType === 'Stylesheet')
       .filter(req => req.isLinkPreload)
       .map(req => req.url);
+
+    let fontURLsFromPreloadedStylesheets = [];
+    const stylesheets = artifacts.CSSUsage.stylesheets;
+    for (const url of attemptedStylesheetURLs) {
+      const stylesheet = stylesheets.find(sheet => sheet.header.sourceURL === url);
+      if (!stylesheet) continue;
+      artifacts.CSSUsage.stylesheets = [stylesheet];
+      const {passingURLs, failingURLs} =
+        FontDisplay.findFontDisplayDeclarations(artifacts, PASSING_FONT_DISPLAY_REGEX);
+      fontURLsFromPreloadedStylesheets =
+        fontURLsFromPreloadedStylesheets.concat([...passingURLs, ...failingURLs]);
+      console.log(fontURLsFromPreloadedStylesheets);
+    }*/
+    const attemptedURLs = networkRecords
+      .filter(req => req.resourceType === 'Font')
+      .filter(req => req.isLinkPreload)
+      .map(req => req.url);
+
     return new Set(attemptedURLs);
   }
 
@@ -85,21 +100,23 @@ class UsesRelPreloadAndFontDisplayAudit extends Audit {
    * @return {Promise<LH.Audit.Product>}
    */
   static async audit(artifacts, context) {
-    const trace = artifacts.traces[UsesRelPreloadAndFontDisplayAudit.DEFAULT_PASS];
     const devtoolsLog = artifacts.devtoolsLogs[this.DEFAULT_PASS];
     const networkRecords = await NetworkRecords.request(devtoolsLog, context);
-    const graph = await PageDependencyGraph.request({trace, devtoolsLog}, context);
 
     // Gets the URLs of fonts where font-display: optional.
     const passingURLs =
       FontDisplay.findFontDisplayDeclarations(artifacts, PASSING_FONT_DISPLAY_REGEX).passingURLs;
+    console.log('URLs of fonts where font-display: optional');
+    console.log(passingURLs);
 
     // Gets the URLs attempted to be preloaded, ignoring those that failed to be reused and were requested again.
-    const attemptedURLs = UsesRelPreloadAndFontDisplayAudit.getURLsAttemptedToPreload(graph);
-    // maybe don't use lantern run? and instead just run through the networkrequests...
+    const attemptedURLs =
+      UsesRelPreloadAndFontDisplayAudit.getURLsAttemptedToPreload(networkRecords);
+    console.log('URLs of fonts attempted to be preloaded');
+    console.log(attemptedURLs);
 
     const results = Array.from(passingURLs)
-      .filter(url => attemptedURLs.has(url))
+      .filter(url => !attemptedURLs.has(url))
       .map(url => {
         return {url: url};
       });
