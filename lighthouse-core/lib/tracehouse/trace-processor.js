@@ -18,6 +18,8 @@
 
 /** @typedef {Omit<LH.Artifacts.TraceTimes, 'firstContentfulPaint'> & {firstContentfulPaint?: number}} TraceTimesWithoutFCP */
 /** @typedef {Omit<LH.Artifacts.TraceOfTab, 'firstContentfulPaintEvt'|'timings'|'timestamps'> & {timings: TraceTimesWithoutFCP, timestamps: TraceTimesWithoutFCP, firstContentfulPaintEvt?: LH.Artifacts.TraceOfTab['firstContentfulPaintEvt']}} TraceOfTabWithoutFCP */
+/** @typedef {Omit<TraceOfTabWithoutFCP, 'frames'|'processEvents'|'mainThreadEvents'|'mainFrameIds'>} FrameTimings */
+/** @typedef {'lastNavigationStart'|'firstResourceSendRequest'} TimeOriginDeterminationMethod */
 
 const log = require('lighthouse-logger');
 
@@ -41,6 +43,13 @@ class TraceProcessor {
    */
   static createNoNavstartError() {
     return new Error('No navigationStart event found');
+  }
+
+  /**
+   * @return {Error}
+   */
+  static createNoResourceSendRequestError() {
+    return new Error('No ResourceSendRequest event found');
   }
 
   /**
@@ -471,11 +480,14 @@ class TraceProcessor {
 
   /**
    * Finds key trace events, identifies main process/thread, and returns timings of trace events
-   * in milliseconds since navigation start in addition to the standard microsecond monotonic timestamps.
+   * in milliseconds since the time origin in addition to the standard microsecond monotonic timestamps.
    * @param {LH.Trace} trace
+   * @param {{timeOriginDeterminationMethod?: TimeOriginDeterminationMethod}} [options]
    * @return {TraceOfTabWithoutFCP}
   */
-  static computeTraceOfTab(trace) {
+  static computeTraceOfTab(trace, options) {
+    const {timeOriginDeterminationMethod = 'lastNavigationStart'} = options || {};
+
     // Parse the trace for our key events and sort them by timestamp. Note: sort
     // *must* be stable to keep events correctly nested.
     const keyEvents = this.filteredTraceSort(trace.traceEvents, e => {
@@ -491,10 +503,94 @@ class TraceProcessor {
     // Filter to just events matching the frame ID, just to make sure.
     const frameEvents = keyEvents.filter(e => e.args.frame === mainFrameIds.frameId);
 
-    // Our navStart will be the last frame navigation in the trace
-    const navigationStart = frameEvents.filter(this._isNavigationStartOfInterest).pop();
-    if (!navigationStart) throw this.createNoNavstartError();
-    const timeOriginEvt = navigationStart;
+    // Compute our time origin to use for all relative timings.
+    const timeOriginEvt = this.computeTimeOrigin(
+      {keyEvents, frameEvents, mainFrameIds},
+      timeOriginDeterminationMethod
+    );
+
+    // Compute the key frame timings for the main frame.
+    const frameTimings = this.computeKeyTimingsForFrame(frameEvents, {timeOriginEvt});
+
+    // subset all trace events to just our tab's process (incl threads other than main)
+    // stable-sort events to keep them correctly nested.
+    const processEvents = TraceProcessor
+      .filteredTraceSort(trace.traceEvents, e => e.pid === mainFrameIds.pid);
+
+    const mainThreadEvents = processEvents
+      .filter(e => e.tid === mainFrameIds.tid);
+
+    const frames = keyEvents
+      .filter(evt => evt.name === 'FrameCommittedInBrowser')
+      .map(evt => evt.args.data)
+      .filter(/** @return {data is {frame: string, url: string}} */ data => {
+        return Boolean(data && data.frame && data.url);
+      });
+
+    const traceOfTab = {...frameTimings, frames, mainThreadEvents, processEvents, mainFrameIds};
+
+    // Update our traceEnd to reflect all page activity
+    const traceEnd = this.computeTraceEnd(trace.traceEvents, timeOriginEvt);
+    traceOfTab.timings.traceEnd = traceEnd.timing;
+    traceOfTab.timestamps.traceEnd = traceEnd.timestamp;
+    return traceOfTab;
+  }
+
+  /**
+   * Computes the last observable timestamp in a set of trace events.
+   *
+   * @param {Array<LH.TraceEvent>} events
+   * @param {LH.TraceEvent} timeOriginEvt
+   * @return {{timing: number, timestamp: number}}
+   */
+  static computeTraceEnd(events, timeOriginEvt) {
+    let maxTs = -Infinity;
+    for (const event of events) {
+      maxTs = Math.max(event.ts + (event.dur || 0), maxTs);
+    }
+
+    return {timestamp: maxTs, timing: (maxTs - timeOriginEvt.ts) / 1000};
+  }
+
+  /**
+   * Computes the time origin using the specified method.
+   *
+   * @param {{keyEvents: Array<LH.TraceEvent>, frameEvents: Array<LH.TraceEvent>, mainFrameIds: {frameId: string}}} traceEventSubsets
+   * @param {TimeOriginDeterminationMethod} method
+   * @return {LH.TraceEvent}
+   */
+  static computeTimeOrigin(traceEventSubsets, method) {
+    switch (method) {
+      case 'firstResourceSendRequest': {
+        // Our time origin will be the timestamp of the first request that's sent in the frame.
+        const fetchStart = traceEventSubsets.keyEvents.find(event => {
+          if (event.name !== 'ResourceSendRequest') return false;
+          const data = event.args.data || {};
+          return data.frame === traceEventSubsets.mainFrameIds.frameId;
+        });
+        if (!fetchStart) throw this.createNoResourceSendRequestError();
+        return fetchStart;
+      }
+      case 'lastNavigationStart':
+      default: {
+        // Our time origin will be the last frame navigation in the trace
+        const frameEvents = traceEventSubsets.frameEvents;
+        const navigationStart = frameEvents.filter(this._isNavigationStartOfInterest).pop();
+        if (!navigationStart) throw this.createNoNavstartError();
+        return navigationStart;
+      }
+    }
+  }
+
+  /**
+   * Computes timings of trace events of key trace events in milliseconds since the time origin
+   * in addition to the standard microsecond monotonic timestamps.
+   * @param {Array<LH.TraceEvent>} frameEvents
+   * @param {{timeOriginEvt: LH.TraceEvent}} options
+   * @return {FrameTimings}
+  */
+  static computeKeyTimingsForFrame(frameEvents, options) {
+    const {timeOriginEvt} = options;
 
     // Find our first paint of this frame
     const firstPaint = frameEvents.find(e => e.name === 'firstPaint' && e.ts > timeOriginEvt.ts);
@@ -553,20 +649,6 @@ class TraceProcessor {
       e => e.name === 'domContentLoadedEventEnd' && e.ts > timeOriginEvt.ts
     );
 
-    // subset all trace events to just our tab's process (incl threads other than main)
-    // stable-sort events to keep them correctly nested.
-    const processEvents = TraceProcessor
-      .filteredTraceSort(trace.traceEvents, e => e.pid === mainFrameIds.pid);
-
-    const mainThreadEvents = processEvents
-      .filter(e => e.tid === mainFrameIds.tid);
-
-    // traceEnd must exist since at least timeOrigin event was verified as existing.
-    const traceEnd = trace.traceEvents.reduce((max, evt) => {
-      return max.ts > evt.ts ? max : evt;
-    });
-    const fakeEndOfTraceEvt = {ts: traceEnd.ts + (traceEnd.dur || 0)};
-
     /** @param {{ts: number}=} event */
     const getTimestamp = (event) => event && event.ts;
     /** @type {TraceTimesWithoutFCP} */
@@ -576,7 +658,7 @@ class TraceProcessor {
       firstContentfulPaint: getTimestamp(firstContentfulPaint),
       firstMeaningfulPaint: getTimestamp(firstMeaningfulPaint),
       largestContentfulPaint: getTimestamp(largestContentfulPaint),
-      traceEnd: fakeEndOfTraceEvt.ts,
+      traceEnd: this.computeTraceEnd(frameEvents, timeOriginEvt).timestamp,
       load: getTimestamp(load),
       domContentLoaded: getTimestamp(domContentLoaded),
     };
@@ -597,20 +679,9 @@ class TraceProcessor {
       domContentLoaded: maybeGetTiming(timestamps.domContentLoaded),
     };
 
-    const frames = keyEvents
-      .filter(evt => evt.name === 'FrameCommittedInBrowser')
-      .map(evt => evt.args.data)
-      .filter(/** @return {data is {frame: string, url: string}} */ data => {
-        return Boolean(data && data.frame && data.url);
-      });
-
     return {
       timings,
       timestamps,
-      processEvents,
-      mainThreadEvents,
-      mainFrameIds,
-      frames,
       timeOriginEvt: timeOriginEvt,
       firstPaintEvt: firstPaint,
       firstContentfulPaintEvt: firstContentfulPaint,
