@@ -160,6 +160,15 @@ Object {
       "path": "long-tasks",
     },
     Object {
+      "path": "no-unload-listeners",
+    },
+    Object {
+      "path": "non-composited-animations",
+    },
+    Object {
+      "path": "unsized-images",
+    },
+    Object {
       "path": "manual/pwa-cross-browser",
     },
     Object {
@@ -359,6 +368,12 @@ Object {
     },
     Object {
       "path": "byte-efficiency/efficient-animated-content",
+    },
+    Object {
+      "path": "byte-efficiency/duplicated-javascript",
+    },
+    Object {
+      "path": "byte-efficiency/legacy-javascript",
     },
     Object {
       "path": "dobetterweb/appcache-manifest",
@@ -743,6 +758,11 @@ Object {
         },
         Object {
           "group": "best-practices-general",
+          "id": "no-unload-listeners",
+          "weight": 1,
+        },
+        Object {
+          "group": "best-practices-general",
           "id": "appcache-manifest",
           "weight": 1,
         },
@@ -884,7 +904,22 @@ Object {
         },
         Object {
           "group": "load-opportunities",
+          "id": "uses-http2",
+          "weight": 0,
+        },
+        Object {
+          "group": "load-opportunities",
           "id": "efficient-animated-content",
+          "weight": 0,
+        },
+        Object {
+          "group": "load-opportunities",
+          "id": "duplicated-javascript",
+          "weight": 0,
+        },
+        Object {
+          "group": "load-opportunities",
+          "id": "legacy-javascript",
           "weight": 0,
         },
         Object {
@@ -959,11 +994,6 @@ Object {
         },
         Object {
           "group": "diagnostics",
-          "id": "uses-http2",
-          "weight": 0,
-        },
-        Object {
-          "group": "diagnostics",
           "id": "uses-passive-event-listeners",
           "weight": 0,
         },
@@ -975,6 +1005,16 @@ Object {
         Object {
           "group": "diagnostics",
           "id": "long-tasks",
+          "weight": 0,
+        },
+        Object {
+          "group": "diagnostics",
+          "id": "non-composited-animations",
+          "weight": 0,
+        },
+        Object {
+          "group": "diagnostics",
+          "id": "unsized-images",
           "weight": 0,
         },
         Object {
@@ -1213,7 +1253,7 @@ Object {
       "title": "Navigation",
     },
     "a11y-tables-lists": Object {
-      "description": "These are opportunities to to improve the experience of reading tabular or list data using assistive technology, like a screen reader.",
+      "description": "These are opportunities to improve the experience of reading tabular or list data using assistive technology, like a screen reader.",
       "title": "Tables and lists",
     },
     "best-practices-browser-compat": Object {
@@ -1305,7 +1345,13 @@ Object {
           "path": "iframe-elements",
         },
         Object {
+          "path": "form-elements",
+        },
+        Object {
           "path": "main-document-content",
+        },
+        Object {
+          "path": "global-listeners",
         },
         Object {
           "path": "dobetterweb/appcache",
@@ -1497,7 +1543,7 @@ Object {
       "title": "Navigation",
     },
     "a11y-tables-lists": Object {
-      "description": "These are opportunities to to improve the experience of reading tabular or list data using assistive technology, like a screen reader.",
+      "description": "These are opportunities to improve the experience of reading tabular or list data using assistive technology, like a screen reader.",
       "title": "Tables and lists",
     },
     "best-practices-browser-compat": Object {

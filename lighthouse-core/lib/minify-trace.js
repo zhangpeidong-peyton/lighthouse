@@ -83,6 +83,7 @@ const traceEventsToKeepInProcess = new Set([
   'MarkDOMContent',
   'largestContentfulPaint::Invalidate',
   'largestContentfulPaint::Candidate',
+  'Animation',
 ]);
 
 /**

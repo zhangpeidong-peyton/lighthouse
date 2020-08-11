@@ -156,6 +156,77 @@ module.exports = [
     },
   },
   {
+    artifacts: {
+      TraceElements: [
+        {
+          traceEventType: 'largest-contentful-paint',
+          selector: 'body > div#late-content > img',
+          nodeLabel: 'img',
+          snippet: '<img src="../dobetterweb/lighthouse-480x318.jpg">',
+          boundingRect: {
+            top: 108,
+            bottom: 426,
+            left: 8,
+            right: 488,
+            width: 480,
+            height: 318,
+          },
+        },
+        {
+          traceEventType: 'layout-shift',
+          selector: 'body > h1',
+          nodeLabel: 'Please don\'t move me',
+          snippet: '<h1>',
+          boundingRect: {
+            top: 465,
+            bottom: 502,
+            left: 8,
+            right: 352,
+            width: 344,
+            height: 37,
+          },
+          score: '0.058 +/- 0.01',
+        },
+        {
+          traceEventType: 'layout-shift',
+          selector: 'body > div#late-content > div',
+          nodeLabel: 'Sorry!',
+          snippet: '<div style="height: 18px;">',
+          boundingRect: {
+            top: 426,
+            bottom: 444,
+            left: 8,
+            right: 352,
+            width: 344,
+            height: 18,
+          },
+          score: '0.026 +/- 0.01',
+        },
+        {
+          traceEventType: 'animation',
+          selector: 'body > div#animate-me',
+          nodeLabel: 'div',
+          snippet: '<div id="animate-me">',
+          boundingRect: {
+            top: 8,
+            bottom: 108,
+            left: 8,
+            right: 108,
+            width: 100,
+            height: 100,
+          },
+          animations: [
+            {
+              // Requires compositor failure reasons to be in the trace
+              // https://chromiumdash.appspot.com/commit/995baabedf9e70d16deafc4bc37a2b215a9b8ec9
+              _minChromiumMilestone: 86,
+              name: 'anim',
+              failureReasonsMask: 8224,
+            },
+          ],
+        },
+      ],
+    },
     lhr: {
       requestedUrl: 'http://localhost:10200/perf/trace-elements.html',
       finalUrl: 'http://localhost:10200/perf/trace-elements.html',
@@ -175,16 +246,15 @@ module.exports = [
             ],
           },
         },
-        // TODO(COMPAT): uncomment when Chrome m84 lands
-        // 'layout-shift-elements': {
-        //   score: null,
-        //   displayValue: '2 elements found',
-        //   details: {
-        //     items: {
-        //       length: 2,
-        //     },
-        //   },
-        // },
+        'layout-shift-elements': {
+          score: null,
+          displayValue: '2 elements found',
+          details: {
+            items: {
+              length: 2,
+            },
+          },
+        },
         'long-tasks': {
           score: null,
           details: {
@@ -223,6 +293,50 @@ module.exports = [
           scoreDisplayMode: 'notApplicable',
           details: {
             items: [],
+          },
+        },
+      },
+    },
+  },
+  {
+    lhr: {
+      requestedUrl: 'http://localhost:10200/perf/animations.html',
+      finalUrl: 'http://localhost:10200/perf/animations.html',
+      audits: {
+        'non-composited-animations': {
+          // Requires compositor failure reasons to be in the trace
+          // https://chromiumdash.appspot.com/commit/995baabedf9e70d16deafc4bc37a2b215a9b8ec9
+          _minChromiumMilestone: 86,
+          score: null,
+          displayValue: '1 animated element found',
+          details: {
+            items: [
+              {
+                node: {
+                  type: 'node',
+                  path: '2,HTML,1,BODY,1,DIV',
+                  selector: 'body > div#animated-boi',
+                  nodeLabel: 'div',
+                  snippet: '<div id="animated-boi">',
+                },
+                subItems: {
+                  items: [
+                    {
+                      // From JavaScript `.animate` which has no animation display name
+                      failureReason: 'Unsupported CSS Property',
+                    },
+                    {
+                      failureReason: 'Unsupported CSS Property',
+                      animation: 'alpha',
+                    },
+                    {
+                      failureReason: 'Unsupported CSS Property',
+                      animation: 'beta',
+                    },
+                  ],
+                },
+              },
+            ],
           },
         },
       },

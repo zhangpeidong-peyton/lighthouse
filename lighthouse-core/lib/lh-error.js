@@ -47,6 +47,11 @@ const UIStrings = {
   internalChromeError: 'An internal Chrome error occurred. Please restart Chrome and try re-running Lighthouse.',
   /** Error message explaining that fetching the resources of the webpage has taken longer than the maximum time. */
   requestContentTimeout: 'Fetching resource content has exceeded the allotted time',
+  /**
+   * @description Error message explaining that the webpage is non-HTML, so audits are ill-defined.
+   * @example {application/xml} mimeType
+   * */
+  notHtml: 'The page provided is not HTML (served as MIME type {mimeType}).',
   /** Error message explaining that the provided URL Lighthouse points to is not valid, and cannot be loaded. */
   urlInvalid: 'The URL you have provided appears to be invalid.',
   /**
@@ -161,7 +166,7 @@ class LighthouseError extends Error {
     // Unexpected errors won't be LHErrors, but we want them serialized as well.
     if (err instanceof Error) {
       const {message, stack} = err;
-      // @ts-ignore - code can be helpful for e.g. node errors, so preserve it if it's present.
+      // @ts-expect-error - code can be helpful for e.g. node errors, so preserve it if it's present.
       const code = err.code;
       return {
         sentinel: ERROR_SENTINEL,
@@ -320,6 +325,12 @@ const ERRORS = {
   PAGE_HUNG: {
     code: 'PAGE_HUNG',
     message: UIStrings.pageLoadFailedHung,
+    lhrRuntimeError: true,
+  },
+  /* Used when the page is non-HTML. */
+  NOT_HTML: {
+    code: 'NOT_HTML',
+    message: UIStrings.notHtml,
     lhrRuntimeError: true,
   },
 
