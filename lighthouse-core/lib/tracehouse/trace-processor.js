@@ -512,7 +512,7 @@ class TraceProcessor {
     // Compute the key frame timings for the main frame.
     const frameTimings = this.computeKeyTimingsForFrame(frameEvents, {timeOriginEvt});
 
-    // subset all trace events to just our tab's process (incl threads other than main)
+    // Subset all trace events to just our tab's process (incl threads other than main)
     // stable-sort events to keep them correctly nested.
     const processEvents = TraceProcessor
       .filteredTraceSort(trace.traceEvents, e => e.pid === mainFrameIds.pid);
@@ -529,7 +529,7 @@ class TraceProcessor {
 
     const traceOfTab = {...frameTimings, frames, mainThreadEvents, processEvents, mainFrameIds};
 
-    // Update our traceEnd to reflect all page activity
+    // Update our traceEnd to reflect all page activity.
     const traceEnd = this.computeTraceEnd(trace.traceEvents, timeOriginEvt);
     traceOfTab.timings.traceEnd = traceEnd.timing;
     traceOfTab.timestamps.traceEnd = traceEnd.timestamp;
