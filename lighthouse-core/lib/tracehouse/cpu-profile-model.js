@@ -132,21 +132,23 @@ class CpuProfilerModel {
       .filter(/** @return {node is CpuProfile['nodes'][0]} */ node => !!node);
 
     /** @param {CpuProfile['nodes'][0]} node @return {LH.TraceEvent} */
-    const createEvent = node => ({
+    const createSyntheticEvent = node => ({
       ts: timestamp,
       pid: this._profile.pid,
       tid: this._profile.tid,
       dur: 0,
       ph: 'I',
-      name: 'FunctionCall-ProfilerModel',
+      // This trace event name is Lighthouse-specific and wouldn't be found in a real trace.
+      // Attribution logic in main-thread-tasks.js special cases this event.
+      name: 'FunctionCall-SynthesizedByProfilerModel',
       cat: 'lighthouse',
       args: {data: {callFrame: node.callFrame}},
     });
 
     /** @type {Array<LH.TraceEvent>} */
-    const startEvents = startNodes.map(createEvent).map(evt => ({...evt, ph: 'B'}));
+    const startEvents = startNodes.map(createSyntheticEvent).map(evt => ({...evt, ph: 'B'}));
     /** @type {Array<LH.TraceEvent>} */
-    const endEvents = endNodes.map(createEvent).map(evt => ({...evt, ph: 'E'}));
+    const endEvents = endNodes.map(createSyntheticEvent).map(evt => ({...evt, ph: 'E'}));
     return [...endEvents.reverse(), ...startEvents];
   }
 
@@ -212,6 +214,8 @@ class CpuProfilerModel {
       if (event.name !== 'Profile' && event.name !== 'ProfileChunk') continue;
       if (typeof event.id !== 'string') continue;
 
+      // `Profile` or `ProfileChunk` can partially define these across multiple events.
+      // We'll fallback to empty values and worry about validation in the `createStartEndEvents` phase.
       const cpuProfileArg = (event.args.data && event.args.data.cpuProfile) || {};
       const timeDeltas =
         (event.args.data && event.args.data.timeDeltas) || cpuProfileArg.timeDeltas;

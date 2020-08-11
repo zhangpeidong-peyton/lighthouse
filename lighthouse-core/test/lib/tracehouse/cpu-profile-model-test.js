@@ -109,6 +109,53 @@ describe('CPU Profiler Model', () => {
   });
 
   describe('#collectProfileEvents', () => {
+    const nodes = [{id: 0}, {id: 1}];
+    const samples = [0, 1, 0, 1];
+    const timeDeltas = [10, 5, 5, 5];
+    /** @param {Record<string, any>} data */
+    const args = data => ({args: {data}});
+
+    it('should extract profiles', () => {
+      const cpuProfile = {nodes, samples, timeDeltas};
+      const traceEvents = [
+        {id: 'A', name: 'Profile', pid: 1, tid: 2, ...args({startTime: 1234, cpuProfile})},
+        {id: 'B', name: 'Profile', pid: 1, tid: 3, ...args({startTime: 2345, cpuProfile})},
+      ];
+
+      const profiles = CpuProfileModel.collectProfileEvents(traceEvents);
+      expect(profiles).toEqual([
+        {id: 'A', pid: 1, tid: 2, startTime: 1234, nodes, samples, timeDeltas},
+        {id: 'B', pid: 1, tid: 3, startTime: 2345, nodes, samples, timeDeltas},
+      ]);
+    });
+
+    it('should ignore profiles without an ID', () => {
+      const cpuProfile = {nodes, samples, timeDeltas};
+      const traceEvents = [
+        {name: 'Profile', pid: 1, tid: 2, ...args({startTime: 1234, cpuProfile})},
+        {id: 'missing', name: 'ProfileChunk', pid: 1, tid: 3, ...args({cpuProfile})},
+      ];
+
+      const profiles = CpuProfileModel.collectProfileEvents(traceEvents);
+      expect(profiles).toEqual([]);
+    });
+
+    it('should handle definition of a profile across multiple events', () => {
+      const traceEvents = [
+        {id: 'A', name: 'Profile', pid: 1, tid: 2, ...args({startTime: 1234})},
+        {id: 'B', name: 'Profile', ts: 1235, pid: 1, tid: 3, ...args({cpuProfile: {nodes}})},
+        {id: 'A', name: 'ProfileChunk', ts: 2345, pid: 1, tid: 2, ...args({cpuProfile: {nodes}})},
+        {id: 'A', name: 'ProfileChunk', ts: 3456, pid: 1, tid: 2, ...args({cpuProfile: {samples}})},
+        {id: 'A', name: 'ProfileChunk', ts: 4567, pid: 1, tid: 2, ...args({timeDeltas})},
+      ];
+
+      const profiles = CpuProfileModel.collectProfileEvents(traceEvents);
+      expect(profiles).toEqual([
+        {id: 'A', pid: 1, tid: 2, startTime: 1234, nodes, samples, timeDeltas},
+        {id: 'B', pid: 1, tid: 3, startTime: 1235, nodes, samples: [], timeDeltas: []},
+      ]);
+    });
+
     it('should work on a real trace', () => {
       const {processEvents} = TraceProcessor.computeTraceOfTab(profilerTrace);
       const profiles = CpuProfileModel.collectProfileEvents(processEvents);
