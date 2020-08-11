@@ -109,8 +109,6 @@ class FontDisplay extends Audit {
       }
     }
 
-    console.log(JSON.stringify(Array.from(passingURLs), null, 4));
-    console.log(JSON.stringify(Array.from(failingURLs), null, 4));
     return {passingURLs, failingURLs};
   }
 

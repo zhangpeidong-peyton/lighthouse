@@ -824,6 +824,15 @@
   "lighthouse-core/audits/is-on-https.js | warning": {
     "message": "Allowed with warning"
   },
+  "lighthouse-core/audits/jankless-font.js | description": {
+    "message": "new audit description"
+  },
+  "lighthouse-core/audits/jankless-font.js | failureTitle": {
+    "message": "fail new audit"
+  },
+  "lighthouse-core/audits/jankless-font.js | title": {
+    "message": "new audit"
+  },
   "lighthouse-core/audits/largest-contentful-paint-element.js | description": {
     "message": "This is the largest contentful element painted within the viewport. [Learn More](https://web.dev/lighthouse-largest-contentful-paint/)"
   },
@@ -1300,15 +1309,6 @@
   },
   "lighthouse-core/audits/uses-rel-preconnect.js | tooManyPreconnectLinksWarning": {
     "message": "More than 2 preconnect links were found. Preconnect links should be used sparingly and only to the most important origins."
-  },
-  "lighthouse-core/audits/uses-rel-preload-and-font-display.js | description": {
-    "message": "new audit description"
-  },
-  "lighthouse-core/audits/uses-rel-preload-and-font-display.js | failureTitle": {
-    "message": "fail new audit"
-  },
-  "lighthouse-core/audits/uses-rel-preload-and-font-display.js | title": {
-    "message": "new audit"
   },
   "lighthouse-core/audits/uses-rel-preload.js | crossoriginWarning": {
     "message": "A preload <link> was found for \"{preloadURL}\" but was not used by the browser. Check that you are using the `crossorigin` attribute properly."

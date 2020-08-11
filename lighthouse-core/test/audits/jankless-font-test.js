@@ -5,7 +5,7 @@
  */
 'use strict';
 
-const UsesRelPreloadAndFontDisplayAudit = require('../../audits/uses-rel-preload-and-font-display.js');
+const JanklessFontAudit = require('../../audits/jankless-font.js');
 
 /* eslint-env jest */
 

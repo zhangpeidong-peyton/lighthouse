@@ -27,13 +27,13 @@ const UIStrings = {
 
 const str_ = i18n.createMessageInstanceIdFn(__filename, UIStrings);
 
-class UsesRelPreloadAndFontDisplayAudit extends Audit {
+class JanklessFontAudit extends Audit {
   /**
    * @return {LH.Audit.Meta}
    */
   static get meta() {
     return {
-      id: 'uses-rel-preload-and-font-display',
+      id: 'jankless-font',
       title: str_(UIStrings.title),
       failureTitle: str_(UIStrings.failureTitle),
       description: str_(UIStrings.description),
@@ -73,7 +73,7 @@ class UsesRelPreloadAndFontDisplayAudit extends Audit {
 
     // Gets the URLs of fonts attempted to be preloaded.
     const attemptedURLs =
-      UsesRelPreloadAndFontDisplayAudit.getURLsAttemptedToPreload(networkRecords);
+      JanklessFontAudit.getURLsAttemptedToPreload(networkRecords);
     console.log('URLs of fonts attempted to be preloaded');
     console.log(attemptedURLs);
 
@@ -97,5 +97,5 @@ class UsesRelPreloadAndFontDisplayAudit extends Audit {
   }
 }
 
-module.exports = UsesRelPreloadAndFontDisplayAudit;
+module.exports = JanklessFontAudit;
 module.exports.UIStrings = UIStrings;
