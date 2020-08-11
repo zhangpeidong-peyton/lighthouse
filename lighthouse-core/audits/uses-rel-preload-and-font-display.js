@@ -41,27 +41,6 @@ class UsesRelPreloadAndFontDisplayAudit extends Audit {
     };
   }
 
-
-  /**
-   * Finds which font URLs were attempted to be preloaded,
-   * ignoring those that failed to be reused and were requested again.
-   * @param {LH.Gatherer.Simulation.GraphNode} graph
-   * @return {Set<string>}
-   */
-  /**
-  static getURLsAttemptedToPreload(graph) {
-    /** @type {Array<LH.Artifacts.NetworkRequest>}
-    const requests = [];
-    graph.traverse(node => node.type === 'network' && requests.push(node.record));
-
-    const preloadRequests = requests
-      .filter(req => req.isLinkPreload)
-      .filter(req => req.resourceType === 'Font');
-
-    return new Set(preloadRequests.map(req => req.url));
-  }
-  */
-
   /**
    * Finds which font URLs were attempted to be preloaded,
    * ignoring those that failed to be reused and were requested again.
@@ -69,23 +48,6 @@ class UsesRelPreloadAndFontDisplayAudit extends Audit {
    * @return {Set<string>}
    */
   static getURLsAttemptedToPreload(networkRecords) {
-    /** const attemptedStylesheetURLs = networkRecords
-      .filter(req => req.resourceType === 'Stylesheet')
-      .filter(req => req.isLinkPreload)
-      .map(req => req.url);
-
-    let fontURLsFromPreloadedStylesheets = [];
-    const stylesheets = artifacts.CSSUsage.stylesheets;
-    for (const url of attemptedStylesheetURLs) {
-      const stylesheet = stylesheets.find(sheet => sheet.header.sourceURL === url);
-      if (!stylesheet) continue;
-      artifacts.CSSUsage.stylesheets = [stylesheet];
-      const {passingURLs, failingURLs} =
-        FontDisplay.findFontDisplayDeclarations(artifacts, PASSING_FONT_DISPLAY_REGEX);
-      fontURLsFromPreloadedStylesheets =
-        fontURLsFromPreloadedStylesheets.concat([...passingURLs, ...failingURLs]);
-      console.log(fontURLsFromPreloadedStylesheets);
-    }*/
     const attemptedURLs = networkRecords
       .filter(req => req.resourceType === 'Font')
       .filter(req => req.isLinkPreload)
@@ -109,7 +71,7 @@ class UsesRelPreloadAndFontDisplayAudit extends Audit {
     console.log('URLs of fonts where font-display: optional');
     console.log(passingURLs);
 
-    // Gets the URLs attempted to be preloaded, ignoring those that failed to be reused and were requested again.
+    // Gets the URLs of fonts attempted to be preloaded.
     const attemptedURLs =
       UsesRelPreloadAndFontDisplayAudit.getURLsAttemptedToPreload(networkRecords);
     console.log('URLs of fonts attempted to be preloaded');
@@ -124,7 +86,7 @@ class UsesRelPreloadAndFontDisplayAudit extends Audit {
     /** @type {LH.Audit.Details.Table['headings']} */
     const headings = [
       {key: 'url', itemType: 'url', text: str_(i18n.UIStrings.columnURL)},
-      // TODO: show the CLS that could have been saved if font was preloaded
+      // TODO: show the CLS that could have been saved if font was preloaded.
     ];
 
     return {
