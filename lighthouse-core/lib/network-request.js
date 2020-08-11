@@ -23,6 +23,7 @@ const HEADER_REQ = 'X-RequestMs';
 const HEADER_RES = 'X-ResponseMs';
 const HEADER_TOTAL = 'X-TotalMs';
 const HEADER_FETCHED_SIZE = 'X-TotalFetchedSize';
+const HEADER_PROTOCOL_IS_H2 = 'X-ProtocolIsH2';
 
 /**
  * @typedef HeaderEntry
@@ -223,6 +224,7 @@ class NetworkRequest {
 
     this._updateResponseReceivedTimeIfNecessary();
     this._updateTransferSizeForLightrider();
+    this._updateProtocolForLightrider();
     this._updateTimingsForLightrider();
   }
 
@@ -242,6 +244,7 @@ class NetworkRequest {
 
     this._updateResponseReceivedTimeIfNecessary();
     this._updateTransferSizeForLightrider();
+    this._updateProtocolForLightrider();
     this._updateTimingsForLightrider();
   }
 
@@ -364,6 +367,18 @@ class NetworkRequest {
     // Bail if the header cannot be parsed.
     if (isNaN(floatValue)) return;
     this.transferSize = floatValue;
+  }
+
+  /**
+   * LR loses protocol information.
+   */
+  _updateProtocolForLightrider() {
+    // Bail if we aren't in Lightrider.
+    if (!global.isLightrider) return;
+
+    if (!this.responseHeaders.some(item => item.name === HEADER_PROTOCOL_IS_H2)) return;
+
+    this.protocol = 'h2';
   }
 
   /**
