@@ -97,6 +97,7 @@ describe('Jankless Font Audit', () => {
       const result = await JanklessFontAudit.audit(getArtifacts(), context);
       expect(result.score).toEqual(1);
       expect(result.details.items).toEqual([]);
+      expect(result.notApplicable).toEqual(true);
     });
 
     it('passes if the font is preloaded', async () => {
@@ -118,10 +119,11 @@ describe('Jankless Font Audit', () => {
       const result = await JanklessFontAudit.audit(getArtifacts(), context);
       expect(result.score).toEqual(1);
       expect(result.details.items).toEqual([]);
+      expect(result.notApplicable).toEqual(true);
     });
   });
 
-  it('ignores fonts where font-display is not optional', async () => {
+  it('is not applicable on fonts where font-display is not optional', async () => {
     stylesheet.content = `
       @font-face {
         font-display: swap;
@@ -147,5 +149,6 @@ describe('Jankless Font Audit', () => {
     const result = await JanklessFontAudit.audit(getArtifacts(), context);
     expect(result.score).toEqual(1);
     expect(result.details.items).toEqual([]);
+    expect(result.notApplicable).toEqual(true);
   });
 });

@@ -17,11 +17,11 @@ const PASSING_FONT_DISPLAY_REGEX = /^(optional)$/;
 const NetworkRecords = require('../computed/network-records.js');
 
 const UIStrings = {
-  /** Title of a Lighthouse audit that provides detail on whether . This descriptive title is shown to users when */
-  title: 'new audit',
-  /** Title of a Lighthouse audit that provides detail on whether . This descriptive title is shown to users when */
+  /** Title of a Lighthouse audit that provides detail on whether fonts that used `font-display: optional` were preloaded. This descriptive title is shown to users when all fonts that used `font-display: optional` were preloaded. */
+  title: 'Preload fonts ',
+  /** Title of a Lighthouse audit that provides detail on whether fonts that used `font-display: optional` were preloaded. This descriptive title is shown to users when one or more fonts used `font-display: optional` and were not preloaded. */
   failureTitle: 'fail new audit',
-  /** Description of a Lighthouse audit that tells the user why they should include . This is displayed after a user expands the section to see more. No character length limits. 'Learn More' becomes link text to additional documentation. */
+  /** Description of a Lighthouse audit that tells the user why they should preload fonts if they are using `font-display: optional`. This is displayed after a user expands the section to see more. No character length limits. 'Learn More' becomes link text to additional documentation. */
   description: 'new audit description',
 };
 
@@ -68,14 +68,10 @@ class JanklessFontAudit extends Audit {
     // Gets the URLs of fonts where font-display: optional.
     const passingURLs =
       FontDisplay.findFontDisplayDeclarations(artifacts, PASSING_FONT_DISPLAY_REGEX).passingURLs;
-    // console.log('URLs of fonts where font-display: optional');
-    // console.log(passingURLs);
 
     // Gets the URLs of fonts attempted to be preloaded.
     const attemptedURLs =
       JanklessFontAudit.getURLsAttemptedToPreload(networkRecords);
-    // console.log('URLs of fonts attempted to be preloaded');
-    // console.log(attemptedURLs);
 
     const results = Array.from(passingURLs)
       .filter(url => !attemptedURLs.has(url))
@@ -92,6 +88,7 @@ class JanklessFontAudit extends Audit {
     return {
       score: results.length > 0 ? 0 : 1,
       details: Audit.makeTableDetails(headings, results),
+      notApplicable: passingURLs.size === 0,
     };
   }
 }
