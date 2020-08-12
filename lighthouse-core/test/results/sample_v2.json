@@ -1920,10 +1920,10 @@
     },
     "jankless-font": {
       "id": "jankless-font",
-      "title": "new audit",
-      "description": "new audit description",
-      "score": 1,
-      "scoreDisplayMode": "binary",
+      "title": "Fonts with `font-display: optional` are preloaded",
+      "description": "Preloading fonts that use `font-display: optional` can help reduce layout shifts and improve CLS. [Learn More](https://web.dev/preload-optional-fonts/)",
+      "score": null,
+      "scoreDisplayMode": "notApplicable",
       "details": {
         "type": "table",
         "headings": [],

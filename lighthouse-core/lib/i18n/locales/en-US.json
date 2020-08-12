@@ -825,13 +825,13 @@
     "message": "Allowed with warning"
   },
   "lighthouse-core/audits/jankless-font.js | description": {
-    "message": "new audit description"
+    "message": "Preloading fonts that use `font-display: optional` can help reduce layout shifts and improve CLS. [Learn More](https://web.dev/preload-optional-fonts/)"
   },
   "lighthouse-core/audits/jankless-font.js | failureTitle": {
-    "message": "fail new audit"
+    "message": "Fonts with `font-display: optional` are not preloaded"
   },
   "lighthouse-core/audits/jankless-font.js | title": {
-    "message": "new audit"
+    "message": "Fonts with `font-display: optional` are preloaded"
   },
   "lighthouse-core/audits/largest-contentful-paint-element.js | description": {
     "message": "This is the largest contentful element painted within the viewport. [Learn More](https://web.dev/lighthouse-largest-contentful-paint/)"

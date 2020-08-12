@@ -5,7 +5,7 @@
  */
 /**
  * @fileoverview
- * Audit that .
+ * Audit that checks whether fonts that use `font-display: optional` were preloaded.
  */
 
 'use strict';
@@ -18,11 +18,11 @@ const NetworkRecords = require('../computed/network-records.js');
 
 const UIStrings = {
   /** Title of a Lighthouse audit that provides detail on whether fonts that used `font-display: optional` were preloaded. This descriptive title is shown to users when all fonts that used `font-display: optional` were preloaded. */
-  title: 'Preload fonts ',
+  title: 'Fonts with `font-display: optional` are preloaded',
   /** Title of a Lighthouse audit that provides detail on whether fonts that used `font-display: optional` were preloaded. This descriptive title is shown to users when one or more fonts used `font-display: optional` and were not preloaded. */
-  failureTitle: 'fail new audit',
+  failureTitle: 'Fonts with `font-display: optional` are not preloaded',
   /** Description of a Lighthouse audit that tells the user why they should preload fonts if they are using `font-display: optional`. This is displayed after a user expands the section to see more. No character length limits. 'Learn More' becomes link text to additional documentation. */
-  description: 'new audit description',
+  description: 'Preloading fonts that use `font-display: optional` can help reduce layout shifts and improve CLS. [Learn More](https://web.dev/preload-optional-fonts/)',
 };
 
 const str_ = i18n.createMessageInstanceIdFn(__filename, UIStrings);
