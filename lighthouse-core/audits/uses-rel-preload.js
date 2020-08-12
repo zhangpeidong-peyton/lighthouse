@@ -70,7 +70,7 @@ class UsesRelPreloadAudit extends Audit {
    * Finds which URLs were attempted to be preloaded, but failed to be reused and were requested again.
    *
    * @param {LH.Gatherer.Simulation.GraphNode} graph
-   * @return {{failedURLs: Set<string>, attemptedURLs: Set<string>}}
+   * @return {Set<string>}
    */
   static getURLsFailedToPreload(graph) {
     /** @type {Array<LH.Artifacts.NetworkRequest>} */
@@ -93,9 +93,7 @@ class UsesRelPreloadAudit extends Audit {
       if (!preloadURLsForFrame.has(request.url)) return false;
       return !request.isLinkPreload;
     });
-    const failedURLs = new Set(duplicateRequestsAfterPreload.map(req => req.url));
-    const attemptedURLs = new Set(preloadRequests.map(req => req.url));
-    return {failedURLs, attemptedURLs};
+    return new Set(duplicateRequestsAfterPreload.map(req => req.url));
   }
 
   /**
@@ -225,7 +223,7 @@ class UsesRelPreloadAudit extends Audit {
 
     /** @type {Array<string>|undefined} */
     let warnings;
-    const failedURLs = UsesRelPreloadAudit.getURLsFailedToPreload(graph).failedURLs;
+    const failedURLs = UsesRelPreloadAudit.getURLsFailedToPreload(graph);
     if (failedURLs.size) {
       warnings = Array.from(failedURLs)
         .map(preloadURL => str_(UIStrings.crossoriginWarning, {preloadURL}));
