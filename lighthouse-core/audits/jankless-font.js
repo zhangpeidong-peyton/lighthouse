@@ -82,7 +82,6 @@ class JanklessFontAudit extends Audit {
     /** @type {LH.Audit.Details.Table['headings']} */
     const headings = [
       {key: 'url', itemType: 'url', text: str_(i18n.UIStrings.columnURL)},
-      // TODO: show the CLS that could have been saved if font was preloaded.
     ];
 
     return {
