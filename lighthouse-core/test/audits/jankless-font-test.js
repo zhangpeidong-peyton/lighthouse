@@ -144,11 +144,71 @@ describe('Jankless Font Audit', () => {
         src: url('/assets/font-c.woff');
       }
     `;
+
     networkRecords = [];
 
     const result = await JanklessFontAudit.audit(getArtifacts(), context);
     expect(result.score).toEqual(1);
     expect(result.details.items).toEqual([]);
     expect(result.notApplicable).toEqual(true);
+  });
+
+  it('handles multiple fonts', async () => {
+    stylesheet.content = `
+      @font-face {
+        font-display: optional;
+        src: url('/assets/font-a.woff');
+      }
+
+      @font-face {
+        font-display: optional;
+        src: url('https://example.com/foo/bar/document-font.woff');
+      }
+
+      @font-face {
+        font-display: fallback;
+        src: url('/assets/font-b.woff');
+      }
+
+      @font-face {
+        font-display: optional;
+        src: url('/assets/font-c.woff');
+      }
+    `;
+
+    networkRecords = [
+      {
+        url: 'https://example.com/assets/font-a.woff',
+        endTime: 3, startTime: 1,
+        resourceType: 'Font',
+        isLinkPreload: true,
+      },
+      {
+        url: 'https://example.com/foo/bar/document-font.woff',
+        endTime: 3, startTime: 1,
+        resourceType: 'Font',
+        isLinkPreload: false,
+      },
+      {
+        url: 'https://example.com/assets/font-b.woff',
+        endTime: 3, startTime: 1,
+        resourceType: 'Font',
+        isLinkPreload: true,
+      },
+      {
+        url: 'https://example.com/assets/font-c.woff',
+        endTime: 3, startTime: 1,
+        resourceType: 'Font',
+        isLinkPreload: false,
+      },
+    ];
+
+    const result = await JanklessFontAudit.audit(getArtifacts(), context);
+    const items = [
+      {url: networkRecords[1].url},
+      {url: networkRecords[3].url},
+    ];
+    expect(result.score).toEqual(0);
+    expect(result.details.items).toEqual(items);
   });
 });
