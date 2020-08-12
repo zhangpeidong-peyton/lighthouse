@@ -44,6 +44,8 @@ class JanklessFontAudit extends Audit {
   /**
    * Finds which font URLs were attempted to be preloaded,
    * ignoring those that failed to be reused and were requested again.
+   * Note: document.fonts.load() is a valid way to preload fonts,
+   * but we are not currently checking for that.
    * @param {Array<LH.Artifacts.NetworkRequest>} networkRecords
    * @return {Set<string>}
    */
