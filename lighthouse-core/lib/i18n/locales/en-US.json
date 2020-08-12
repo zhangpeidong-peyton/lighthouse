@@ -825,7 +825,7 @@
     "message": "Allowed with warning"
   },
   "lighthouse-core/audits/jankless-font.js | description": {
-    "message": "Preloading fonts that use `font-display: optional` can help reduce layout shifts and improve CLS. [Learn More](https://web.dev/preload-optional-fonts/)"
+    "message": "Preloading fonts that use `font-display: optional` can help reduce layout shifts and improve CLS. [Learn More](https://web.dev/optimize-cls/#web-fonts-causing-foutfoit)"
   },
   "lighthouse-core/audits/jankless-font.js | failureTitle": {
     "message": "Fonts with `font-display: optional` are not preloaded"
