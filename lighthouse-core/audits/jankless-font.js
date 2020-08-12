@@ -66,15 +66,15 @@ class JanklessFontAudit extends Audit {
     const networkRecords = await NetworkRecords.request(devtoolsLog, context);
 
     // Gets the URLs of fonts where font-display: optional.
-    const passingURLs =
+    const optionalFontURLs =
       FontDisplay.findFontDisplayDeclarations(artifacts, PASSING_FONT_DISPLAY_REGEX).passingURLs;
 
     // Gets the URLs of fonts attempted to be preloaded.
-    const attemptedURLs =
+    const preloadedFontURLs =
       JanklessFontAudit.getURLsAttemptedToPreload(networkRecords);
 
-    const results = Array.from(passingURLs)
-      .filter(url => !attemptedURLs.has(url))
+    const results = Array.from(optionalFontURLs)
+      .filter(url => !preloadedFontURLs.has(url))
       .map(url => {
         return {url: url};
       });
@@ -88,7 +88,7 @@ class JanklessFontAudit extends Audit {
     return {
       score: results.length > 0 ? 0 : 1,
       details: Audit.makeTableDetails(headings, results),
-      notApplicable: passingURLs.size === 0,
+      notApplicable: optionalFontURLs.size === 0,
     };
   }
 }
