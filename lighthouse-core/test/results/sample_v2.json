@@ -1918,6 +1918,18 @@
         ]
       }
     },
+    "jankless-font": {
+      "id": "jankless-font",
+      "title": "new audit",
+      "description": "new audit description",
+      "score": 1,
+      "scoreDisplayMode": "binary",
+      "details": {
+        "type": "table",
+        "headings": [],
+        "items": []
+      }
+    },
     "pwa-cross-browser": {
       "id": "pwa-cross-browser",
       "title": "Site works cross-browser",
@@ -4389,6 +4401,11 @@
           "group": "diagnostics"
         },
         {
+          "id": "jankless-font",
+          "weight": 0,
+          "group": "diagnostics"
+        },
+        {
           "id": "network-requests",
           "weight": 0
         },
@@ -5568,6 +5585,12 @@
       {
         "startTime": 0,
         "name": "lh:audit:unsized-images",
+        "duration": 100,
+        "entryType": "measure"
+      },
+      {
+        "startTime": 0,
+        "name": "lh:audit:jankless-font",
         "duration": 100,
         "entryType": "measure"
       },
@@ -6869,6 +6892,12 @@
         "audits[link-name].details.headings[0].text",
         "audits[object-alt].details.headings[0].text",
         "audits[password-inputs-can-be-pasted-into].details.headings[0].text"
+      ],
+      "lighthouse-core/audits/jankless-font.js | title": [
+        "audits[jankless-font].title"
+      ],
+      "lighthouse-core/audits/jankless-font.js | description": [
+        "audits[jankless-font].description"
       ],
       "lighthouse-core/audits/manual/pwa-cross-browser.js | title": [
         "audits[pwa-cross-browser].title"

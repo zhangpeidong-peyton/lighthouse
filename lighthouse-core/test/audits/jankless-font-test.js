@@ -6,12 +6,118 @@
 'use strict';
 
 const JanklessFontAudit = require('../../audits/jankless-font.js');
+const networkRecordsToDevtoolsLog = require('../network-records-to-devtools-log.js');
 
 /* eslint-env jest */
 
-describe('Uses Rel Preload and Font Display Audit', () => {
-  it('does something', () => {
-    const value = 0;
-    expect(value).toEqual(0);
+describe('Jankless Font Audit', () => {
+  let networkRecords;
+  let stylesheet;
+  let context;
+
+  beforeEach(() => {
+    stylesheet = {content: '', header: {}};
+    context = {computedCache: new Map()};
+  });
+
+  function getArtifacts() {
+    return {
+      devtoolsLogs: {[JanklessFontAudit.DEFAULT_PASS]: networkRecordsToDevtoolsLog(networkRecords)},
+      URL: {finalUrl: 'https://example.com/foo/bar/page'},
+      CSSUsage: {stylesheets: [stylesheet]},
+    };
+  }
+
+  describe('font-display is optional', () => {
+    it('fails if the font is not preloaded', async () => {
+      stylesheet.content = `
+        @font-face {
+          font-display: optional;
+          src: url('/assets/font-a.woff');
+        }
+      `;
+
+      networkRecords = [
+        {
+          url: 'https://example.com/assets/font-a.woff',
+          endTime: 3, startTime: 1,
+          resourceType: 'Font',
+          isLinkPreload: false,
+        },
+      ];
+
+      const result = await JanklessFontAudit.audit(getArtifacts(), context);
+      const items = [
+        {url: networkRecords[0].url},
+      ];
+      expect(result.score).toEqual(0);
+      expect(result.details.items).toEqual(items);
+    });
+
+    it('passes if the font is preloaded', async () => {
+      stylesheet.content = `
+        @font-face {
+          font-display: optional;
+          src: url('/assets/font-a.woff');
+        }
+      `;
+
+      networkRecords = [
+        {
+          url: 'https://example.com/assets/font-a.woff',
+          endTime: 3, startTime: 1,
+          resourceType: 'Font',
+          isLinkPreload: true,
+        },
+      ];
+
+      const result = await JanklessFontAudit.audit(getArtifacts(), context);
+      expect(result.details.items).toEqual([]);
+      expect(result.score).toEqual(1);
+    });
+  });
+
+  describe('font-display is not optional', () => {
+    it('passes if the font is not preloaded', async () => {
+      stylesheet.content = `
+        @font-face {
+          src: url('/assets/font-a.woff');
+        }
+      `;
+
+      networkRecords = [
+        {
+          url: 'https://example.com/assets/font-a.woff',
+          endTime: 3, startTime: 1,
+          resourceType: 'Font',
+          isLinkPreload: false,
+        },
+      ];
+
+      const result = await JanklessFontAudit.audit(getArtifacts(), context);
+      expect(result.score).toEqual(1);
+      expect(result.details.items).toEqual([]);
+    });
+
+    it('passes if the font is preloaded', async () => {
+      stylesheet.content = `
+        @font-face {
+          src: url('/assets/font-a.woff');
+        }
+      `;
+
+      networkRecords = [
+        {
+          url: 'https://example.com/assets/font-a.woff',
+          endTime: 3, startTime: 1,
+          resourceType: 'Font',
+          isLinkPreload: true,
+        },
+      ];
+
+      const result = await JanklessFontAudit.audit(getArtifacts(), context);
+      expect(result.score).toEqual(1);
+      expect(result.details.items).toEqual([]);
+    });
   });
 });
