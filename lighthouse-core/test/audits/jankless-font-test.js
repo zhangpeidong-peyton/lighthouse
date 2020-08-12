@@ -120,4 +120,32 @@ describe('Jankless Font Audit', () => {
       expect(result.details.items).toEqual([]);
     });
   });
+
+  it('ignores fonts where font-display is not optional', async () => {
+    stylesheet.content = `
+      @font-face {
+        font-display: swap;
+        src: url('/assets/font-a.woff');
+      }
+
+      @font-face {
+        font-display: block;
+        src: url('https://example.com/foo/bar/document-font.woff');
+      }
+
+      @font-face {
+        font-display: fallback;
+        src: url('/assets/font-b.woff');
+      }
+
+      @font-face {
+        src: url('/assets/font-c.woff');
+      }
+    `;
+    networkRecords = [];
+
+    const result = await JanklessFontAudit.audit(getArtifacts(), context);
+    expect(result.score).toEqual(1);
+    expect(result.details.items).toEqual([]);
+  });
 });
