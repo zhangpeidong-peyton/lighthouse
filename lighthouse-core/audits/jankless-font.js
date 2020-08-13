@@ -78,7 +78,7 @@ class JanklessFontAudit extends Audit {
     const results = Array.from(optionalFontURLs)
       .filter(url => !preloadedFontURLs.has(url))
       .map(url => {
-        return {url: url};
+        return {url};
       });
 
     /** @type {LH.Audit.Details.Table['headings']} */
