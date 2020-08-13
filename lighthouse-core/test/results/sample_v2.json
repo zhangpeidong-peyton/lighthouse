@@ -4401,11 +4401,6 @@
           "group": "diagnostics"
         },
         {
-          "id": "jankless-font",
-          "weight": 0,
-          "group": "diagnostics"
-        },
-        {
           "id": "network-requests",
           "weight": 0
         },
@@ -4736,6 +4731,11 @@
         {
           "id": "image-size-responsive",
           "weight": 1,
+          "group": "best-practices-ux"
+        },
+        {
+          "id": "jankless-font",
+          "weight": 0,
           "group": "best-practices-ux"
         },
         {
