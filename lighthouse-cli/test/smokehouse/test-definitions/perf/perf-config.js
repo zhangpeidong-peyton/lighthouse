@@ -10,7 +10,7 @@ const perfConfig = {
   extends: 'lighthouse:default',
   settings: {
     throttlingMethod: 'devtools',
-    onlyCategories: ['performance'],
+    onlyCategories: ['performance', 'best-practices'],
 
     // A mixture of under, over, and meeting budget to exercise all paths.
     budgets: [{
