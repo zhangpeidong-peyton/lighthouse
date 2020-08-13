@@ -228,7 +228,7 @@ describe('CategoryRenderer', () => {
 
     const bestPracticeCat = sampleResults.categories['best-practices'];
     const categoryDOM2 = renderer.render(bestPracticeCat, sampleResults.categoryGroups);
-    assert.ok(!categoryDOM2.querySelector('.lh-clump--notapplicable'));
+    assert.ok(categoryDOM2.querySelector('.lh-clump--notapplicable'));
   });
 
   describe('category with groups', () => {
