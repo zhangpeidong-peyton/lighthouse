@@ -1921,7 +1921,7 @@
     "jankless-font": {
       "id": "jankless-font",
       "title": "Fonts with `font-display: optional` are preloaded",
-      "description": "Preloading fonts that use `font-display: optional` can help reduce layout shifts and improve CLS. [Learn More](https://web.dev/optimize-cls/#web-fonts-causing-foutfoit)",
+      "description": "Preloading optional fonts can reduce layout shifts and improve CLS. [Learn More](https://web.dev/optimize-cls/#web-fonts-causing-foutfoit)",
       "score": null,
       "scoreDisplayMode": "notApplicable",
       "details": {

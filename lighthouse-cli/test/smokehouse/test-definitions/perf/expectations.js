@@ -147,23 +147,21 @@ module.exports = [
         'font-display': {
           score: 0,
           details: {
-            items: {
-              0: {
+            items: [
+              {
                 url: 'http://localhost:10200/perf/lobster-v20-latin-regular.woff2',
               },
-              length: 1,
-            },
+            ],
           },
         },
         'jankless-font': {
           score: 0,
           details: {
-            items: {
-              0: {
+            items: [
+              {
                 url: 'http://localhost:10200/perf/lobster-two-v10-latin-700.woff2?delay=1000',
               },
-              length: 1,
-            },
+            ],
           },
         },
       },
