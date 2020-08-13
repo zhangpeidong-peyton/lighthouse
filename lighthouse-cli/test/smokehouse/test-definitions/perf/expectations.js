@@ -154,6 +154,7 @@ module.exports = [
             ],
           },
         },
+        // jankless-font isn't a performance audit, but can easily leverage the font pages present here.
         'jankless-font': {
           score: 0,
           details: {
