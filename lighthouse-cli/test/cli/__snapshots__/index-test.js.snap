@@ -755,7 +755,7 @@ Object {
         Object {
           "group": "best-practices-ux",
           "id": "jankless-font",
-          "weight": 0,
+          "weight": 1,
         },
         Object {
           "group": "best-practices-browser-compat",
