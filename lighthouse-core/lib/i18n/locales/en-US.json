@@ -824,15 +824,6 @@
   "lighthouse-core/audits/is-on-https.js | warning": {
     "message": "Allowed with warning"
   },
-  "lighthouse-core/audits/jankless-font.js | description": {
-    "message": "Preloading optional fonts can reduce layout shifts and improve CLS. [Learn More](https://web.dev/optimize-cls/#web-fonts-causing-foutfoit)"
-  },
-  "lighthouse-core/audits/jankless-font.js | failureTitle": {
-    "message": "Fonts with `font-display: optional` are not preloaded"
-  },
-  "lighthouse-core/audits/jankless-font.js | title": {
-    "message": "Fonts with `font-display: optional` are preloaded"
-  },
   "lighthouse-core/audits/large-javascript-libraries.js | columnLibraryName": {
     "message": "Library"
   },
@@ -1021,6 +1012,15 @@
   },
   "lighthouse-core/audits/performance-budget.js | title": {
     "message": "Performance budget"
+  },
+  "lighthouse-core/audits/preload-fonts.js | description": {
+    "message": "Preloading optional fonts can reduce layout shifts and improve CLS. [Learn More](https://web.dev/optimize-cls/#web-fonts-causing-foutfoit)"
+  },
+  "lighthouse-core/audits/preload-fonts.js | failureTitle": {
+    "message": "Fonts with `font-display: optional` are not preloaded"
+  },
+  "lighthouse-core/audits/preload-fonts.js | title": {
+    "message": "Fonts with `font-display: optional` are preloaded"
   },
   "lighthouse-core/audits/redirects-http.js | description": {
     "message": "If you've already set up HTTPS, make sure that you redirect all HTTP traffic to HTTPS in order to enable secure web features for all your users. [Learn more](https://web.dev/redirects-http/)."

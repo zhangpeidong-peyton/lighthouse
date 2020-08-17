@@ -5,7 +5,7 @@
  */
 'use strict';
 
-const JanklessFontAudit = require('../../audits/jankless-font.js');
+const PreloadFontsAudit = require('../../audits/preload-fonts.js');
 const networkRecordsToDevtoolsLog = require('../network-records-to-devtools-log.js');
 
 /* eslint-env jest */
@@ -22,7 +22,7 @@ describe('Jankless Font Audit', () => {
 
   function getArtifacts() {
     return {
-      devtoolsLogs: {[JanklessFontAudit.DEFAULT_PASS]: networkRecordsToDevtoolsLog(networkRecords)},
+      devtoolsLogs: {[PreloadFontsAudit.DEFAULT_PASS]: networkRecordsToDevtoolsLog(networkRecords)},
       URL: {finalUrl: 'https://example.com/foo/bar/page'},
       CSSUsage: {stylesheets: [stylesheet]},
     };
@@ -46,7 +46,7 @@ describe('Jankless Font Audit', () => {
         },
       ];
 
-      const result = await JanklessFontAudit.audit(getArtifacts(), context);
+      const result = await PreloadFontsAudit.audit(getArtifacts(), context);
       const items = [
         {url: networkRecords[0].url},
       ];
@@ -71,7 +71,7 @@ describe('Jankless Font Audit', () => {
         },
       ];
 
-      const result = await JanklessFontAudit.audit(getArtifacts(), context);
+      const result = await PreloadFontsAudit.audit(getArtifacts(), context);
       expect(result.details.items).toEqual([]);
       expect(result.score).toEqual(1);
     });
@@ -94,7 +94,7 @@ describe('Jankless Font Audit', () => {
         },
       ];
 
-      const result = await JanklessFontAudit.audit(getArtifacts(), context);
+      const result = await PreloadFontsAudit.audit(getArtifacts(), context);
       expect(result.score).toEqual(1);
       expect(result.details.items).toEqual([]);
       expect(result.notApplicable).toEqual(true);
@@ -116,7 +116,7 @@ describe('Jankless Font Audit', () => {
         },
       ];
 
-      const result = await JanklessFontAudit.audit(getArtifacts(), context);
+      const result = await PreloadFontsAudit.audit(getArtifacts(), context);
       expect(result.score).toEqual(1);
       expect(result.details.items).toEqual([]);
       expect(result.notApplicable).toEqual(true);
@@ -147,7 +147,7 @@ describe('Jankless Font Audit', () => {
 
     networkRecords = [];
 
-    const result = await JanklessFontAudit.audit(getArtifacts(), context);
+    const result = await PreloadFontsAudit.audit(getArtifacts(), context);
     expect(result.score).toEqual(1);
     expect(result.details.items).toEqual([]);
     expect(result.notApplicable).toEqual(true);
@@ -203,7 +203,7 @@ describe('Jankless Font Audit', () => {
       },
     ];
 
-    const result = await JanklessFontAudit.audit(getArtifacts(), context);
+    const result = await PreloadFontsAudit.audit(getArtifacts(), context);
     const items = [
       {url: networkRecords[1].url},
       {url: networkRecords[3].url},

@@ -100,7 +100,7 @@ Object {
       "path": "image-size-responsive",
     },
     Object {
-      "path": "jankless-font",
+      "path": "preload-fonts",
     },
     Object {
       "path": "deprecations",
@@ -754,7 +754,7 @@ Object {
         },
         Object {
           "group": "best-practices-ux",
-          "id": "jankless-font",
+          "id": "preload-fonts",
           "weight": 1,
         },
         Object {

@@ -670,8 +670,8 @@
         ]
       }
     },
-    "jankless-font": {
-      "id": "jankless-font",
+    "preload-fonts": {
+      "id": "preload-fonts",
       "title": "Fonts with `font-display: optional` are preloaded",
       "description": "Preloading optional fonts can reduce layout shifts and improve CLS. [Learn More](https://web.dev/optimize-cls/#web-fonts-causing-foutfoit)",
       "score": null,
@@ -4753,7 +4753,7 @@
           "group": "best-practices-ux"
         },
         {
-          "id": "jankless-font",
+          "id": "preload-fonts",
           "weight": 0,
           "group": "best-practices-ux"
         },
@@ -5447,7 +5447,7 @@
       },
       {
         "startTime": 0,
-        "name": "lh:audit:jankless-font",
+        "name": "lh:audit:preload-fonts",
         "duration": 100,
         "entryType": "measure"
       },
@@ -6615,11 +6615,11 @@
       "lighthouse-core/audits/image-size-responsive.js | columnExpected": [
         "audits[image-size-responsive].details.headings[4].text"
       ],
-      "lighthouse-core/audits/jankless-font.js | title": [
-        "audits[jankless-font].title"
+      "lighthouse-core/audits/preload-fonts.js | title": [
+        "audits[preload-fonts].title"
       ],
-      "lighthouse-core/audits/jankless-font.js | description": [
-        "audits[jankless-font].description"
+      "lighthouse-core/audits/preload-fonts.js | description": [
+        "audits[preload-fonts].description"
       ],
       "lighthouse-core/audits/deprecations.js | failureTitle": [
         "audits.deprecations.title"

@@ -154,7 +154,7 @@ module.exports = [
             ],
           },
         },
-        'jankless-font': {
+        'preload-fonts': {
           score: 0,
           details: {
             items: [

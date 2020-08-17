@@ -39,11 +39,11 @@
       }
     </style>
     <link rel="stylesheet" href="http://localhost:10503/perf/cors-fonts.css">
-    <!-- PASS(jankless-font): not applicable unless font-display: optional -->
+    <!-- PASS(preload-fonts): not applicable unless font-display: optional -->
     <link rel="preload" href="http://localhost:10200/perf/fonts/lobster-v20-latin-regular.woff2" as="font">
-    <!-- PASS(jankless-font): font-display: optional & preloaded -->
+    <!-- PASS(preload-fonts): font-display: optional & preloaded -->
     <link rel="preload" href="http://localhost:10200/perf/lobster-two-v10-latin-700.woff2?delay=4000" as="font" crossorigin="anonymous">
-    <!-- PASS(jankless-font): font-display: optional & attempted preload, we ignore the re-requests from missing crossorigin attribute -->
+    <!-- PASS(preload-fonts): font-display: optional & attempted preload, we ignore the re-requests from missing crossorigin attribute -->
     <link rel="preload" href="http://localhost:10503/perf/lobster-two-v10-latin-700.woff2?cors=true" as="font">
   </head>
   <body>
@@ -51,7 +51,7 @@
     <p><strong class="webfont">Let's load some sweet webfonts...</strong></p>
     <p class="nofont">Some lovely text that uses the fallback font</p>
     <p class="corsfont">Some lovely text that uses a CORS font</p>
-    <!-- FAIL(jankless-font): font-display: optional but no preload -->
+    <!-- FAIL(preload-fonts): font-display: optional but no preload -->
     <p class="optionalfont">Some lovely text that uses an optional font</p>
   </body>
 </html>

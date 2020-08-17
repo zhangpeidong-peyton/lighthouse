@@ -33,7 +33,7 @@ class JanklessFontAudit extends Audit {
    */
   static get meta() {
     return {
-      id: 'jankless-font',
+      id: 'preload-fonts',
       title: str_(UIStrings.title),
       failureTitle: str_(UIStrings.failureTitle),
       description: str_(UIStrings.description),
