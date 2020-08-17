@@ -27,7 +27,7 @@ const UIStrings = {
 
 const str_ = i18n.createMessageInstanceIdFn(__filename, UIStrings);
 
-class JanklessFontAudit extends Audit {
+class PreloadFontsAudit extends Audit {
   /**
    * @return {LH.Audit.Meta}
    */
@@ -73,7 +73,7 @@ class JanklessFontAudit extends Audit {
 
     // Gets the URLs of fonts attempted to be preloaded.
     const preloadedFontURLs =
-      JanklessFontAudit.getURLsAttemptedToPreload(networkRecords);
+      PreloadFontsAudit.getURLsAttemptedToPreload(networkRecords);
 
     const results = Array.from(optionalFontURLs)
       .filter(url => !preloadedFontURLs.has(url))
@@ -94,5 +94,5 @@ class JanklessFontAudit extends Audit {
   }
 }
 
-module.exports = JanklessFontAudit;
+module.exports = PreloadFontsAudit;
 module.exports.UIStrings = UIStrings;

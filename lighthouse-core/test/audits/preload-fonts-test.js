@@ -10,7 +10,7 @@ const networkRecordsToDevtoolsLog = require('../network-records-to-devtools-log.
 
 /* eslint-env jest */
 
-describe('Jankless Font Audit', () => {
+describe('Preload Fonts Audit', () => {
   let networkRecords;
   let stylesheet;
   let context;
