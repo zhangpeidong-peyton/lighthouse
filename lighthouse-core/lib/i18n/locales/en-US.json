@@ -1014,7 +1014,7 @@
     "message": "Performance budget"
   },
   "lighthouse-core/audits/preload-fonts.js | description": {
-    "message": "Preloading optional fonts can reduce layout shifts and improve CLS. [Learn More](https://web.dev/optimize-cls/#web-fonts-causing-foutfoit)"
+    "message": "Preloading optional fonts can reduce layout shifts and improve CLS. [Learn More](https://web.dev/preload-optional-fonts/)"
   },
   "lighthouse-core/audits/preload-fonts.js | failureTitle": {
     "message": "Fonts with `font-display: optional` are not preloaded"
