@@ -72,7 +72,7 @@ const traceEventsToKeepInProcess = new Set([
   ...traceEventsToKeepInToplevelTask,
 
   // See the DevTools marker events
-  // https://cs.chromium.org/chromium/src/third_party/devtools-frontend/src/front_end/timeline_model/TimelineModel.js?type=cs&q=f:devtools+-f:out+%22MarkLoad:+%27%22&sq=package:chromium&g=0&l=1506
+  // https://source.chromium.org/chromium/chromium/src/+/master:third_party/devtools-frontend/src/front_end/timeline_model/TimelineModel.js?q=-f:out%20f:TimelineModel%20%22MarkLoad:%20%27%22&ss=chromium
   'firstPaint',
   'firstContentfulPaint',
   'firstMeaningfulPaint',

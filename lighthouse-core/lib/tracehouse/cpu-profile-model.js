@@ -11,7 +11,7 @@
  * This model converts the `Profile` and `ProfileChunk` mega trace events from the `disabled-by-default-v8.cpu_profiler`
  * category into B/E-style trace events that main-thread-tasks.js already knows how to parse into a task tree.
  *
- * The CPU profiler measures where time is being spent by sampling the stack (See https://www.jetbrains.com/help/profiler/Profiling_Guidelines__Choosing_the_Right_Profiling_Mode.html
+ * The V8 CPU profiler measures where time is being spent by sampling the stack (See https://www.jetbrains.com/help/profiler/Profiling_Guidelines__Choosing_the_Right_Profiling_Mode.html
  * for a generic description of the differences between tracing and sampling).
  *
  * A `Profile` event is a record of the stack that was being executed at different sample points in time.
