@@ -1705,6 +1705,13 @@
         }
       }
     },
+    "lazy-third-party": {
+      "id": "lazy-third-party",
+      "title": "Lazy load third-party resources",
+      "description": "Some third-party resources can be fetched after the page loads. These third-party resources are used by embedded elements which can be replaced by a facade until the user needs to use them. [Learn more]().",
+      "score": null,
+      "scoreDisplayMode": "notApplicable"
+    },
     "largest-contentful-paint-element": {
       "id": "largest-contentful-paint-element",
       "title": "Largest Contentful Paint element",
@@ -4419,6 +4426,11 @@
           "group": "diagnostics"
         },
         {
+          "id": "lazy-third-party",
+          "weight": 0,
+          "group": "diagnostics"
+        },
+        {
           "id": "largest-contentful-paint-element",
           "weight": 0,
           "group": "diagnostics"
@@ -5602,6 +5614,12 @@
       {
         "startTime": 0,
         "name": "lh:audit:third-party-summary",
+        "duration": 100,
+        "entryType": "measure"
+      },
+      {
+        "startTime": 0,
+        "name": "lh:audit:lazy-third-party",
         "duration": 100,
         "entryType": "measure"
       },
@@ -6861,6 +6879,12 @@
       ],
       "lighthouse-core/audits/third-party-summary.js | columnBlockingTime": [
         "audits[third-party-summary].details.headings[2].text"
+      ],
+      "lighthouse-core/audits/lazy-third-party.js | title": [
+        "audits[lazy-third-party].title"
+      ],
+      "lighthouse-core/audits/lazy-third-party.js | description": [
+        "audits[lazy-third-party].description"
       ],
       "lighthouse-core/audits/largest-contentful-paint-element.js | title": [
         "audits[largest-contentful-paint-element].title"

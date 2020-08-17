@@ -860,6 +860,18 @@
   "lighthouse-core/audits/layout-shift-elements.js | title": {
     "message": "Âv́ôíd̂ ĺâŕĝé l̂áŷóût́ ŝh́îf́t̂ś"
   },
+  "lighthouse-core/audits/lazy-third-party.js | description": {
+    "message": "Ŝóm̂é t̂h́îŕd̂-ṕâŕt̂ý r̂éŝóûŕĉéŝ ćâń b̂é f̂ét̂ćĥéd̂ áf̂t́êŕ t̂h́ê ṕâǵê ĺôád̂ś. T̂h́êśê t́ĥír̂d́-p̂ár̂t́ŷ ŕêśôúr̂ćêś âŕê úŝéd̂ b́ŷ ém̂b́êd́d̂éd̂ él̂ém̂én̂t́ŝ ẃĥíĉh́ ĉán̂ b́ê ŕêṕl̂áĉéd̂ b́ŷ á f̂áĉád̂é ûńt̂íl̂ t́ĥé ûśêŕ n̂éêd́ŝ t́ô úŝé t̂h́êḿ. [L̂éâŕn̂ ḿôŕê]()."
+  },
+  "lighthouse-core/audits/lazy-third-party.js | displayValue": {
+    "message": "{itemCount, plural,\n  =1 {# l̂áẑý l̂óâd́âb́l̂é r̂éŝóûŕĉé f̂óûńd̂}\n  other {# ĺâźŷ ĺôád̂áb̂ĺê ŕêśôúr̂ćêś f̂óûńd̂}\n  }"
+  },
+  "lighthouse-core/audits/lazy-third-party.js | failureTitle": {
+    "message": "Ŝóm̂é t̂h́îŕd̂-ṕâŕt̂ý r̂éŝóûŕĉéŝ ćâń b̂é l̂áẑý l̂óâd́êd́"
+  },
+  "lighthouse-core/audits/lazy-third-party.js | title": {
+    "message": "L̂áẑý l̂óâd́ t̂h́îŕd̂-ṕâŕt̂ý r̂éŝóûŕĉéŝ"
+  },
   "lighthouse-core/audits/load-fast-enough-for-pwa.js | description": {
     "message": "Â f́âśt̂ ṕâǵê ĺôád̂ óv̂ér̂ á ĉél̂ĺûĺâŕ n̂ét̂ẃôŕk̂ én̂śûŕêś â ǵôód̂ ḿôb́îĺê úŝér̂ éx̂ṕêŕîén̂ćê. [Ĺêár̂ń m̂ór̂é](https://web.dev/load-fast-enough-for-pwa/)."
   },

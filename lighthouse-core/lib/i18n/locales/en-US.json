@@ -860,6 +860,18 @@
   "lighthouse-core/audits/layout-shift-elements.js | title": {
     "message": "Avoid large layout shifts"
   },
+  "lighthouse-core/audits/lazy-third-party.js | description": {
+    "message": "Some third-party resources can be fetched after the page loads. These third-party resources are used by embedded elements which can be replaced by a facade until the user needs to use them. [Learn more]()."
+  },
+  "lighthouse-core/audits/lazy-third-party.js | displayValue": {
+    "message": "{itemCount, plural,\n  =1 {# lazy loadable resource found}\n  other {# lazy loadable resources found}\n  }"
+  },
+  "lighthouse-core/audits/lazy-third-party.js | failureTitle": {
+    "message": "Some third-party resources can be lazy loaded"
+  },
+  "lighthouse-core/audits/lazy-third-party.js | title": {
+    "message": "Lazy load third-party resources"
+  },
   "lighthouse-core/audits/load-fast-enough-for-pwa.js | description": {
     "message": "A fast page load over a cellular network ensures a good mobile user experience. [Learn more](https://web.dev/load-fast-enough-for-pwa/)."
   },
