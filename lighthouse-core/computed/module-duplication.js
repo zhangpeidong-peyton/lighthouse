@@ -40,6 +40,33 @@ class ModuleDuplication {
   }
 
   /**
+   * @param {Map<string, Array<{scriptUrl: string, resourceSize: number}>>} sourceDataAggregated
+   */
+  static _normalizeAggregatedData(sourceDataAggregated) {
+    // Sort by resource size.
+    for (const sourceData of sourceDataAggregated.values()) {
+      if (sourceData.length > 1) sourceData.sort((a, b) => b.resourceSize - a.resourceSize);
+    }
+
+    // Remove modules smaller than 50% size of largest.
+    for (const [key, sourceData] of sourceDataAggregated.entries()) {
+      if (sourceData.length === 1) continue;
+
+      const largestResourceSize = sourceData[0].resourceSize;
+      const filteredSourceData = sourceData.filter(data => {
+        const diff = largestResourceSize - data.resourceSize;
+        return diff / largestResourceSize < 0.5;
+      });
+      sourceDataAggregated.set(key, filteredSourceData);
+    }
+
+    // Delete source datas with only one value (no duplicates).
+    for (const [key, sourceData] of sourceDataAggregated.entries()) {
+      if (sourceData.length === 1) sourceDataAggregated.delete(key);
+    }
+  }
+
+  /**
    * @param {LH.Artifacts} artifacts
    * @param {LH.Audit.Context} context
    */
@@ -92,11 +119,7 @@ class ModuleDuplication {
       }
     }
 
-    for (const [key, value] of sourceDataAggregated.entries()) {
-      if (value.length === 1) sourceDataAggregated.delete(key);
-      else value.sort((a, b) => b.resourceSize - a.resourceSize);
-    }
-
+    this._normalizeAggregatedData(sourceDataAggregated);
     return sourceDataAggregated;
   }
 }

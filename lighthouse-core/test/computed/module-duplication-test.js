@@ -134,16 +134,6 @@ describe('ModuleDuplication computed artifact', () => {
             "scriptUrl": "https://example.com/coursehero-bundle-1.js",
           },
         ],
-        "node_modules/@babel/runtime/helpers/applyDecoratedDescriptor.js" => Array [
-          Object {
-            "resourceSize": 892,
-            "scriptUrl": "https://example.com/coursehero-bundle-1.js",
-          },
-          Object {
-            "resourceSize": 446,
-            "scriptUrl": "https://example.com/coursehero-bundle-2.js",
-          },
-        ],
         "node_modules/@babel/runtime/helpers/possibleConstructorReturn.js" => Array [
           Object {
             "resourceSize": 230,
@@ -184,16 +174,6 @@ describe('ModuleDuplication computed artifact', () => {
             "scriptUrl": "https://example.com/coursehero-bundle-1.js",
           },
         ],
-        "node_modules/@babel/runtime/helpers/extends.js" => Array [
-          Object {
-            "resourceSize": 490,
-            "scriptUrl": "https://example.com/coursehero-bundle-1.js",
-          },
-          Object {
-            "resourceSize": 245,
-            "scriptUrl": "https://example.com/coursehero-bundle-2.js",
-          },
-        ],
         "node_modules/@babel/runtime/helpers/typeof.js" => Array [
           Object {
             "resourceSize": 992,
@@ -212,16 +192,6 @@ describe('ModuleDuplication computed artifact', () => {
           Object {
             "resourceSize": 260,
             "scriptUrl": "https://example.com/coursehero-bundle-1.js",
-          },
-        ],
-        "js/src/common/base-component.ts" => Array [
-          Object {
-            "resourceSize": 459,
-            "scriptUrl": "https://example.com/coursehero-bundle-1.js",
-          },
-          Object {
-            "resourceSize": 216,
-            "scriptUrl": "https://example.com/coursehero-bundle-2.js",
           },
         ],
         "js/src/utils/service/amplitude-service.ts" => Array [
@@ -244,16 +214,6 @@ describe('ModuleDuplication computed artifact', () => {
             "scriptUrl": "https://example.com/coursehero-bundle-2.js",
           },
         ],
-        "js/src/utils/service/api-service.ts" => Array [
-          Object {
-            "resourceSize": 116,
-            "scriptUrl": "https://example.com/coursehero-bundle-1.js",
-          },
-          Object {
-            "resourceSize": 54,
-            "scriptUrl": "https://example.com/coursehero-bundle-2.js",
-          },
-        ],
         "js/src/common/decorators/throttle.ts" => Array [
           Object {
             "resourceSize": 251,
@@ -271,16 +231,6 @@ describe('ModuleDuplication computed artifact', () => {
           },
           Object {
             "resourceSize": 563,
-            "scriptUrl": "https://example.com/coursehero-bundle-2.js",
-          },
-        ],
-        "js/src/utils/service/global-service.ts" => Array [
-          Object {
-            "resourceSize": 336,
-            "scriptUrl": "https://example.com/coursehero-bundle-1.js",
-          },
-          Object {
-            "resourceSize": 167,
             "scriptUrl": "https://example.com/coursehero-bundle-2.js",
           },
         ],
@@ -572,5 +522,61 @@ describe('ModuleDuplication computed artifact', () => {
     for (const [input, expected] of testCases) {
       expect(ModuleDuplication._normalizeSource(input)).toBe(expected);
     }
+  });
+
+  describe('_normalizeAggregatedData', () => {
+    it('removes entries with just one value', () => {
+      const data = new Map([['a.js', [{resourceSize: 100}]]]);
+      ModuleDuplication._normalizeAggregatedData(data);
+      expect(data).toMatchInlineSnapshot(`Map {}`);
+    });
+
+    it('sorts entries based on resource size', () => {
+      const data = new Map([
+        ['a.js', [{resourceSize: 250}, {resourceSize: 200}]],
+        ['b.js', [{resourceSize: 200}, {resourceSize: 250}]],
+      ]);
+      ModuleDuplication._normalizeAggregatedData(data);
+      expect(data).toMatchInlineSnapshot(`
+        Map {
+          "a.js" => Array [
+            Object {
+              "resourceSize": 250,
+            },
+            Object {
+              "resourceSize": 200,
+            },
+          ],
+          "b.js" => Array [
+            Object {
+              "resourceSize": 250,
+            },
+            Object {
+              "resourceSize": 200,
+            },
+          ],
+        }
+      `);
+    });
+
+    it('removes data if size is much smaller than the largest', () => {
+      const data = new Map([
+        ['a.js', [{resourceSize: 200}, {resourceSize: 1}, {resourceSize: 250}]],
+        ['b.js', [{resourceSize: 250}, {resourceSize: 1}]],
+      ]);
+      ModuleDuplication._normalizeAggregatedData(data);
+      expect(data).toMatchInlineSnapshot(`
+        Map {
+          "a.js" => Array [
+            Object {
+              "resourceSize": 250,
+            },
+            Object {
+              "resourceSize": 200,
+            },
+          ],
+        }
+      `);
+    });
   });
 });
