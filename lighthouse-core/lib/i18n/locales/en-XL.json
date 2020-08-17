@@ -1014,7 +1014,7 @@
     "message": "P̂ér̂f́ôŕm̂án̂ćê b́ûd́ĝét̂"
   },
   "lighthouse-core/audits/preload-fonts.js | description": {
-    "message": "P̂ŕêĺôád̂ín̂ǵ ôṕt̂íôńâĺ f̂ón̂t́ŝ ćâń r̂éd̂úĉé l̂áŷóût́ ŝh́îf́t̂ś âńd̂ ím̂ṕr̂óv̂é ĈĹŜ. [Ĺêár̂ń M̂ór̂é](https://web.dev/preload-optional-fonts/)"
+    "message": "P̂ŕêĺôád̂ `optional` f́ôńt̂ś ŝó f̂ír̂śt̂-t́îḿê v́îśît́ôŕŝ ḿâý ûśê t́ĥém̂. [Ĺêár̂ń M̂ór̂é](https://web.dev/preload-optional-fonts/)"
   },
   "lighthouse-core/audits/preload-fonts.js | failureTitle": {
     "message": "F̂ón̂t́ŝ ẃît́ĥ `font-display: optional` ár̂é n̂ót̂ ṕr̂él̂óâd́êd́"

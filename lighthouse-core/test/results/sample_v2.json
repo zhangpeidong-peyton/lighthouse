@@ -673,7 +673,7 @@
     "preload-fonts": {
       "id": "preload-fonts",
       "title": "Fonts with `font-display: optional` are not preloaded",
-      "description": "Preloading optional fonts can reduce layout shifts and improve CLS. [Learn More](https://web.dev/preload-optional-fonts/)",
+      "description": "Preload `optional` fonts so first-time visitors may use them. [Learn More](https://web.dev/preload-optional-fonts/)",
       "score": 0,
       "scoreDisplayMode": "binary",
       "details": {
