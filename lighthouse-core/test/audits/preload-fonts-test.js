@@ -118,7 +118,7 @@ describe('Preload Fonts Audit', () => {
     });
   });
 
-  it('ignores fonts where font-display is not optional', async () => {
+  it('is not applicable on fonts where font-display is not optional', async () => {
     stylesheet.content = `
       @font-face {
         font-display: swap;
