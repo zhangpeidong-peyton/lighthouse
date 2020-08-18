@@ -40,18 +40,16 @@ describe('Preload Fonts Audit', () => {
       networkRecords = [
         {
           url: 'https://example.com/assets/font-a.woff',
-          endTime: 3, startTime: 1,
           resourceType: 'Font',
           isLinkPreload: false,
         },
       ];
 
       const result = await PreloadFontsAudit.audit(getArtifacts(), context);
-      const items = [
-        {url: networkRecords[0].url},
-      ];
       expect(result.score).toEqual(0);
-      expect(result.details.items).toEqual(items);
+      expect(result.details.items).toEqual([
+        {url: networkRecords[0].url},
+      ]);
     });
 
     it('passes if the font is preloaded', async () => {
@@ -65,7 +63,6 @@ describe('Preload Fonts Audit', () => {
       networkRecords = [
         {
           url: 'https://example.com/assets/font-a.woff',
-          endTime: 3, startTime: 1,
           resourceType: 'Font',
           isLinkPreload: true,
         },
@@ -88,7 +85,6 @@ describe('Preload Fonts Audit', () => {
       networkRecords = [
         {
           url: 'https://example.com/assets/font-a.woff',
-          endTime: 3, startTime: 1,
           resourceType: 'Font',
           isLinkPreload: false,
         },
@@ -110,7 +106,6 @@ describe('Preload Fonts Audit', () => {
       networkRecords = [
         {
           url: 'https://example.com/assets/font-a.woff',
-          endTime: 3, startTime: 1,
           resourceType: 'Font',
           isLinkPreload: true,
         },
@@ -123,7 +118,7 @@ describe('Preload Fonts Audit', () => {
     });
   });
 
-  it('is not applicable on fonts where font-display is not optional', async () => {
+  it('ignores fonts where font-display is not optional', async () => {
     stylesheet.content = `
       @font-face {
         font-display: swap;
@@ -179,36 +174,31 @@ describe('Preload Fonts Audit', () => {
     networkRecords = [
       {
         url: 'https://example.com/assets/font-a.woff',
-        endTime: 3, startTime: 1,
         resourceType: 'Font',
         isLinkPreload: true,
       },
       {
         url: 'https://example.com/foo/bar/document-font.woff',
-        endTime: 3, startTime: 1,
         resourceType: 'Font',
         isLinkPreload: false,
       },
       {
         url: 'https://example.com/assets/font-b.woff',
-        endTime: 3, startTime: 1,
         resourceType: 'Font',
         isLinkPreload: true,
       },
       {
         url: 'https://example.com/assets/font-c.woff',
-        endTime: 3, startTime: 1,
         resourceType: 'Font',
         isLinkPreload: false,
       },
     ];
 
     const result = await PreloadFontsAudit.audit(getArtifacts(), context);
-    const items = [
+    expect(result.score).toEqual(0);
+    expect(result.details.items).toEqual([
       {url: networkRecords[1].url},
       {url: networkRecords[3].url},
-    ];
-    expect(result.score).toEqual(0);
-    expect(result.details.items).toEqual(items);
+    ]);
   });
 });
