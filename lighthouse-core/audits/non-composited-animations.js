@@ -20,7 +20,7 @@ const UIStrings = {
   /** Description of a diagnostic LH audit that shows the user animations that are not composited. */
   description: 'Animations which are not composited can be janky and contribute to CLS. ' +
     '[Learn more](https://web.dev/non-composited-animations)',
-  /** [ICU Syntax] Label identifying the number of animations that are not composited. */
+  /** [ICU Syntax] Label identifying the number of animated elements that are not composited. */
   displayValue: `{itemCount, plural,
   =1 {# animated element found}
   other {# animated elements found}
