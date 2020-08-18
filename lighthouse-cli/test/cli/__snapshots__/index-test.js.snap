@@ -160,6 +160,18 @@ Object {
       "path": "long-tasks",
     },
     Object {
+      "path": "no-unload-listeners",
+    },
+    Object {
+      "path": "non-composited-animations",
+    },
+    Object {
+      "path": "unsized-images",
+    },
+    Object {
+      "path": "large-javascript-libraries",
+    },
+    Object {
       "path": "manual/pwa-cross-browser",
     },
     Object {
@@ -749,6 +761,11 @@ Object {
         },
         Object {
           "group": "best-practices-general",
+          "id": "no-unload-listeners",
+          "weight": 1,
+        },
+        Object {
+          "group": "best-practices-general",
           "id": "appcache-manifest",
           "weight": 1,
         },
@@ -890,6 +907,11 @@ Object {
         },
         Object {
           "group": "load-opportunities",
+          "id": "uses-http2",
+          "weight": 0,
+        },
+        Object {
+          "group": "load-opportunities",
           "id": "efficient-animated-content",
           "weight": 0,
         },
@@ -975,11 +997,6 @@ Object {
         },
         Object {
           "group": "diagnostics",
-          "id": "uses-http2",
-          "weight": 0,
-        },
-        Object {
-          "group": "diagnostics",
           "id": "uses-passive-event-listeners",
           "weight": 0,
         },
@@ -991,6 +1008,21 @@ Object {
         Object {
           "group": "diagnostics",
           "id": "long-tasks",
+          "weight": 0,
+        },
+        Object {
+          "group": "diagnostics",
+          "id": "non-composited-animations",
+          "weight": 0,
+        },
+        Object {
+          "group": "diagnostics",
+          "id": "unsized-images",
+          "weight": 0,
+        },
+        Object {
+          "group": "diagnostics",
+          "id": "large-javascript-libraries",
           "weight": 0,
         },
         Object {
@@ -1321,7 +1353,13 @@ Object {
           "path": "iframe-elements",
         },
         Object {
+          "path": "form-elements",
+        },
+        Object {
           "path": "main-document-content",
+        },
+        Object {
+          "path": "global-listeners",
         },
         Object {
           "path": "dobetterweb/appcache",

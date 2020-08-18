@@ -84,6 +84,15 @@ const expectations = [
       requestedUrl: 'http://localhost:10200/byte-efficiency/tester.html',
       finalUrl: 'http://localhost:10200/byte-efficiency/tester.html',
       audits: {
+        'uses-http2': {
+          score: '<1',
+          details: {
+            overallSavingsMs: '>0',
+            items: {
+              length: '>10',
+            },
+          },
+        },
         'unminified-css': {
           details: {
             overallSavingsBytes: '>17000',
@@ -184,7 +193,7 @@ const expectations = [
           details: {
             overallSavingsBytes: '>60000',
             items: {
-              length: 5,
+              length: 6,
             },
           },
         },
@@ -211,12 +220,13 @@ const expectations = [
         // Check that images aren't TOO BIG.
         'uses-responsive-images': {
           details: {
-            overallSavingsBytes: '108000 +/- 5000',
+            overallSavingsBytes: '113000 +/- 5000',
             items: [
               {wastedPercent: '56 +/- 5', url: /lighthouse-1024x680.jpg/},
               {wastedPercent: '78 +/- 5', url: /lighthouse-2048x1356.webp\?size0/},
               {wastedPercent: '56 +/- 5', url: /lighthouse-480x320.webp/},
               {wastedPercent: '20 +/- 5', url: /lighthouse-480x320.jpg/},
+              {wastedPercent: '20 +/- 5', url: /lighthouse-480x320\.jpg\?attributesized/},
             ],
           },
         },
@@ -224,10 +234,20 @@ const expectations = [
         'image-size-responsive': {
           details: {
             items: [
-              // One of these two is the ?duplicate variant but sort order isn't guaranteed
+              // One of these is the ?duplicate variant and another is the
+              // ?cssauto variant but sort order isn't guaranteed
               // since the pixel diff is equivalent for identical images.
               {url: /lighthouse-320x212-poor.jpg/},
               {url: /lighthouse-320x212-poor.jpg/},
+              {url: /lighthouse-320x212-poor.jpg/},
+            ],
+          },
+        },
+        'unsized-images': {
+          details: {
+            items: [
+              {url: /lighthouse-320x212-poor\.jpg/},
+              {url: /lighthouse-320x212-poor\.jpg\?cssauto/},
             ],
           },
         },

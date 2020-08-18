@@ -14,9 +14,14 @@
 const config = {
   extends: 'lighthouse:default',
   audits: [
+    'full-page-screenshot',
   ],
-  categories: {
-  },
+  passes: [{
+    passName: 'defaultPass',
+    gatherers: [
+      'full-page-screenshot',
+    ],
+  }],
 };
 
 module.exports = config;

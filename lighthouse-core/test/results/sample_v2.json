@@ -1,14 +1,14 @@
 {
-  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3358.0 Safari/537.36",
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4232.0 Safari/537.36",
   "environment": {
     "networkUserAgent": "Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5 Build/MRA58N) AppleWebKit/537.36(KHTML, like Gecko) Chrome/66.0.3359.30 Mobile Safari/537.36",
-    "hostUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3358.0 Safari/537.36",
+    "hostUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4232.0 Safari/537.36",
     "benchmarkIndex": 1000,
     "credits": {
       "axe-core": "2.1.1"
     }
   },
-  "lighthouseVersion": "6.1.0",
+  "lighthouseVersion": "6.2.0",
   "fetchTime": "2018-03-13T00:55:45.840Z",
   "requestedUrl": "http://localhost:10200/dobetterweb/dbw_tester.html",
   "finalUrl": "http://localhost:10200/dobetterweb/dbw_tester.html",
@@ -473,21 +473,12 @@
                 }
               }
             }
-          },
-          "75994.33": {
-            "request": {
-              "url": "http://localhost:10200/favicon.ico",
-              "startTime": 185608.288594,
-              "endTime": 185608.857719,
-              "responseReceivedTime": 185608.85586200003,
-              "transferSize": 221
-            }
           }
         },
         "longestChain": {
-          "duration": 5536.498000001302,
-          "length": 1,
-          "transferSize": 221
+          "duration": 4796.288000012282,
+          "length": 2,
+          "transferSize": 30174
         }
       }
     },
@@ -1385,6 +1376,8 @@
             "totalBlockingTime": 117,
             "maxPotentialFID": 123,
             "cumulativeLayoutShift": 0.42,
+            "observedTimeOrigin": 0,
+            "observedTimeOriginTs": 185603319912,
             "observedNavigationStart": 0,
             "observedNavigationStartTs": 185603319912,
             "observedFirstPaint": 3969,
@@ -1858,6 +1851,141 @@
         ]
       }
     },
+    "no-unload-listeners": {
+      "id": "no-unload-listeners",
+      "title": "Registers an `unload` listener",
+      "description": "The `unload` event does not fire reliably and listening for it can prevent browser optimizations like the Back-Forward Cache. Consider using the `pagehide` or `visibilitychange` events instead. [Learn More](https://developers.google.com/web/updates/2018/07/page-lifecycle-api#the-unload-event)",
+      "score": 0,
+      "scoreDisplayMode": "binary",
+      "details": {
+        "type": "table",
+        "headings": [
+          {
+            "key": "source",
+            "itemType": "source-location",
+            "text": "URL"
+          }
+        ],
+        "items": [
+          {
+            "source": {
+              "type": "source-location",
+              "url": "http://localhost:58599/dobetterweb/dbw_tester.html",
+              "urlProvider": "network",
+              "line": 386,
+              "column": 36
+            }
+          }
+        ]
+      }
+    },
+    "non-composited-animations": {
+      "id": "non-composited-animations",
+      "title": "Avoid non-composited animations",
+      "description": "Animations which are not composited can be janky and contribute to CLS. [Learn more](https://developers.google.com/web/fundamentals/performance/rendering/stick-to-compositor-only-properties-and-manage-layer-count)",
+      "score": null,
+      "scoreDisplayMode": "informative",
+      "displayValue": "1 animated element found",
+      "details": {
+        "type": "table",
+        "headings": [
+          {
+            "key": "node",
+            "itemType": "node",
+            "subItemsHeading": {
+              "key": "failureReason",
+              "itemType": "text"
+            },
+            "text": "Element"
+          },
+          {
+            "key": null,
+            "itemType": "text",
+            "subItemsHeading": {
+              "key": "animation",
+              "itemType": "text"
+            },
+            "text": "Name"
+          }
+        ],
+        "items": [
+          {
+            "node": {
+              "type": "node",
+              "path": "1,HTML,1,BODY,0,DIV",
+              "selector": "body > div#animated-boi",
+              "nodeLabel": "div",
+              "snippet": "<div id=\"animated-boi\">"
+            },
+            "subItems": {
+              "type": "subitems",
+              "items": [
+                {
+                  "failureReason": "Unsupported CSS Property: width"
+                },
+                {
+                  "failureReason": "Unsupported CSS Properties: height, left",
+                  "animation": "alpha"
+                },
+                {
+                  "failureReason": "Unsupported CSS Property: background-color",
+                  "animation": "beta"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "unsized-images": {
+      "id": "unsized-images",
+      "title": "Image elements do not have explicit `width` and `height`",
+      "description": "Set an explicit width and height on image elements to reduce layout shifts and improve CLS. [Learn more](https://web.dev/optimize-cls/#images-without-dimensions)",
+      "score": 0,
+      "scoreDisplayMode": "binary",
+      "details": {
+        "type": "table",
+        "headings": [
+          {
+            "key": "url",
+            "itemType": "thumbnail",
+            "text": ""
+          },
+          {
+            "key": "url",
+            "itemType": "url",
+            "text": "URL"
+          },
+          {
+            "key": "node",
+            "itemType": "node",
+            "text": "Failing Elements"
+          }
+        ],
+        "items": [
+          {
+            "url": "http://localhost:10200/dobetterweb/lighthouse-480x318.jpg",
+            "node": {
+              "type": "node"
+            }
+          }
+        ]
+      }
+    },
+    "large-javascript-libraries": {
+      "id": "large-javascript-libraries",
+      "title": "Avoids large JavaScript libraries with smaller alternatives",
+      "description": "Large JavaScript libraries can lead to poor performance. Prefer smaller, functionally equivalent libraries to reduce your bundle size. [Learn more](https://developers.google.com/web/fundamentals/performance/webpack/decrease-frontend-size#optimize_dependencies).",
+      "score": 1,
+      "scoreDisplayMode": "binary",
+      "displayValue": "0 large libraries found",
+      "details": {
+        "type": "table",
+        "headings": [],
+        "items": [],
+        "summary": {}
+      }
+    },
     "pwa-cross-browser": {
       "id": "pwa-cross-browser",
       "title": "Site works cross-browser",
@@ -2029,6 +2157,14 @@
               "selector": "h2",
               "path": "3,HTML,1,BODY,5,DIV,0,H2",
               "snippet": "<h2>Do better web tester page</h2>",
+              "boundingRect": {
+                "width": 396,
+                "height": 28,
+                "top": 335,
+                "right": 404,
+                "bottom": 363,
+                "left": 8
+              },
               "explanation": "Fix any of the following:\n  Element has insufficient color contrast of 1.32 (foreground color: #ffc0cb, background color: #eeeeee, font size: 18.0pt, font weight: bold). Expected contrast ratio of 3:1",
               "nodeLabel": "Do better web tester page"
             }
@@ -2039,6 +2175,14 @@
               "selector": "span",
               "path": "3,HTML,1,BODY,5,DIV,1,SPAN",
               "snippet": "<span>Hi there!</span>",
+              "boundingRect": {
+                "width": 57,
+                "height": 18,
+                "top": 383,
+                "right": 65,
+                "bottom": 401,
+                "left": 8
+              },
               "explanation": "Fix any of the following:\n  Element has insufficient color contrast of 1.32 (foreground color: #ffc0cb, background color: #eeeeee, font size: 12.0pt, font weight: normal). Expected contrast ratio of 4.5:1",
               "nodeLabel": "Hi there!"
             }
@@ -2153,6 +2297,14 @@
               "selector": "html",
               "path": "3,HTML",
               "snippet": "<html manifest=\"clock.appcache\">",
+              "boundingRect": {
+                "width": 412,
+                "height": 1442,
+                "top": 0,
+                "right": 412,
+                "bottom": 1442,
+                "left": 0
+              },
               "explanation": "Fix any of the following:\n  The <html> element does not have a lang attribute",
               "nodeLabel": "html"
             }
@@ -2198,6 +2350,14 @@
               "selector": "img[height=\"\\35 7\"]",
               "path": "3,HTML,1,BODY,10,IMG",
               "snippet": "<img src=\"lighthouse-480x318.jpg\" width=\"480\" height=\"57\">",
+              "boundingRect": {
+                "width": 480,
+                "height": 57,
+                "top": 419,
+                "right": 488,
+                "bottom": 476,
+                "left": 8
+              },
               "explanation": "Fix any of the following:\n  Element does not have an alt attribute\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute or the title attribute is empty\n  Element's default semantics were not overridden with role=\"presentation\"\n  Element's default semantics were not overridden with role=\"none\"",
               "nodeLabel": "img"
             }
@@ -2208,6 +2368,14 @@
               "selector": "img[height=\"\\33 18\"]",
               "path": "3,HTML,1,BODY,12,IMG",
               "snippet": "<img src=\"lighthouse-480x318.jpg\" width=\"480\" height=\"318\">",
+              "boundingRect": {
+                "width": 480,
+                "height": 318,
+                "top": 480,
+                "right": 488,
+                "bottom": 798,
+                "left": 8
+              },
               "explanation": "Fix any of the following:\n  Element does not have an alt attribute\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute or the title attribute is empty\n  Element's default semantics were not overridden with role=\"presentation\"\n  Element's default semantics were not overridden with role=\"none\"",
               "nodeLabel": "img"
             }
@@ -2218,6 +2386,14 @@
               "selector": "img[src$=\"lighthouse-rotating\\.gif\"]",
               "path": "3,HTML,1,BODY,14,IMG",
               "snippet": "<img src=\"lighthouse-rotating.gif\" width=\"811\" height=\"462\">",
+              "boundingRect": {
+                "width": 811,
+                "height": 462,
+                "top": 802,
+                "right": 819,
+                "bottom": 1264,
+                "left": 8
+              },
               "explanation": "Fix any of the following:\n  Element does not have an alt attribute\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute or the title attribute is empty\n  Element's default semantics were not overridden with role=\"presentation\"\n  Element's default semantics were not overridden with role=\"none\"",
               "nodeLabel": "img"
             }
@@ -2227,7 +2403,15 @@
               "type": "node",
               "selector": "img:nth-child(30)",
               "path": "3,HTML,1,BODY,53,IMG",
-              "snippet": "<img src=\"blob:http://localhost:62824/289254fd-ef1d-4c1a-96a8-ba291caa2140\">",
+              "snippet": "<img src=\"blob:http://localhost:54759/41e77cc6-8eb2-49d5-a819-7edf852531be\">",
+              "boundingRect": {
+                "width": 16,
+                "height": 16,
+                "top": 1413,
+                "right": 294,
+                "bottom": 1429,
+                "left": 278
+              },
               "explanation": "Fix any of the following:\n  Element does not have an alt attribute\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute or the title attribute is empty\n  Element's default semantics were not overridden with role=\"presentation\"\n  Element's default semantics were not overridden with role=\"none\"",
               "nodeLabel": "img"
             }
@@ -2275,6 +2459,14 @@
               "selector": "input[onpaste=\"event\\.preventDefault\\(\\)\\;\"]",
               "path": "3,HTML,1,BODY,48,INPUT",
               "snippet": "<input type=\"password\" onpaste=\"event.preventDefault();\">",
+              "boundingRect": {
+                "width": 131,
+                "height": 19,
+                "top": 1394,
+                "right": 323,
+                "bottom": 1413,
+                "left": 192
+              },
               "explanation": "Fix any of the following:\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Form element does not have an implicit (wrapped) <label>\n  Form element does not have an explicit <label>\n  Element has no title attribute or the title attribute is empty",
               "nodeLabel": "input"
             }
@@ -2285,6 +2477,14 @@
               "selector": "input:nth-child(28)",
               "path": "3,HTML,1,BODY,50,INPUT",
               "snippet": "<input type=\"password\">",
+              "boundingRect": {
+                "width": 131,
+                "height": 19,
+                "top": 1415.8125,
+                "right": 139,
+                "bottom": 1434.8125,
+                "left": 8
+              },
               "explanation": "Fix any of the following:\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Form element does not have an implicit (wrapped) <label>\n  Form element does not have an explicit <label>\n  Element has no title attribute or the title attribute is empty",
               "nodeLabel": "input"
             }
@@ -2295,6 +2495,14 @@
               "selector": "input[onpaste=\"return\\ false\\;\"]",
               "path": "3,HTML,1,BODY,52,INPUT",
               "snippet": "<input type=\"password\" onpaste=\"return false;\">",
+              "boundingRect": {
+                "width": 131,
+                "height": 19,
+                "top": 1415,
+                "right": 274,
+                "bottom": 1434,
+                "left": 143
+              },
               "explanation": "Fix any of the following:\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Form element does not have an implicit (wrapped) <label>\n  Form element does not have an explicit <label>\n  Element has no title attribute or the title attribute is empty",
               "nodeLabel": "input"
             }
@@ -2427,6 +2635,14 @@
               "selector": "#\\35 934a",
               "path": "3,HTML,1,BODY,2,OBJECT",
               "snippet": "<object id=\"5934a\"></object>",
+              "boundingRect": {
+                "width": 300,
+                "height": 150,
+                "top": 8,
+                "right": 308,
+                "bottom": 158,
+                "left": 8
+              },
               "explanation": "Fix any of the following:\n  Element does not have text that is visible to screen readers\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute or the title attribute is empty\n  Element's default semantics were not overridden with role=\"presentation\"\n  Element's default semantics were not overridden with role=\"none\"",
               "nodeLabel": "object"
             }
@@ -2437,6 +2653,14 @@
               "selector": "#\\35 934b",
               "path": "3,HTML,1,BODY,3,OBJECT",
               "snippet": "<object id=\"5934b\"></object>",
+              "boundingRect": {
+                "width": 300,
+                "height": 150,
+                "top": 162,
+                "right": 308,
+                "bottom": 312,
+                "left": 8
+              },
               "explanation": "Fix any of the following:\n  Element does not have text that is visible to screen readers\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute or the title attribute is empty\n  Element's default semantics were not overridden with role=\"presentation\"\n  Element's default semantics were not overridden with role=\"none\"",
               "nodeLabel": "object"
             }
@@ -3508,23 +3732,25 @@
     },
     "uses-http2": {
       "id": "uses-http2",
-      "title": "Does not use HTTP/2 for all of its resources",
+      "title": "Use HTTP/2",
       "description": "HTTP/2 offers many benefits over HTTP/1.1, including binary headers, multiplexing, and server push. [Learn more](https://web.dev/uses-http2/).",
-      "score": 0,
+      "score": 0.41,
       "scoreDisplayMode": "binary",
+      "numericValue": 1550,
+      "numericUnit": "millisecond",
       "displayValue": "15 requests not served via HTTP/2",
       "details": {
-        "type": "table",
+        "type": "opportunity",
         "headings": [
           {
             "key": "url",
-            "itemType": "url",
-            "text": "URL"
+            "valueType": "url",
+            "label": "URL"
           },
           {
             "key": "protocol",
-            "itemType": "text",
-            "text": "Protocol"
+            "valueType": "text",
+            "label": "Protocol"
           }
         ],
         "items": [
@@ -3588,7 +3814,8 @@
             "protocol": "http/1.1",
             "url": "http://localhost:10200/favicon.ico"
           }
-        ]
+        ],
+        "overallSavingsMs": 1550
       }
     },
     "uses-passive-event-listeners": {
@@ -3787,6 +4014,14 @@
               "snippet": "<button class=\"small-button\">Do something</button>",
               "path": "3,HTML,1,BODY,17,BUTTON",
               "selector": "body > button.small-button",
+              "boundingRect": {
+                "left": 8,
+                "right": 208,
+                "top": 1268.8125,
+                "bottom": 1286.8125,
+                "width": 200,
+                "height": 18
+              },
               "nodeLabel": "Do something"
             },
             "overlappingTarget": {
@@ -3794,6 +4029,14 @@
               "snippet": "<button class=\"small-button\">Do something else</button>",
               "path": "3,HTML,1,BODY,18,BUTTON",
               "selector": "body > button.small-button",
+              "boundingRect": {
+                "left": 8,
+                "right": 208,
+                "top": 1286.8125,
+                "bottom": 1304.8125,
+                "width": 200,
+                "height": 18
+              },
               "nodeLabel": "Do something else"
             },
             "tapTargetScore": 864,
@@ -4099,6 +4342,11 @@
           "group": "load-opportunities"
         },
         {
+          "id": "uses-http2",
+          "weight": 0,
+          "group": "load-opportunities"
+        },
+        {
           "id": "efficient-animated-content",
           "weight": 0,
           "group": "load-opportunities"
@@ -4184,11 +4432,6 @@
           "group": "diagnostics"
         },
         {
-          "id": "uses-http2",
-          "weight": 0,
-          "group": "diagnostics"
-        },
-        {
           "id": "uses-passive-event-listeners",
           "weight": 0,
           "group": "diagnostics"
@@ -4200,6 +4443,21 @@
         },
         {
           "id": "long-tasks",
+          "weight": 0,
+          "group": "diagnostics"
+        },
+        {
+          "id": "non-composited-animations",
+          "weight": 0,
+          "group": "diagnostics"
+        },
+        {
+          "id": "unsized-images",
+          "weight": 0,
+          "group": "diagnostics"
+        },
+        {
+          "id": "large-javascript-libraries",
           "weight": 0,
           "group": "diagnostics"
         },
@@ -4547,6 +4805,11 @@
           "group": "best-practices-browser-compat"
         },
         {
+          "id": "no-unload-listeners",
+          "weight": 1,
+          "group": "best-practices-general"
+        },
+        {
           "id": "appcache-manifest",
           "weight": 1,
           "group": "best-practices-general"
@@ -4568,7 +4831,7 @@
         }
       ],
       "id": "best-practices",
-      "score": 0.08
+      "score": 0.07
     },
     "seo": {
       "title": "SEO",
@@ -5360,6 +5623,30 @@
       {
         "startTime": 0,
         "name": "lh:audit:long-tasks",
+        "duration": 100,
+        "entryType": "measure"
+      },
+      {
+        "startTime": 0,
+        "name": "lh:audit:no-unload-listeners",
+        "duration": 100,
+        "entryType": "measure"
+      },
+      {
+        "startTime": 0,
+        "name": "lh:audit:non-composited-animations",
+        "duration": 100,
+        "entryType": "measure"
+      },
+      {
+        "startTime": 0,
+        "name": "lh:audit:unsized-images",
+        "duration": 100,
+        "entryType": "measure"
+      },
+      {
+        "startTime": 0,
+        "name": "lh:audit:large-javascript-libraries",
         "duration": 100,
         "entryType": "measure"
       },
@@ -6225,6 +6512,8 @@
         "audits[network-rtt].details.headings[0].text",
         "audits[network-server-latency].details.headings[0].text",
         "audits[long-tasks].details.headings[0].text",
+        "audits[no-unload-listeners].details.headings[0].text",
+        "audits[unsized-images].details.headings[1].text",
         "audits[uses-long-cache-ttl].details.headings[0].text",
         "audits[total-byte-weight].details.headings[0].text",
         "audits[render-blocking-resources].details.headings[0].label",
@@ -6235,7 +6524,7 @@
         "audits[geolocation-on-start].details.headings[0].text",
         "audits[no-document-write].details.headings[0].text",
         "audits[notification-on-start].details.headings[0].text",
-        "audits[uses-http2].details.headings[0].text",
+        "audits[uses-http2].details.headings[0].label",
         "audits[uses-passive-event-listeners].details.headings[0].text"
       ],
       "lighthouse-core/audits/errors-in-console.js | columnDesc": [
@@ -6594,6 +6883,7 @@
       "lighthouse-core/lib/i18n/i18n.js | columnElement": [
         "audits[largest-contentful-paint-element].details.headings[0].text",
         "audits[layout-shift-elements].details.headings[0].text",
+        "audits[non-composited-animations].details.headings[0].text",
         "audits[dom-size].details.headings[1].text"
       ],
       "lighthouse-core/audits/layout-shift-elements.js | title": [
@@ -6632,6 +6922,83 @@
       ],
       "lighthouse-core/lib/i18n/i18n.js | columnDuration": [
         "audits[long-tasks].details.headings[2].text"
+      ],
+      "lighthouse-core/audits/no-unload-listeners.js | failureTitle": [
+        "audits[no-unload-listeners].title"
+      ],
+      "lighthouse-core/audits/no-unload-listeners.js | description": [
+        "audits[no-unload-listeners].description"
+      ],
+      "lighthouse-core/audits/non-composited-animations.js | title": [
+        "audits[non-composited-animations].title"
+      ],
+      "lighthouse-core/audits/non-composited-animations.js | description": [
+        "audits[non-composited-animations].description"
+      ],
+      "lighthouse-core/audits/non-composited-animations.js | displayValue": [
+        {
+          "values": {
+            "itemCount": 1
+          },
+          "path": "audits[non-composited-animations].displayValue"
+        }
+      ],
+      "lighthouse-core/lib/i18n/i18n.js | columnName": [
+        "audits[non-composited-animations].details.headings[1].text",
+        "audits[js-libraries].details.headings[0].text"
+      ],
+      "lighthouse-core/audits/non-composited-animations.js | unsupportedCSSProperty": [
+        {
+          "values": {
+            "propertyCount": 1,
+            "properties": "width"
+          },
+          "path": "audits[non-composited-animations].details.items[0].subItems.items[0].failureReason"
+        },
+        {
+          "values": {
+            "propertyCount": 2,
+            "properties": "height, left"
+          },
+          "path": "audits[non-composited-animations].details.items[0].subItems.items[1].failureReason"
+        },
+        {
+          "values": {
+            "propertyCount": 1,
+            "properties": "background-color"
+          },
+          "path": "audits[non-composited-animations].details.items[0].subItems.items[2].failureReason"
+        }
+      ],
+      "lighthouse-core/audits/unsized-images.js | failureTitle": [
+        "audits[unsized-images].title"
+      ],
+      "lighthouse-core/audits/unsized-images.js | description": [
+        "audits[unsized-images].description"
+      ],
+      "lighthouse-core/lib/i18n/i18n.js | columnFailingElem": [
+        "audits[unsized-images].details.headings[2].text",
+        "audits[color-contrast].details.headings[0].text",
+        "audits[html-has-lang].details.headings[0].text",
+        "audits[image-alt].details.headings[0].text",
+        "audits.label.details.headings[0].text",
+        "audits[link-name].details.headings[0].text",
+        "audits[object-alt].details.headings[0].text",
+        "audits[password-inputs-can-be-pasted-into].details.headings[0].text"
+      ],
+      "lighthouse-core/audits/large-javascript-libraries.js | title": [
+        "audits[large-javascript-libraries].title"
+      ],
+      "lighthouse-core/audits/large-javascript-libraries.js | description": [
+        "audits[large-javascript-libraries].description"
+      ],
+      "lighthouse-core/audits/large-javascript-libraries.js | displayValue": [
+        {
+          "values": {
+            "libraryCount": 0
+          },
+          "path": "audits[large-javascript-libraries].displayValue"
+        }
       ],
       "lighthouse-core/audits/manual/pwa-cross-browser.js | title": [
         "audits[pwa-cross-browser].title"
@@ -6740,14 +7107,6 @@
       ],
       "lighthouse-core/audits/accessibility/color-contrast.js | description": [
         "audits[color-contrast].description"
-      ],
-      "lighthouse-core/audits/accessibility/axe-audit.js | failingElementsHeader": [
-        "audits[color-contrast].details.headings[0].text",
-        "audits[html-has-lang].details.headings[0].text",
-        "audits[image-alt].details.headings[0].text",
-        "audits.label.details.headings[0].text",
-        "audits[link-name].details.headings[0].text",
-        "audits[object-alt].details.headings[0].text"
       ],
       "lighthouse-core/audits/accessibility/definition-list.js | title": [
         "audits[definition-list].title"
@@ -7180,9 +7539,6 @@
       "lighthouse-core/audits/dobetterweb/js-libraries.js | description": [
         "audits[js-libraries].description"
       ],
-      "lighthouse-core/lib/i18n/i18n.js | columnName": [
-        "audits[js-libraries].details.headings[0].text"
-      ],
       "lighthouse-core/audits/dobetterweb/js-libraries.js | columnVersion": [
         "audits[js-libraries].details.headings[1].text"
       ],
@@ -7198,10 +7554,7 @@
       "lighthouse-core/audits/dobetterweb/password-inputs-can-be-pasted-into.js | description": [
         "audits[password-inputs-can-be-pasted-into].description"
       ],
-      "lighthouse-core/audits/dobetterweb/password-inputs-can-be-pasted-into.js | columnFailingElem": [
-        "audits[password-inputs-can-be-pasted-into].details.headings[0].text"
-      ],
-      "lighthouse-core/audits/dobetterweb/uses-http2.js | failureTitle": [
+      "lighthouse-core/audits/dobetterweb/uses-http2.js | title": [
         "audits[uses-http2].title"
       ],
       "lighthouse-core/audits/dobetterweb/uses-http2.js | description": [
@@ -7216,7 +7569,7 @@
         }
       ],
       "lighthouse-core/audits/dobetterweb/uses-http2.js | columnProtocol": [
-        "audits[uses-http2].details.headings[1].text"
+        "audits[uses-http2].details.headings[1].label"
       ],
       "lighthouse-core/audits/dobetterweb/uses-passive-event-listeners.js | failureTitle": [
         "audits[uses-passive-event-listeners].title"
