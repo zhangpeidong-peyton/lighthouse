@@ -110,7 +110,7 @@ class ReportRenderer {
         report.environment.networkUserAgent},
       {name: Util.i18n.strings.runtimeSettingsBenchmark, description: report.environment &&
         report.environment.benchmarkIndex.toFixed(0)},
-      ];
+    ];
     if (report.environment.credits && report.environment.credits['axe-core']) {
       runtimeValues.push({
         name: Util.i18n.strings.runtimeSettingsAxeVersion,
@@ -125,7 +125,7 @@ class ReportRenderer {
       this._dom.find('.lh-env__name', item).textContent = runtime.name;
       this._dom.find('.lh-env__description', item).textContent = runtime.description;
       env.appendChild(item);
-    };
+    }
 
     this._dom.find('.lh-footer__version_issue', footer).textContent = Util.i18n.strings.footerIssue;
     this._dom.find('.lh-footer__version', footer).textContent = report.lighthouseVersion;
