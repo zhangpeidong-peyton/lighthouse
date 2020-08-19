@@ -8,6 +8,8 @@
 const thirdPartyWeb = require('third-party-web/httparchive-nostats-subset');
 
 /** @typedef {import("third-party-web").IEntity} ThirdPartyEntity */
+/** @typedef {import("third-party-web").IProduct} ThirdPartyProduct */
+/** @typedef {import("third-party-web").IFacade} ThirdPartyFacade */
 
 /**
  * `third-party-web` throws when the passed in string doesn't appear to have any domain whatsoever.
@@ -21,6 +23,29 @@ function getEntity(url) {
   } catch (_) {
     return undefined;
   }
+}
+
+/**
+ * @param {string} url
+ * @return {ThirdPartyProduct|undefined}
+ */
+function getProduct(url) {
+  try {
+    return thirdPartyWeb.getProduct(url);
+  } catch (_) {
+    return undefined;
+  }
+}
+
+/**
+ * The first facade should always be the best one.
+ * @param {string} url
+ * @return {ThirdPartyFacade|undefined}
+ */
+function getFirstFacade(url) {
+  const product = getProduct(url);
+  if (!product || !product.facades || !product.facades.length) return undefined;
+  return product.facades[0];
 }
 
 /**
@@ -44,6 +69,8 @@ function isFirstParty(url, mainDocumentEntity) {
 
 module.exports = {
   getEntity,
+  getProduct,
+  getFirstFacade,
   isThirdParty,
   isFirstParty,
 };

@@ -24,8 +24,6 @@ const UIStrings = {
     'your page has primarily finished loading. [Learn more](https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/loading-third-party-javascript/).',
   /** Label for a table column that displays the name of a third-party provider that potentially links to their website. */
   columnThirdParty: 'Third-Party',
-  /** Label for a table column that displays how much time each row spent blocking other work on the main thread, entries will be the number of milliseconds spent. */
-  columnBlockingTime: 'Main-Thread Blocking Time',
   /** Summary text for the result of a Lighthouse audit that identifies the code on a web page that the user doesn't control (referred to as "third-party code"). This text summarizes the number of distinct entities that were found on the page. */
   displayValue: 'Third-party code blocked the main thread for ' +
     `{timeInMs, number, milliseconds}\xa0ms`,
@@ -142,7 +140,7 @@ class ThirdPartySummary extends Audit {
       {key: 'transferSize', granularity: 1, itemType: 'bytes',
         text: str_(i18n.UIStrings.columnTransferSize)},
       {key: 'blockingTime', granularity: 1, itemType: 'ms',
-        text: str_(UIStrings.columnBlockingTime)},
+        text: str_(i18n.UIStrings.columnBlockingTime)},
     ];
 
     if (!results.length) {
