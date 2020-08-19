@@ -1226,9 +1226,6 @@
   "lighthouse-core/audits/themed-omnibox.js | title": {
     "message": "กำหนดสีธีมของแถบที่อยู่"
   },
-  "lighthouse-core/audits/third-party-summary.js | columnBlockingTime": {
-    "message": "เวลาในการบล็อกเทรดหลัก"
-  },
   "lighthouse-core/audits/third-party-summary.js | columnThirdParty": {
     "message": "บุคคลที่สาม"
   },

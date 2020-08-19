@@ -1226,9 +1226,6 @@
   "lighthouse-core/audits/themed-omnibox.js | title": {
     "message": "Angiver en temafarve til adresselinjen."
   },
-  "lighthouse-core/audits/third-party-summary.js | columnBlockingTime": {
-    "message": "Tidspunkt for blokering af den primære tråd"
-  },
   "lighthouse-core/audits/third-party-summary.js | columnThirdParty": {
     "message": "Tredjepart"
   },

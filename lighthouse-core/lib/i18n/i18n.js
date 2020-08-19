@@ -68,6 +68,8 @@ const UIStrings = {
   columnWastedBytes: 'Potential Savings',
   /** Label for a column in a data table; entries will be the number of milliseconds the user could reduce page load by if they implemented the suggestions. */
   columnWastedMs: 'Potential Savings',
+  /** Label for a table column that displays how much time each row spent blocking other work on the main thread, entries will be the number of milliseconds spent. */
+  columnBlockingTime: 'Main-Thread Blocking Time',
   /** Label for a column in a data table; entries will be the number of milliseconds spent during a particular activity. */
   columnTimeSpent: 'Time Spent',
   /** Label for a column in a data table; entries will be the location of a specific line of code in a file, in the format "line: 102". */

@@ -1226,9 +1226,6 @@
   "lighthouse-core/audits/themed-omnibox.js | title": {
     "message": "முகவரிப் பட்டிக்கான தீம் வண்ணத்தை அமைக்கும்."
   },
-  "lighthouse-core/audits/third-party-summary.js | columnBlockingTime": {
-    "message": "முக்கியத் தொடரிழையில் தடுப்பதற்குச் செலவிட்ட நேரம்"
-  },
   "lighthouse-core/audits/third-party-summary.js | columnThirdParty": {
     "message": "மூன்றாம் தரப்பு"
   },

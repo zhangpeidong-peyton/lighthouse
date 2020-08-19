@@ -1226,9 +1226,6 @@
   "lighthouse-core/audits/themed-omnibox.js | title": {
     "message": "Зададен е тематичен цвят за адресната лента."
   },
-  "lighthouse-core/audits/third-party-summary.js | columnBlockingTime": {
-    "message": "Време на блокиране на основната нишка"
-  },
   "lighthouse-core/audits/third-party-summary.js | columnThirdParty": {
     "message": "Трета страна"
   },

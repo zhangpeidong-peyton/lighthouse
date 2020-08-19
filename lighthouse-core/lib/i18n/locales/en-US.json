@@ -860,11 +860,14 @@
   "lighthouse-core/audits/layout-shift-elements.js | title": {
     "message": "Avoid large layout shifts"
   },
+  "lighthouse-core/audits/lazy-third-party.js | columnFacade": {
+    "message": "Facade Alternative"
+  },
   "lighthouse-core/audits/lazy-third-party.js | description": {
     "message": "Some third-party resources can be fetched after the page loads. These third-party resources are used by embedded elements which can be replaced by a facade until the user needs to use them. [Learn more]()."
   },
   "lighthouse-core/audits/lazy-third-party.js | displayValue": {
-    "message": "{itemCount, plural,\n  =1 {# lazy loadable resource found}\n  other {# lazy loadable resources found}\n  }"
+    "message": "{itemCount, plural,\n  =1 {# facade alternative available}\n  other {# facade alternatives available}\n  }"
   },
   "lighthouse-core/audits/lazy-third-party.js | failureTitle": {
     "message": "Some third-party resources can be lazy loaded"
@@ -1265,9 +1268,6 @@
   "lighthouse-core/audits/themed-omnibox.js | title": {
     "message": "Sets a theme color for the address bar."
   },
-  "lighthouse-core/audits/third-party-summary.js | columnBlockingTime": {
-    "message": "Main-Thread Blocking Time"
-  },
   "lighthouse-core/audits/third-party-summary.js | columnThirdParty": {
     "message": "Third-Party"
   },
@@ -1531,6 +1531,9 @@
   },
   "lighthouse-core/gather/gather-runner.js | warningTimeout": {
     "message": "The page loaded too slowly to finish within the time limit. Results may be incomplete."
+  },
+  "lighthouse-core/lib/i18n/i18n.js | columnBlockingTime": {
+    "message": "Main-Thread Blocking Time"
   },
   "lighthouse-core/lib/i18n/i18n.js | columnCacheTTL": {
     "message": "Cache TTL"

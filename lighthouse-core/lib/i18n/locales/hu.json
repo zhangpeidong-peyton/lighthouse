@@ -1226,9 +1226,6 @@
   "lighthouse-core/audits/themed-omnibox.js | title": {
     "message": "A téma színét állítja be a címsávon."
   },
-  "lighthouse-core/audits/third-party-summary.js | columnBlockingTime": {
-    "message": "Fő szál akadályozásának időtartama"
-  },
   "lighthouse-core/audits/third-party-summary.js | columnThirdParty": {
     "message": "Harmadik fél"
   },

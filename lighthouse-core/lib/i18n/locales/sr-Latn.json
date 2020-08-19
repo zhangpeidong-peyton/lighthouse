@@ -1226,9 +1226,6 @@
   "lighthouse-core/audits/themed-omnibox.js | title": {
     "message": "Podešava boju teme za traku za adresu."
   },
-  "lighthouse-core/audits/third-party-summary.js | columnBlockingTime": {
-    "message": "Period blokiranja glavne niti"
-  },
   "lighthouse-core/audits/third-party-summary.js | columnThirdParty": {
     "message": "Nezavisni dobavljač"
   },

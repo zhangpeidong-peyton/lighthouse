@@ -1226,9 +1226,6 @@
   "lighthouse-core/audits/themed-omnibox.js | title": {
     "message": "చిరునామా బార్ కోసం థీమ్ రంగు సెట్ చేయబడింది."
   },
-  "lighthouse-core/audits/third-party-summary.js | columnBlockingTime": {
-    "message": "ప్రధాన థ్రెడ్ బ్లాక్ చేయబడే సమయం"
-  },
   "lighthouse-core/audits/third-party-summary.js | columnThirdParty": {
     "message": "మూడవ పక్షం"
   },

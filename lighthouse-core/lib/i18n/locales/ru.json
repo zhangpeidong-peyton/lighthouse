@@ -1226,9 +1226,6 @@
   "lighthouse-core/audits/themed-omnibox.js | title": {
     "message": "Изменяет цвет адресной строки в соответствии с темой"
   },
-  "lighthouse-core/audits/third-party-summary.js | columnBlockingTime": {
-    "message": "Время блокировки основного потока"
-  },
   "lighthouse-core/audits/third-party-summary.js | columnThirdParty": {
     "message": "Сторонний поставщик"
   },

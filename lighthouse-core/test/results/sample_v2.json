@@ -6877,7 +6877,7 @@
       "lighthouse-core/audits/third-party-summary.js | columnThirdParty": [
         "audits[third-party-summary].details.headings[0].text"
       ],
-      "lighthouse-core/audits/third-party-summary.js | columnBlockingTime": [
+      "lighthouse-core/lib/i18n/i18n.js | columnBlockingTime": [
         "audits[third-party-summary].details.headings[2].text"
       ],
       "lighthouse-core/audits/lazy-third-party.js | title": [

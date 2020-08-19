@@ -1226,9 +1226,6 @@
   "lighthouse-core/audits/themed-omnibox.js | title": {
     "message": "Hiermee wordt een themakleur voor de adresbalk ingesteld."
   },
-  "lighthouse-core/audits/third-party-summary.js | columnBlockingTime": {
-    "message": "Tijd dat primaire thread is geblokkeerd"
-  },
   "lighthouse-core/audits/third-party-summary.js | columnThirdParty": {
     "message": "Derden"
   },

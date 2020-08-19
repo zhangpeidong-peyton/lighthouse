@@ -1226,9 +1226,6 @@
   "lighthouse-core/audits/themed-omnibox.js | title": {
     "message": "Legt eine Designfarbe für die Adressleiste fest."
   },
-  "lighthouse-core/audits/third-party-summary.js | columnBlockingTime": {
-    "message": "Dauer der Blockierung des Hauptthreads"
-  },
   "lighthouse-core/audits/third-party-summary.js | columnThirdParty": {
     "message": "Drittanbieter"
   },

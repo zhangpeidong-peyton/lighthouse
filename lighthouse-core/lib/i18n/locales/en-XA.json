@@ -1226,9 +1226,6 @@
   "lighthouse-core/audits/themed-omnibox.js | title": {
     "message": "[Šéţš å ţĥémé çöļöŕ ƒöŕ ţĥé åððŕéšš бåŕ. one two three four five six seven eight]"
   },
-  "lighthouse-core/audits/third-party-summary.js | columnBlockingTime": {
-    "message": "[Måîñ-Ţĥŕéåð Бļöçķîñĝ Ţîmé one two three]"
-  },
   "lighthouse-core/audits/third-party-summary.js | columnThirdParty": {
     "message": "[Ţĥîŕð-Þåŕţý one two]"
   },

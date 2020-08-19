@@ -1226,9 +1226,6 @@
   "lighthouse-core/audits/themed-omnibox.js | title": {
     "message": "Lapa iestata adreses joslas motīva krāsu."
   },
-  "lighthouse-core/audits/third-party-summary.js | columnBlockingTime": {
-    "message": "Galvenā pavediena bloķēšanas laiks"
-  },
   "lighthouse-core/audits/third-party-summary.js | columnThirdParty": {
     "message": "Trešā puse"
   },
