@@ -978,7 +978,7 @@
     "message": "Avoids `unload` event listeners"
   },
   "lighthouse-core/audits/non-composited-animations.js | description": {
-    "message": "Animations which are not composited can be janky and contribute to CLS. [Learn more](https://web.dev/non-composited-animations)"
+    "message": "Animations which are not composited can be janky and increase CLS. [Learn more](https://web.dev/non-composited-animations)"
   },
   "lighthouse-core/audits/non-composited-animations.js | displayValue": {
     "message": "{itemCount, plural,\n  =1 {# animated element found}\n  other {# animated elements found}\n  }"
