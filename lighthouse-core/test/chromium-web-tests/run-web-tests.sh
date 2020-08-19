@@ -68,11 +68,11 @@ echo "Server is up"
 rm -rf "$latest_content_shell/out/Release/layout-test-results"
 
 # Add typ to python path. The regular method assumes there is a Chromium checkout.
-export PYTHONPATH="${PYTHONPATH}:$BLINK_TOOLS_PATH/third_party/typ"
+export PYTHONPATH="${PYTHONPATH}:$BLINK_TOOLS_PATH/latest/third_party/typ"
 
 set -o xtrace
 python \
-  "$BLINK_TOOLS_PATH/third_party/blink/tools/run_web_tests.py" \
+  "$BLINK_TOOLS_PATH/latest/third_party/blink/tools/run_web_tests.py" \
   --layout-tests-directory="$DEVTOOLS_PATH/test/webtests" \
   --build-directory="$latest_content_shell/out" \
   $* \

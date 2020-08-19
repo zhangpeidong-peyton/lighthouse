@@ -18,26 +18,31 @@ if [ x"$BLINK_TOOLS_PATH" == x ]; then
   exit 1
 fi
 
-if [ -e "$BLINK_TOOLS_PATH" ]; then
+VERSIONED_DIR="$BLINK_TOOLS_PATH/$commit_chromium$commit_catapult"
+
+if [ -e "$VERSIONED_DIR" ]; then
   echo "cached blink tools found"
 else
-  mkdir -p "$BLINK_TOOLS_PATH/third_party/blink/tools"
+  mkdir -p "$VERSIONED_DIR/third_party/blink/tools"
+  rm "$BLINK_TOOLS_PATH/latest" || true
+  ln -s "$VERSIONED_DIR" "$BLINK_TOOLS_PATH/latest"
+
   wget "https://chromium.googlesource.com/chromium/src/+archive/$commit_chromium/third_party/blink/tools.tar.gz" --no-check-certificate -q -O blinktools.tar.gz
-  tar -xf blinktools.tar.gz -C "$BLINK_TOOLS_PATH/third_party/blink/tools"
+  tar -xf blinktools.tar.gz -C "$VERSIONED_DIR/third_party/blink/tools"
   rm blinktools.tar.gz
 
   # Just need this for the results.html template.
-  mkdir -p "$BLINK_TOOLS_PATH/third_party/blink/web_tests/fast/harness"
+  mkdir -p "$VERSIONED_DIR/third_party/blink/web_tests/fast/harness"
   wget "https://chromium.googlesource.com/chromium/src/+archive/$commit_chromium/third_party/blink/web_tests/fast/harness.tar.gz" --no-check-certificate -q -O harness.tar.gz
-  tar -xf harness.tar.gz -C "$BLINK_TOOLS_PATH/third_party/blink/web_tests/fast/harness"
+  tar -xf harness.tar.gz -C "$VERSIONED_DIR/third_party/blink/web_tests/fast/harness"
   rm harness.tar.gz
 
-  mkdir -p "$BLINK_TOOLS_PATH/third_party/typ"
+  mkdir -p "$VERSIONED_DIR/third_party/typ"
   wget "https://chromium.googlesource.com/catapult/+archive/$commit_catapult/third_party/typ.tar.gz" --no-check-certificate -q -O typ.tar.gz
-  tar -xf typ.tar.gz -C "$BLINK_TOOLS_PATH/third_party/typ"
+  tar -xf typ.tar.gz -C "$VERSIONED_DIR/third_party/typ"
   rm typ.tar.gz
 
-  cd "$BLINK_TOOLS_PATH"
+  cd "$VERSIONED_DIR"
   git init
   echo "*.pyc" > .gitignore
   git add .
