@@ -216,8 +216,9 @@ class ReportUIFeatures {
   _setupThirdPartyFilter() {
     // Some audits should not display the third party filter option.
     const thirdPartyFilterAuditExclusions = [
-      // This audit deals explicitly with third party resources.
+      // These audits deal explicitly with third party resources.
       'uses-rel-preconnect',
+      'lazy-third-party',
     ];
     // Some audits should hide third party by default.
     const thirdPartyFilterAuditHideByDefault = [
