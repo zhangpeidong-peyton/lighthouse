@@ -6,12 +6,12 @@
 'use strict';
 
 const Audit = require('./audit.js');
-const BootupTime = require('./bootup-time.js');
 const i18n = require('../lib/i18n/i18n.js');
 const thirdPartyWeb = require('../lib/third-party-web.js');
 const NetworkRecords = require('../computed/network-records.js');
 const MainResource = require('../computed/main-resource.js');
 const MainThreadTasks = require('../computed/main-thread-tasks.js');
+const ThirdPartySummary = require('./third-party-summary.js');
 
 const UIStrings = {
   /** Title of a diagnostic audit that provides details about the third-party code on a web page that can be lazy loaded. This descriptive title is shown to users when no resources have lazy loading alternatives available. */
@@ -29,6 +29,8 @@ const UIStrings = {
   }`,
   /** Label for a table column that displays the name of a lazy loading facade alternative for a third party resource. */
   columnFacade: 'Facade Alternative',
+  /** Label for a table column that displays the name of the third party product that a URL is used for. */
+  columnProduct: 'Product',
 };
 
 const str_ = i18n.createMessageInstanceIdFn(__filename, UIStrings);
@@ -36,8 +38,7 @@ const str_ = i18n.createMessageInstanceIdFn(__filename, UIStrings);
 /** @typedef {import("third-party-web").IEntity} ThirdPartyEntity */
 /** @typedef {import("third-party-web").IFacade} ThirdPartyFacade */
 
-/** @typedef {{mainThreadTime: number, transferSize: number, blockingTime: number}} Summary */
-/** @typedef {{summary: Summary, urlSummaries: Map<string, Summary>}} FacadeSummary */
+/** @typedef {{facade: ThirdPartyFacade, urlSummaries: Map<string, ThirdPartySummary.Summary>}} FacadeSummary */
 
 class LazyThirdParty extends Audit {
   /**
@@ -54,61 +55,25 @@ class LazyThirdParty extends Audit {
   }
 
   /**
-   *
-   * @param {Array<LH.Artifacts.NetworkRequest>} networkRecords
-   * @param {Array<LH.Artifacts.TaskNode>} mainThreadTasks
-   * @param {number} cpuMultiplier
+   * @param {Map<string, ThirdPartySummary.Summary} byURL
    * @param {ThirdPartyEntity | undefined} mainEntity
-   * @return {Map<ThirdPartyFacade, FacadeSummary>}
+   * @return {Map<string, FacadeSummary>}
    */
-  static getSummaries(networkRecords, mainThreadTasks, cpuMultiplier, mainEntity) {
-    /** @type {Map<ThirdPartyFacade, FacadeSummary>} */
-    const summaries = new Map();
-    const defaultStat = {mainThreadTime: 0, blockingTime: 0, transferSize: 0};
-    const defaultFacadeStat = {summary: {...defaultStat}, urlSummaries: new Map()};
+  static getFacadeSummaries(byURL, mainEntity) {
+    /** @type {Map<string, FacadeSummary>} */
+    const facadeSummaries = new Map();
 
-    for (const request of networkRecords) {
-      const entity = thirdPartyWeb.getEntity(request.url);
-      const facade = thirdPartyWeb.getFirstFacade(request.url);
+    for (const [url, urlSummary] of byURL) {
+      const entity = thirdPartyWeb.getEntity(url);
+      const facade = thirdPartyWeb.getFirstFacade(url);
       if (!facade || !entity || mainEntity && entity.name === mainEntity.name) continue;
 
-      const facadeStats = summaries.get(facade) || {...defaultFacadeStat};
-      facadeStats.summary.transferSize += request.transferSize;
-
-      const urlStats = facadeStats.urlSummaries.get(request.url) || {...defaultStat};
-      urlStats.transferSize += request.transferSize;
-      facadeStats.urlSummaries.set(request.url, urlStats);
-
-      summaries.set(facade, facadeStats);
+      const facadeSummary = facadeSummaries.get(facade.name) || {facade, urlSummaries: new Map()};
+      facadeSummary.urlSummaries.set(url, urlSummary);
+      facadeSummaries.set(facade.name, facadeSummary);
     }
 
-    const jsURLs = BootupTime.getJavaScriptURLs(networkRecords);
-
-    for (const task of mainThreadTasks) {
-      const attributableURL = BootupTime.getAttributableURLForTask(task, jsURLs);
-      const entity = thirdPartyWeb.getEntity(attributableURL);
-      const facade = thirdPartyWeb.getFirstFacade(attributableURL);
-      if (!facade || !entity || mainEntity && entity.name === mainEntity.name) continue;
-
-      const facadeStats = summaries.get(facade) || {...defaultFacadeStat};
-      const urlStats = facadeStats.urlSummaries.get(attributableURL) || {...defaultStat};
-
-      const taskDuration = task.selfTime * cpuMultiplier;
-      facadeStats.summary.mainThreadTime += taskDuration;
-      urlStats.mainThreadTime += taskDuration;
-
-      // The amount of time spent *blocking* on main thread is the sum of all time longer than 50ms.
-      // Note that this is not totally equivalent to the TBT definition since it fails to account for FCP,
-      // but a majority of third-party work occurs after FCP and should yield largely similar numbers.
-      const blockingTime = Math.max(taskDuration - 50, 0);
-      facadeStats.summary.blockingTime += blockingTime;
-      urlStats.blockingTime += blockingTime;
-
-      facadeStats.urlSummaries.set(attributableURL, urlStats);
-      summaries.set(facade, facadeStats);
-    }
-
-    return summaries;
+    return facadeSummaries;
   }
 
   /**
@@ -126,29 +91,28 @@ class LazyThirdParty extends Audit {
     const tasks = await MainThreadTasks.request(trace, context);
     const multiplier = settings.throttlingMethod === 'simulate' ?
       settings.throttling.cpuSlowdownMultiplier : 1;
-    const summaries = this.getSummaries(networkRecords, tasks, multiplier, mainEntity);
+    const {byURL} = ThirdPartySummary.getSummaries(networkRecords, tasks, multiplier);
+    const facadeSummaries = LazyThirdParty.getFacadeSummaries(byURL, mainEntity);
 
     const summary = {wastedBytes: 0, wastedMs: 0};
 
     /** @type LH.Audit.Details.TableItem[] */
-    const results = Array.from(summaries)
-      .map(([facade, facadeStats]) => {
+    const results = Array.from(facadeSummaries)
+      .map(([name, facadeSummary]) => {
         /** @type LH.Audit.Details.TableItem[] */
         const items = [];
-        for (const [url, urlStats] of Array.from(facadeStats.urlSummaries)) {
-          items.push({url, ...urlStats});
+        for (const [url, urlStats] of Array.from(facadeSummary.urlSummaries)) {
+          const product = thirdPartyWeb.getProduct(url) || {name: ''};
+          items.push({url, productName: product.name, ...urlStats});
+          summary.wastedBytes += urlStats.transferSize;
+          summary.wastedMs += urlStats.blockingTime;
         }
-        summary.wastedBytes += facadeStats.summary.transferSize;
-        summary.wastedMs += facadeStats.summary.blockingTime;
         return {
           facade: /** @type {LH.Audit.Details.LinkValue} */ {
             type: 'link',
-            text: facade.name,
-            url: facade.repo,
+            text: name,
+            url: facadeSummary.facade.repo,
           },
-          transferSize: facadeStats.summary.transferSize,
-          mainThreadTime: facadeStats.summary.mainThreadTime,
-          blockingTime: facadeStats.summary.blockingTime,
           subItems: {type: 'subitems', items},
         };
       });
@@ -157,9 +121,11 @@ class LazyThirdParty extends Audit {
     const headings = [
       {key: 'facade', itemType: 'link', text: str_(UIStrings.columnFacade),
         subItemsHeading: {key: 'url', itemType: 'url'}},
-      {key: 'transferSize', granularity: 1, itemType: 'bytes',
+      {key: null, itemType: 'text', text: str_(UIStrings.columnProduct),
+        subItemsHeading: {key: 'productName'}},
+      {key: null, granularity: 1, itemType: 'bytes',
         text: str_(i18n.UIStrings.columnTransferSize), subItemsHeading: {key: 'transferSize'}},
-      {key: 'blockingTime', granularity: 1, itemType: 'ms',
+      {key: null, granularity: 1, itemType: 'ms',
         text: str_(i18n.UIStrings.columnBlockingTime), subItemsHeading: {key: 'blockingTime'}},
     ];
 
