@@ -117,6 +117,13 @@ class LazyThirdParty extends Audit {
         };
       });
 
+    if (!results.length) {
+      return {
+        score: 1,
+        notApplicable: true,
+      };
+    }
+
     /** @type {LH.Audit.Details.Table['headings']} */
     const headings = [
       {key: 'facade', itemType: 'link', text: str_(UIStrings.columnFacade),
@@ -129,12 +136,6 @@ class LazyThirdParty extends Audit {
         text: str_(i18n.UIStrings.columnBlockingTime), subItemsHeading: {key: 'blockingTime'}},
     ];
 
-    if (!results.length) {
-      return {
-        score: 1,
-        notApplicable: true,
-      };
-    }
     return {
       score: 0,
       displayValue: str_(UIStrings.displayValue, {
