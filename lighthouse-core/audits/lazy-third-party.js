@@ -14,22 +14,22 @@ const MainThreadTasks = require('../computed/main-thread-tasks.js');
 const ThirdPartySummary = require('./third-party-summary.js');
 
 const UIStrings = {
-  /** Title of a diagnostic audit that provides details about the third-party code on a web page that can be lazy loaded. This descriptive title is shown to users when no resources have lazy loading alternatives available. */
+  /** Title of a diagnostic audit that provides details about the third-party code on a web page that can be lazy loaded. This descriptive title is shown to users when no resources have lazy loading alternatives available. Lazy loading means loading resources is deferred until they are needed. */
   title: 'Lazy load third-party resources',
-  /** Title of a diagnostic audit that provides details about the third-party code on a web page that can be lazy loaded. This descriptive title is shown to users when one or more third-party resources have available lazy loading alternatives. */
+  /** Title of a diagnostic audit that provides details about the third-party code on a web page that can be lazy loaded. This descriptive title is shown to users when one or more third-party resources have available lazy loading alternatives. Lazy loading means loading resources is deferred until they are needed. */
   failureTitle: 'Some third-party resources can be lazy loaded',
-  /** Description of a Lighthouse audit that identifies the third party code on the page that can be lazy loaded. This is displayed after a user expands the section to see more. No character length limits. 'Learn More' becomes link text to additional documentation. */
+  /** Description of a Lighthouse audit that identifies the third party code on the page that can be lazy loaded. This is displayed after a user expands the section to see more. No character length limits. 'Learn More' becomes link text to additional documentation. Lazy loading means loading resources is deferred until they are needed. */
   description: 'Some third-party resources can be fetched after the page loads. ' +
     'These third-party resources are used by embedded elements which can be replaced by a facade ' +
     'until the user needs to use them. [Learn more]().',
-  /** Summary text for the result of a Lighthouse audit that identifies the third party code on a web page that can be lazy loaded. This text summarizes the number of lazy loading facades that can be used on the page. */
+  /** Summary text for the result of a Lighthouse audit that identifies the third party code on a web page that can be lazy loaded. This text summarizes the number of lazy loading facades that can be used on the page. Lazy loading means loading resources is deferred until they are needed. */
   displayValue: `{itemCount, plural,
   =1 {# facade alternative available}
   other {# facade alternatives available}
   }`,
-  /** Label for a table column that displays the name of a lazy loading facade alternative for a third party resource. */
+  /** Label for a table column that displays the name of a lazy loading facade alternative for a third party resource. Lazy loading means loading resources is deferred until they are needed. */
   columnFacade: 'Facade Alternative',
-  /** Label for a table column that displays the name of the third party product that a URL is used for. */
+  /** Label for a table column that displays the name of the third party product that a URL is used for. Lazy loading means loading resources is deferred until they are needed. */
   columnProduct: 'Product',
 };
 
