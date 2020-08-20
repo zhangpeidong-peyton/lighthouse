@@ -55,7 +55,7 @@ class LazyThirdParty extends Audit {
   }
 
   /**
-   * @param {Map<string, ThirdPartySummary.Summary} byURL
+   * @param {Map<string, ThirdPartySummary.Summary>} byURL
    * @param {ThirdPartyEntity | undefined} mainEntity
    * @return {Map<string, FacadeSummary>}
    */
