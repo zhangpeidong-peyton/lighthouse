@@ -863,6 +863,9 @@
   "lighthouse-core/audits/lazy-third-party.js | columnFacade": {
     "message": "Facade Alternative"
   },
+  "lighthouse-core/audits/lazy-third-party.js | columnProduct": {
+    "message": "Product"
+  },
   "lighthouse-core/audits/lazy-third-party.js | description": {
     "message": "Some third-party resources can be fetched after the page loads. These third-party resources are used by embedded elements which can be replaced by a facade until the user needs to use them. [Learn more]()."
   },
