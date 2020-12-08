@@ -218,5 +218,17 @@
       "**/scripts/"
     ]
   },
-  "homepage": "https://github.com/GoogleChrome/lighthouse#readme"
+  "homepage": "https://github.com/GoogleChrome/lighthouse#readme",
+  "pkg": {
+    "bin": "./lighthouse-cli/index.js",
+    "scripts": [
+      "lighthouse-cli/**/*.js",
+      "lighthouse-core/**/*.js"
+    ],
+    "assets": [
+      "./lighthouse-core/report/html/report-template.html",
+      "./lighthouse-core/report/html/report-styles.css",
+      "./lighthouse-core/report/html/templates.html"
+    ]
+  }
 }
