@@ -5,8 +5,40 @@
  */
 'use strict';
 
+/* globals getElementsInDocument getNodeDetails */
+
 const Gatherer = require('../gatherer.js');
 const pageFunctions = require('../../../lib/page-functions.js');
+
+/**
+ * @return {LH.Artifacts.EmbeddedContentInfo[]}
+ */
+function getEmbeddedContent() {
+  const functions = /** @type {typeof pageFunctions} */ ({
+    // @ts-expect-error - getElementsInDocument put into scope via stringification
+    getElementsInDocument,
+    // @ts-expect-error - getNodeDetails put into scope via stringification
+    getNodeDetails,
+  });
+
+  const selector = 'object, embed, applet';
+  const elements = functions.getElementsInDocument(selector);
+  return elements
+    .map(node => ({
+      tagName: node.tagName,
+      type: node.getAttribute('type'),
+      src: node.getAttribute('src'),
+      data: node.getAttribute('data'),
+      code: node.getAttribute('code'),
+      params: Array.from(node.children)
+        .filter(el => el.tagName === 'PARAM')
+        .map(el => ({
+          name: el.getAttribute('name') || '',
+          value: el.getAttribute('value') || '',
+        })),
+      node: functions.getNodeDetails(node),
+    }));
+}
 
 class EmbeddedContent extends Gatherer {
   /**
@@ -14,27 +46,13 @@ class EmbeddedContent extends Gatherer {
    * @return {Promise<LH.Artifacts['EmbeddedContent']>}
    */
   afterPass(passContext) {
-    const expression = `(function() {
-      ${pageFunctions.getElementsInDocumentString}; // define function on page
-      const selector = 'object, embed, applet';
-      const elements = getElementsInDocument(selector);
-      return elements
-        .map(node => ({
-          tagName: node.tagName,
-          type: node.getAttribute('type'),
-          src: node.getAttribute('src'),
-          data: node.getAttribute('data'),
-          code: node.getAttribute('code'),
-          params: Array.from(node.children)
-            .filter(el => el.tagName === 'PARAM')
-            .map(el => ({
-              name: el.getAttribute('name') || '',
-              value: el.getAttribute('value') || '',
-            })),
-        }));
-    })()`;
-
-    return passContext.driver.evaluateAsync(expression);
+    return passContext.driver.evaluate(getEmbeddedContent, {
+      args: [],
+      deps: [
+        pageFunctions.getElementsInDocument,
+        pageFunctions.getNodeDetailsString,
+      ],
+    });
   }
 }
 

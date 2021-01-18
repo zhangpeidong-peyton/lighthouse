@@ -226,7 +226,7 @@ module.exports = [
           traceEventType: 'animation',
           node: {
             selector: 'body > div#animate-me',
-            nodeLabel: 'div',
+            nodeLabel: 'This is changing font size',
             snippet: '<div id="animate-me">',
             boundingRect: {
               top: 8,
@@ -241,7 +241,7 @@ module.exports = [
             {
               name: 'anim',
               failureReasonsMask: 8224,
-              unsupportedProperties: ['background-color'],
+              unsupportedProperties: ['font-size'],
             },
           ],
         },
@@ -318,77 +318,6 @@ module.exports = [
           scoreDisplayMode: 'notApplicable',
           details: {
             items: [],
-          },
-        },
-      },
-    },
-  },
-  {
-    lhr: {
-      requestedUrl: 'http://localhost:10200/perf/animations.html',
-      finalUrl: 'http://localhost:10200/perf/animations.html',
-      audits: {
-        'non-composited-animations': {
-          // Requires compositor failure reasons to be in the trace
-          // https://chromiumdash.appspot.com/commit/995baabedf9e70d16deafc4bc37a2b215a9b8ec9
-          _minChromiumMilestone: 86,
-          score: null,
-          displayValue: '1 animated element found',
-          details: {
-            items: [
-              {
-                node: {
-                  type: 'node',
-                  path: '2,HTML,1,BODY,1,DIV',
-                  selector: 'body > div#animated-boi',
-                  nodeLabel: 'div',
-                  snippet: '<div id="animated-boi">',
-                },
-                subItems: {
-                  items: [
-                    {
-                      // From JavaScript `.animate` which has no animation display name
-                      failureReason: 'Unsupported CSS Property: width',
-                    },
-                    {
-                      failureReason: 'Unsupported CSS Property: height',
-                      animation: 'alpha',
-                    },
-                    {
-                      failureReason: 'Unsupported CSS Property: background-color',
-                      animation: 'beta',
-                    },
-                  ],
-                },
-              },
-            ],
-          },
-        },
-      },
-    },
-  },
-  {
-    lhr: {
-      requestedUrl: 'http://localhost:10200/perf/third-party.html',
-      finalUrl: 'http://localhost:10200/perf/third-party.html',
-      audits: {
-        'third-party-facades': {
-          score: 0,
-          displayValue: '1 facade alternative available',
-          details: {
-            items: [
-              {
-                product: 'YouTube Embedded Player (Video)',
-                blockingTime: 0,
-                transferSize: '651128 +/- 100000',
-                subItems: {
-                  type: 'subitems',
-                  items: {
-                    length: '>5', // We don't care exactly how many it has, just ensure we surface the subresources.
-                  },
-                },
-              },
-            ],
           },
         },
       },

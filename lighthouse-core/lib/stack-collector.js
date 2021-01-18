@@ -39,7 +39,7 @@ const libDetectorSource = fs.readFileSync(
 /**
  * Obtains a list of detected JS libraries and their versions.
  */
-/* istanbul ignore next */
+/* c8 ignore start */
 async function detectLibraries() {
   /** @type {JSLibrary[]} */
   const libraries = [];
@@ -74,6 +74,7 @@ async function detectLibraries() {
 
   return libraries;
 }
+/* c8 ignore stop */
 
 /**
  * @param {LH.Gatherer.PassContext} passContext
@@ -82,13 +83,11 @@ async function detectLibraries() {
 async function collectStacks(passContext) {
   const status = {msg: 'Collect stacks', id: 'lh:gather:collectStacks'};
   log.time(status);
-  const expression = `(function () {
-    ${libDetectorSource};
-    return (${detectLibraries.toString()}());
-  })()`;
 
-  /** @type {JSLibrary[]} */
-  const jsLibraries = await passContext.driver.evaluateAsync(expression);
+  const jsLibraries = await passContext.driver.evaluate(detectLibraries, {
+    args: [],
+    deps: [libDetectorSource],
+  });
 
   /** @type {LH.Artifacts['Stacks']} */
   const stacks = jsLibraries.map(lib => ({

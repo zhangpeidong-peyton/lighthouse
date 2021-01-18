@@ -16,6 +16,12 @@ jobs:
     steps:
     - name: git clone
       uses: actions/checkout@v2
+      with:
+        fetch-depth: 100
+    - run: bash lighthouse-core/scripts/github-actions-commit-range.sh
+      env:
+        GITHUB_CONTEXT_PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        GITHUB_CONTEXT_BASE_SHA: ${{ github.event.before }}
 
     - name: Use Node.js 12.x
       uses: actions/setup-node@v1
@@ -50,6 +56,9 @@ jobs:
     # buildtracker needs history and a common merge commit.
     - name: Fixup git history (for buildtracker)
       run: bash $GITHUB_WORKSPACE/.github/scripts/git-get-shared-history.sh
+      env:
+        # https://buildtracker.dev/docs/guides/github-actions#configuration
+        BT_API_AUTH_TOKEN: ${{ secrets.BT_API_AUTH_TOKEN }}
     - name: Store in buildtracker
       # TODO(paulirish): Don't allow this to fail the build. https://github.com/paularmstrong/build-tracker/issues/200
       run: yarn bt-cli upload-build || true
@@ -103,8 +112,14 @@ jobs:
       if: matrix.os == 'ubuntu-latest'
 
     - name: yarn unit
-      run: xvfb-run --auto-servernum yarn unit
+      run: xvfb-run --auto-servernum yarn unit:cicoverage
       if: matrix.os == 'ubuntu-latest'
+    - name: Upload test coverage to Codecov
+      if: matrix.os == 'ubuntu-latest'
+      uses: codecov/codecov-action@6004246
+      with:
+        flags: unit
+        file: ./unit-coverage.lcov
 
     # For windows, just test the potentially platform-specific code.
     - name: yarn unit-cli
@@ -155,7 +170,14 @@ jobs:
 
     - run: sudo apt-get install xvfb
     - name: Run smoke tests
-      run: xvfb-run --auto-servernum yarn smoke --debug -j=1 --retries=2 --invert-match ${{ matrix.smoke-test-invert }} $SMOKE_GROUP_1
+      run: xvfb-run --auto-servernum yarn smoke:cicoverage --debug -j=1 --retries=2 --invert-match ${{ matrix.smoke-test-invert }} $SMOKE_GROUP_1
+
+    - name: Upload test coverage to Codecov
+      if: matrix.chrome-channel == 'ToT'
+      uses: codecov/codecov-action@6004246
+      with:
+        flags: smoke
+        file: ./smoke-coverage.lcov
 
     # Fail if any changes were written to source files.
     - run: git diff --exit-code
