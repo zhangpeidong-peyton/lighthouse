@@ -27,7 +27,7 @@ class DomContentLoadedTime extends Audit {
       title: "Dom ContentLoaded Time",
       description: "Dom ContentLoaded Time",
       scoreDisplayMode: Audit.SCORING_MODES.NUMERIC,
-      requiredArtifacts: ["traces", "TestedAsMobileDevice"]
+      requiredArtifacts: ["traces"]
     };
   }
 
@@ -62,7 +62,7 @@ class DomContentLoadedTime extends Audit {
     const traceOfTab = TraceProcessor.computeTraceOfTab(trace);
     const { timings } = traceOfTab;
     const domContentLoadedTime = timings.domContentLoaded ? timings.domContentLoaded : 0;
-    const isDesktop = artifacts.TestedAsMobileDevice === false;
+    const isDesktop = context.settings.formFactor === 'desktop';
     const options = isDesktop
       ? context.options.desktop
       : context.options.mobile;

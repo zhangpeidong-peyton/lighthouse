@@ -27,7 +27,7 @@ class PageLoadTime extends Audit {
       title: "Load Time",
       description: "Load Time",
       scoreDisplayMode: Audit.SCORING_MODES.NUMERIC,
-      requiredArtifacts: ["traces", "TestedAsMobileDevice"]
+      requiredArtifacts: ["traces"]
     };
   }
 
@@ -62,7 +62,7 @@ class PageLoadTime extends Audit {
     const traceOfTab = TraceProcessor.computeTraceOfTab(trace);
     const { timings } = traceOfTab;
     const loadTime = timings.load ? timings.load : 0;
-    const isDesktop = artifacts.TestedAsMobileDevice === false;
+    const isDesktop = context.settings.formFactor === 'desktop';
     const options = isDesktop
       ? context.options.desktop
       : context.options.mobile;
