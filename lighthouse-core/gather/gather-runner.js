@@ -689,7 +689,11 @@ class GatherRunner {
     const artifacts = {};
 
     try {
-      await driver.connect();
+      if (options.settings.newtab) {
+        await driver.connect();
+      } else {
+        await driver.connectToExist();
+      }
       // In the devtools/extension case, we can't still be on the site while trying to clear state
       // So we first navigate to about:blank, then apply our emulation & setup
       await GatherRunner.loadBlank(driver);

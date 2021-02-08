@@ -186,6 +186,8 @@ declare global {
       extraHeaders?: Crdp.Network.Headers | null; // See extraHeaders TODO in bin.js
       /** How Lighthouse was run, e.g. from the Chrome extension or from the npm module */
       channel?: string
+      /** */
+      newtab?: boolean;
       /** Precomputed lantern estimates to use instead of observed analysis. */
       precomputedLanternData?: PrecomputedLanternData | null;
       /** The budget.json object for LightWallet. */

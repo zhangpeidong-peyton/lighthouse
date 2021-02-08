@@ -107,6 +107,7 @@ const defaultSettings = {
   gatherMode: false,
   disableStorageReset: false,
   channel: 'node',
+  newtab: true,
 
   // the following settings have no defaults but we still want ensure that `key in settings`
   // in config will work in a typechecked way

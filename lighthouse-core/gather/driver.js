@@ -208,6 +208,13 @@ class Driver {
     log.timeEnd(status);
   }
 
+  async connectToExist() {
+    const status = {msg: 'Connecting to browser', id: 'lh:init:connect'};
+    log.time(status);
+    await this._connection.connectToExist();
+    log.timeEnd(status);
+  }
+
   /**
    * @return {Promise<void>}
    */

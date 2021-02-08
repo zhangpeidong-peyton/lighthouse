@@ -33,7 +33,7 @@ const NO_CPU_THROTTLE_METRICS = {
  * @return {Promise<void>}
  */
 async function emulate(driver, settings) {
-  if (settings.emulatedUserAgent !== false) {
+  if (settings.emulatedUserAgent != false) {
     // Network.enable must be called for UA overriding to work
     await driver.sendCommand('Network.enable');
     await driver.sendCommand('Network.setUserAgentOverride', {

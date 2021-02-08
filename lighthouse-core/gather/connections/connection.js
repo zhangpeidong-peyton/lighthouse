@@ -37,6 +37,13 @@ class Connection {
   /**
    * @return {Promise<void>}
    */
+  connectToExist() {
+    return Promise.reject(new Error('Not implemented'));
+  }
+
+  /**
+   * @return {Promise<void>}
+   */
   disconnect() {
     return Promise.reject(new Error('Not implemented'));
   }
