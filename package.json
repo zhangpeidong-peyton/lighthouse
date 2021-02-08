@@ -1,6 +1,6 @@
 {
   "name": "lighthouse",
-  "version": "7.0.0",
+  "version": "7.0.1",
   "description": "Automated auditing, performance metrics, and best practices for the web.",
   "main": "./lighthouse-core/index.js",
   "bin": {
@@ -18,12 +18,13 @@
     "build-extension": "yarn build-extension-chrome && yarn build-extension-firefox",
     "build-extension-chrome": "node ./build/build-extension.js chrome",
     "build-extension-firefox": "node ./build/build-extension.js firefox",
-    "build-devtools": "(yarn unlink || true) && yarn link && yarn link lighthouse && node ./build/build-bundle.js clients/devtools-entry.js dist/lighthouse-dt-bundle.js && node ./build/build-dt-report-resources.js",
+    "build-devtools": "yarn reset-link && node ./build/build-bundle.js clients/devtools-entry.js dist/lighthouse-dt-bundle.js && node ./build/build-dt-report-resources.js",
     "build-smokehouse-bundle": "node ./build/build-smokehouse-bundle.js",
-    "build-lr": "node ./build/build-lightrider-bundles.js",
+    "build-lr": "yarn reset-link && node ./build/build-lightrider-bundles.js",
     "build-pack": "bash build/build-pack.sh",
     "build-treemap": "node ./build/build-treemap.js",
     "build-viewer": "node ./build/build-viewer.js",
+    "reset-link": "(yarn unlink || true) && yarn link && yarn link lighthouse",
     "c8": "bash lighthouse-core/scripts/c8.sh",
     "clean": "rimraf dist proto/scripts/*.json proto/scripts/*_pb2.* proto/scripts/*_pb.* proto/scripts/__pycache__ proto/scripts/*.pyc *.report.html *.report.dom.html *.report.json *.devtoolslog.json *.trace.json lighthouse-core/lib/i18n/locales/*.ctc.json || true",
     "lint": "[ \"$CI\" = true ] && eslint --quiet -f codeframe . || eslint .",
@@ -55,7 +56,7 @@
     "coveralls": "cat unit-coverage.lcov | coveralls",
     "devtools": "bash lighthouse-core/scripts/roll-to-devtools.sh",
     "chrome": "node lighthouse-core/scripts/manual-chrome-launcher.js",
-    "fast": "yarn start --emulated-form-factor=none --throttlingMethod=provided",
+    "fast": "yarn start --preset=desktop --throttlingMethod=provided",
     "deploy-treemap": "yarn build-treemap --deploy",
     "deploy-viewer": "yarn build-viewer --deploy",
     "now-build": "node lighthouse-core/scripts/build-report-for-autodeployment.js && yarn build-viewer && yarn build-treemap && cp -r dist/gh-pages dist/now/gh-pages",
@@ -151,7 +152,8 @@
     "pretty-json-stringify": "^0.0.2",
     "puppeteer": "^1.19.0",
     "terser": "^5.3.8",
-    "typescript": "4.1.2",
+    "typed-query-selector": "^2.4.0",
+    "typescript": "4.1.3",
     "webtreemap-cdt": "^3.0.1"
   },
   "dependencies": {

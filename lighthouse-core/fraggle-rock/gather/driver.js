@@ -20,6 +20,8 @@ const defaultSession = {
   on: throwNotConnectedFn,
   once: throwNotConnectedFn,
   off: throwNotConnectedFn,
+  addProtocolMessageListener: throwNotConnectedFn,
+  removeProtocolMessageListener: throwNotConnectedFn,
   sendCommand: throwNotConnectedFn,
 };
 
